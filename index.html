@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>All The Way - Courtside</title>
+<meta name="description" content="Basketball drill library with court diagrams and an instant practice planner.">
+<meta name="theme-color" content="#12161c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Courtside">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}html,body{overscroll-behavior-y:none}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: sticky scoreboard header with tabs; plan view = settings rail + timeline; library = filter bar + drill grid */
+:root{
+  --bg:#eef1f4; --surface:#ffffff; --sunk:#e3e8ee; --ink:#12161c; --muted:#5a6573; --line:#d3dae2;
+  --accent:#d9520b; --accent-ink:#ffffff; --court:#1d6a73; --court-soft:#d9ecee;
+  --good:#1f7a3f; --warn:#a15c00;
+  --display:"Big Shoulders Display","Oswald","Arial Narrow",Impact,sans-serif;
+  --body:"Barlow","Segoe UI",system-ui,sans-serif;
+  --r:10px; --floor:#f1e3c8; --floorline:#b8935a;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1217; --surface:#161b22; --sunk:#1d242d; --ink:#e8ecf1; --muted:#97a2b0; --line:#2a333e;
+  --accent:#ff7a2e; --accent-ink:#1a0d04; --court:#5bbcc6; --court-soft:#163238; --good:#5fcf87; --warn:#f0a840; --floor:#2a2219; --floorline:#7d6443; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1217; --surface:#161b22; --sunk:#1d242d; --ink:#e8ecf1; --muted:#97a2b0; --line:#2a333e;
+  --accent:#ff7a2e; --accent-ink:#1a0d04; --court:#5bbcc6; --court-soft:#163238; --good:#5fcf87; --warn:#f0a840; --floor:#2a2219; --floorline:#7d6443; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--ink)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ink);color:var(--bg)}
+header .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand svg{flex:none}
+.brand b{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:.02em;text-transform:uppercase;line-height:1}
+.brand small{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.65}
+nav{display:flex;gap:4px;background:color-mix(in srgb,var(--bg) 12%,transparent);padding:4px;border-radius:999px}
+nav a{color:inherit;text-decoration:none;font-weight:600;font-size:14px;padding:6px 14px;border-radius:999px;opacity:.75}
+nav a[aria-current="page"]{background:var(--accent);color:var(--accent-ink);opacity:1}
+
+main{padding-block:24px 60px}
+h1,h2,h3{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;text-wrap:balance;margin:0}
+h1{font-size:clamp(30px,5vw,44px)}
+h2{font-size:24px}
+h3{font-size:19px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.muted{color:var(--muted)}
+
+/* ---------- plan ---------- */
+.plan{display:grid;grid-template-columns:330px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:860px){.plan{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.rail{display:grid;gap:18px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}
+@media (max-width:860px){.rail{position:static}}
+.field{display:grid;gap:8px}
+.field>label,.field>.lbl{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stepper{display:flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:999px;width:max-content;background:var(--sunk)}
+.stepper button{width:44px;height:44px;border:0;background:transparent;font-size:22px;font-weight:600;border-radius:999px}
+.stepper button:hover{background:var(--line)}
+.stepper input{width:64px;text-align:center;border:0;background:transparent;font-family:var(--display);font-weight:800;font-size:30px;-moz-appearance:textfield}
+.stepper input::-webkit-inner-spin-button{display:none}
+.big-count{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:999px;font-weight:600;font-size:14px}
+.seg button[aria-pressed="true"]{background:var(--court);border-color:var(--court);color:var(--surface)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);padding:9px 16px;border-radius:999px;font-weight:600}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.sm{padding:5px 11px;font-size:13px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+.summary{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.stats{display:flex;gap:22px;flex-wrap:wrap}
+.stat b{display:block;font-family:var(--display);font-weight:800;font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+.timeline{display:grid;gap:0;border-left:3px solid var(--line);margin-left:46px}
+.block{position:relative;display:grid;gap:6px;padding:14px 0 14px 22px}
+.block+.block{border-top:1px dashed var(--line)}
+.block .clock{position:absolute;left:-52px;top:16px;width:44px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;color:var(--muted)}
+.block::before{content:"";position:absolute;left:-8px;top:20px;width:13px;height:13px;border-radius:50%;background:var(--surface);border:3px solid var(--court)}
+.block.is-game::before{border-color:var(--accent)}
+.block.is-break::before{border-color:var(--line)}
+.block-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.block-head h3{font-size:21px}
+.block-head h3 button{all:unset;cursor:pointer}
+.block-head h3 button:hover{color:var(--accent)}
+.mins{font-family:var(--display);font-weight:800;font-size:18px;color:var(--court);font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:4px;background:var(--court-soft);color:var(--court)}
+.tag.game{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.groups{font-weight:600;font-size:14px}
+.groups.warn{color:var(--warn)}
+.block p{margin:0;max-width:68ch}
+.block .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+
+.equip{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.equip span{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px}
+
+.teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+.team{border-radius:8px;padding:10px 12px;background:var(--sunk);border-top:4px solid var(--c)}
+.team b{font-family:var(--display);font-size:18px;text-transform:uppercase}
+.team ol{margin:6px 0 0;padding-left:20px;font-size:14px}
+textarea{width:100%;min-height:76px;border:1px solid var(--line);border-radius:8px;background:var(--sunk);padding:8px 10px;resize:vertical}
+
+/* ---------- library ---------- */
+.lib-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:end;margin-bottom:16px}
+.filters{display:grid;gap:12px;margin-bottom:18px}
+.search{display:flex;gap:10px;flex-wrap:wrap}
+.search input,.search select{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 16px}
+.search input[type="search"]{flex:1 1 240px;min-width:0}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.chips button{flex:none;border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:999px;font-weight:600;font-size:13px;white-space:nowrap}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chips em{font-style:normal;opacity:.6;margin-left:4px;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{display:grid;gap:8px;align-content:start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;position:relative}
+.card:hover{border-color:var(--court)}
+.card h3{font-size:20px;padding-right:30px}
+.card p{margin:0;font-size:14px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.star{position:absolute;top:10px;right:10px;border:0;background:transparent;font-size:20px;line-height:1;color:var(--muted);padding:4px}
+.star[aria-pressed="true"]{color:var(--accent)}
+.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
+
+/* ---------- modal ---------- */
+dialog{border:0;padding:0;background:var(--surface);color:var(--ink);border-radius:14px;width:min(640px,calc(100vw - 32px));max-height:calc(100dvh - 40px)}
+dialog::backdrop{background:rgba(5,8,12,.55)}
+.dlg{padding:22px;display:grid;gap:14px;overflow:auto;max-height:calc(100dvh - 40px)}
+.dlg h2{font-size:30px}
+.dlg ol,.dlg ul{margin:0;padding-left:22px;display:grid;gap:4px}
+.dlg section{display:grid;gap:6px}
+.dlg .x{position:absolute;top:10px;right:12px;border:0;background:transparent;font-size:26px;line-height:1;color:var(--muted)}
+
+/* ---------- run mode ---------- */
+.run{position:fixed;inset:0;z-index:20;background:var(--ink);color:var(--bg);display:grid;grid-template-rows:auto 1fr auto;
+  padding:calc(env(safe-area-inset-top,0px) + 16px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px))}
+.run-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.run-mid{display:grid;place-content:center;text-align:center;gap:10px;min-height:0;overflow:auto}
+.run .clock-big{font-family:var(--display);font-weight:800;font-size:clamp(90px,24vw,220px);line-height:.9;font-variant-numeric:tabular-nums;color:var(--accent)}
+.run .clock-big.low{animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.run .clock-big.low{animation:none}}
+.run h2{font-size:clamp(30px,6vw,56px)}
+.run .groups{opacity:.8;font-size:17px}
+.run .steps{max-width:60ch;margin:6px auto 0;text-align:left;opacity:.85;font-size:16px}
+.run-bot{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;align-items:center}
+.run .btn{background:transparent;color:var(--bg);border-color:color-mix(in srgb,var(--bg) 30%,transparent)}
+.run .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);min-width:120px}
+.bar{height:6px;border-radius:3px;background:color-mix(in srgb,var(--bg) 18%,transparent);overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:var(--accent);width:0}
+.next{font-size:14px;opacity:.7}
+.dg{display:block;width:100%;height:auto}
+.dg-floor{fill:var(--floor)}
+.dg-court{fill:none;stroke:var(--floorline);stroke-width:.35}
+.dg-rim{fill:none;stroke:var(--accent);stroke-width:.4}
+.dg-o circle{fill:var(--surface);stroke:var(--court);stroke-width:.45}
+.dg-o text,.dg-c text{font:700 2px var(--body);fill:var(--court);text-anchor:middle;dominant-baseline:central}
+.dg-x path{stroke:var(--accent);stroke-width:.6;stroke-linecap:round;fill:none}
+.dg-x text{font:700 1.6px var(--body);fill:var(--accent)}
+.dg-c rect{fill:var(--surface);stroke:var(--ink);stroke-width:.4}.dg-c text{fill:var(--ink)}
+.dg-k{fill:var(--accent);opacity:.85}
+.dg-b{fill:var(--accent);stroke:var(--ink);stroke-width:.2}
+.dg-qd{fill:var(--surface);stroke:var(--court);stroke-width:.3;opacity:.7}
+.dg-m{fill:none;stroke:var(--ink);stroke-width:.35;stroke-linejoin:round}
+.dg-p{fill:none;stroke:var(--ink);stroke-width:.35;stroke-dasharray:1 .7}
+.dg-sh{fill:none;stroke:var(--muted);stroke-width:.3;stroke-dasharray:.3 .6}
+.dg-ah{fill:var(--ink)}
+.dg-t{font:600 1.9px var(--body);fill:var(--muted);text-anchor:middle;dominant-baseline:central}
+.dg-wrap{background:var(--floor);border-radius:10px;padding:8px;max-width:440px;width:100%;margin:0 auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;font-size:12px;color:var(--muted);font-weight:600}
+.legend svg{width:26px;height:12px;vertical-align:middle;margin-right:4px}
+.thumb{background:var(--floor);border-radius:6px;padding:4px;margin:-2px 0 2px}
+.thumb .dg-t{display:none}
+.thumb .dg{max-height:150px}
+.card{cursor:pointer}
+.run-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:center;max-width:980px;margin:0 auto;text-align:left}
+.run-body .dg-wrap{max-width:none}
+@media (max-width:760px){.run-body{grid-template-columns:minmax(0,1fr)}.run-body .dg-wrap{max-width:320px}}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;z-index:30}
+</style>
+
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="15" fill="var(--accent)"/><path d="M2 17h30M17 2v30M6.5 6.5c5 5 5 16 0 21M27.5 6.5c-5 5-5 16 0 21" stroke="var(--ink)" stroke-width="1.8" fill="none"/></svg>
+      <div><small>All The Way</small><b>Courtside</b></div>
+    </div>
+    <nav aria-label="Sections">
+      <a href="#plan" data-view="plan">Plan session</a>
+      <a href="#drills" data-view="drills">Drill library</a>
+      <a href="#saved" data-view="saved">Saved</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- PLAN -->
+  <section id="view-plan" class="plan">
+    <aside class="rail">
+      <div class="panel" style="display:grid;gap:18px">
+        <div class="field">
+          <span class="lbl">Kids at practice</span>
+          <div class="big-count">
+            <div class="stepper">
+              <button type="button" data-step="kids" data-d="-1" aria-label="One fewer kid">−</button>
+              <input id="kids" type="number" min="1" max="60" value="12" inputmode="numeric" aria-label="Number of kids">
+              <button type="button" data-step="kids" data-d="1" aria-label="One more kid">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="field"><span class="lbl">Session length</span><div class="seg" id="dur"></div></div>
+        <div class="field"><span class="lbl">Age group</span><div class="seg" id="lvl"></div></div>
+        <div class="field"><span class="lbl">Focus</span><div class="seg" id="focus"></div></div>
+        <div class="field">
+          <span class="lbl">Hoops available</span>
+          <div class="stepper">
+            <button type="button" data-step="hoops" data-d="-1" aria-label="One fewer hoop">−</button>
+            <input id="hoops" type="number" min="0" max="12" value="2" inputmode="numeric" aria-label="Number of hoops">
+            <button type="button" data-step="hoops" data-d="1" aria-label="One more hoop">+</button>
+          </div>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="regen" type="button">↻ New session</button>
+          <button class="btn" id="save" type="button">Save</button>
+        </div>
+      </div>
+    </aside>
+
+    <div style="display:grid;gap:24px;min-width:0">
+      <div class="panel">
+        <div class="summary">
+          <div>
+            <div class="eyebrow" id="planEyebrow">Today's practice</div>
+            <h1 id="planTitle">Balanced practice</h1>
+          </div>
+          <button class="btn primary" id="runBtn" type="button">▶ Run with timer</button>
+        </div>
+        <div class="stats" id="stats"></div>
+        <div style="margin-top:20px" class="timeline" id="timeline"></div>
+        <div style="margin-top:18px">
+          <div class="eyebrow">Equipment to bring</div>
+          <div class="equip" id="equip"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="row" style="justify-content:space-between">
+          <div><h2>Split into teams</h2><div class="muted" style="font-size:14px">Paste names, one per line or comma separated. Leave empty to use numbers.</div></div>
+          <div class="row">
+            <div class="stepper" title="Teams">
+              <button type="button" data-step="teams" data-d="-1" aria-label="Fewer teams">−</button>
+              <input id="teams" type="number" min="2" max="12" value="2" aria-label="Number of teams">
+              <button type="button" data-step="teams" data-d="1" aria-label="More teams">+</button>
+            </div>
+            <button class="btn" id="shuffleTeams" type="button">Shuffle</button>
+          </div>
+        </div>
+        <textarea id="names" style="margin-top:12px" placeholder="Ava, Marcus, Jayden, Sofia..."></textarea>
+        <div class="teams" id="teamOut"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIBRARY -->
+  <section id="view-drills" hidden>
+    <div class="lib-head">
+      <div><div class="eyebrow" id="libCount"></div><h1>Drill library</h1></div>
+    </div>
+    <div class="filters">
+      <div class="search">
+        <input type="search" id="q" placeholder="Search drills, skills, equipment…" aria-label="Search drills">
+        <select id="fLvl" aria-label="Age group">
+          <option value="4" selected>Rep / Elite</option><option value="3">Ages 13–15</option><option value="2">Ages 9–12</option><option value="1">Ages 5–8</option><option value="">All levels</option>
+        </select>
+        <select id="fKids" aria-label="Works with">
+          <option value="">Any group size</option><option value="1">Solo (1)</option><option value="2">Pairs (2)</option><option value="4">Small group (4)</option><option value="8">8 kids</option><option value="12">12 kids</option><option value="20">20+ kids</option>
+        </select>
+        <select id="fHoop" aria-label="Hoop needed">
+          <option value="">Hoop or no hoop</option><option value="0">No hoop needed</option>
+        </select>
+      </div>
+      <div class="chips" id="catChips"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <!-- SAVED -->
+  <section id="view-saved" hidden style="display:grid;gap:28px">
+    <div><div class="eyebrow">Stored in this browser</div><h1>Saved</h1></div>
+    <div><h2 style="margin-bottom:12px">Sessions</h2><div id="savedSessions" style="display:grid;gap:10px"></div></div>
+    <div><h2 style="margin-bottom:12px">Favorite drills</h2><div class="grid" id="favGrid"></div></div>
+  </section>
+</main>
+
+<dialog id="dlg"><div class="dlg" id="dlgBody"></div></dialog>
+<div class="run" id="run" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="drills.js"></script>
+<script src="drills_adv.js"></script>
+<script src="diagrams.js"></script>
+<script>
+(function(){
+const D = window.DRILLS.map((d,i)=>({...d,l:d.l+(d.l.includes("3")&&!d.l.includes("1")&&!d.l.includes("4")?"4":""),id:i}));
+const C = window.CATS;
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LV = {1:"Ages 5–8",2:"Ages 9–12",3:"Ages 13–15",4:"Rep / Elite"};
+const store = {
+  get(k,f){try{const v=localStorage.getItem("cs_"+k);return v?JSON.parse(v):f}catch(e){return f}},
+  set(k,v){try{localStorage.setItem("cs_"+k,JSON.stringify(v))}catch(e){}}
+};
+let favs = new Set(store.get("favs",[]));
+const st = Object.assign({kids:12,dur:90,lvl:4,focus:"balanced",hoops:2,teams:2}, store.get("settings",{}));
+if(!st.v2){st.lvl=4;st.dur=Math.max(st.dur,60);st.v2=1;store.set("plan",null)}
+
+const FOCUS = {
+  balanced:{label:"Balanced",seq:["handle","shoot","pass","defense","finish","rebound","offense"]},
+  shooting:{label:"Shooting",seq:["shoot","finish","shoot","foot","shoot"]},
+  handling:{label:"Ball handling",seq:["handle","finish","handle","pass","handle"]},
+  defense:{label:"Defense",seq:["defense","rebound","defense","transition","defense"]},
+  team:{label:"Team play",seq:["pass","offense","transition","offense","defense"]},
+  compete:{label:"Competitive",seq:["games","shoot","defense","games","offense"]}
+};
+const DUR=[30,45,60,75,90];
+if(!FOCUS[st.focus])st.focus="balanced";
+
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
+const pick = a=>a[Math.floor(Math.random()*a.length)];
+const fits = (d,{kids,lvl,hoops})=> d.l.includes(String(lvl)) && d.p[0]<=kids && !(d.h && hoops<1);
+
+function groupText(d,kids,hoops){
+  const [mn,mx]=d.p;
+  if(kids<=mx){
+    if(mx===2 && kids%2) return {t:`${Math.floor(kids/2)} pairs, one group of 3`};
+    if(mx===3 && kids%3 && kids>3) return {t:`Groups of 3 (${Math.floor(kids/3)} groups, extras join one)`};
+    return {t: kids===1?"1 player":`All ${kids} together`};
+  }
+  const g=Math.ceil(kids/mx), lo=Math.floor(kids/g), hi=Math.ceil(kids/g);
+  const size = lo===hi?`${lo}`:`${lo}–${hi}`;
+  if(mx===2) return {t:`${Math.floor(kids/2)} pairs${kids%2?" + one trio":""}`+(d.h&&hoops<Math.ceil(kids/2)?` · share ${hoops} hoop${hoops>1?"s":""}`:"")};
+  if(d.h && hoops<g){
+    return {t:`${g} groups of ${size} · only ${hoops} hoop${hoops>1?"s":""}: rotate groups or run a side station`,warn:true};
+  }
+  return {t:`${g} groups of ${size}`+(d.h?` · ${d.h*g>1?"one per hoop":"one hoop"}`:"")};
+}
+
+function build(){
+  const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
+  const pool=c=>D.filter(d=>d.c===c&&fits(d,o));
+  const used=new Set(); const blocks=[];
+  const take=(c)=>{let p=pool(c).filter(d=>!used.has(d.id)); if(!p.length) p=pool(c); if(!p.length) return null; const d=pick(p); used.add(d.id); return d};
+  const T=st.dur;
+  let left=T;
+  const warm=take("warm"); if(warm){const m=Math.min(warm.t+2,8);blocks.push({id:warm.id,m});left-=m}
+  const coolD = T>=40 ? take("cool") : null; const coolM = coolD?Math.min(coolD.t,5):0; left-=coolM;
+  const breakM = T>=60?2:0; left-=breakM;
+  const gameD = takeGame(); const gameM = Math.max(8,Math.round(T*0.2)); left-=gameM;
+  const seq=FOCUS[st.focus].seq; let i=0, mids=[];
+  while(left>=4 && i<20){
+    const d=take(seq[i%seq.length]); i++;
+    if(!d) continue;
+    const m=Math.min(left, Math.max(5, d.t + (T>=75?3:1)));
+    mids.push({id:d.id,m}); left-=m;
+  }
+  if(left>0 && mids.length) mids[mids.length-1].m+=left; else if(left>0) blocks[0].m+=left;
+  const half=Math.ceil(mids.length/2);
+  blocks.push(...mids.slice(0,half));
+  if(breakM) blocks.push({brk:true,m:breakM});
+  blocks.push(...mids.slice(half));
+  if(gameD) blocks.push({id:gameD.id,m:gameM});
+  if(coolD) blocks.push({id:coolD.id,m:coolM});
+  return blocks;
+  function takeGame(){
+    let p=D.filter(d=>d.c==="games"&&fits(d,o)&&d.p[1]>=Math.min(st.kids,12)&&!(st.lvl===1&&d.n==="21")&&!(st.lvl>=3&&/Steal the Bacon|Relay|Treasure|Sharks|Dribble Knockout/.test(d.n)));
+    if(!p.length) p=D.filter(d=>d.c==="games"&&fits(d,o));
+    if(!p.length) return null; const d=pick(p); used.add(d.id); return d;
+  }
+}
+
+let plan = store.get("plan",null);
+function regen(){plan=build();store.set("plan",plan);renderPlan()}
+
+function fmt(m){return `${Math.floor(m/60)?Math.floor(m/60)+":"+String(m%60).padStart(2,"0"):"0:"+String(m).padStart(2,"0")}`}
+function renderPlan(){
+  $("#planTitle").textContent = FOCUS[st.focus].label+" practice";
+  $("#planEyebrow").textContent = `${st.kids} kids · ${LV[st.lvl]} · ${st.hoops} hoop${st.hoops===1?"":"s"}`;
+  const total=plan.reduce((a,b)=>a+b.m,0);
+  const drills=plan.filter(b=>!b.brk).length;
+  $("#stats").innerHTML=`<div class="stat"><b>${total}</b><span>Minutes</span></div><div class="stat"><b>${drills}</b><span>Drills</span></div><div class="stat"><b>${st.kids}</b><span>Kids</span></div>`;
+  let clock=0;
+  $("#timeline").innerHTML=plan.map((b,idx)=>{
+    const at=fmt(clock); clock+=b.m;
+    if(b.brk) return `<div class="block is-break"><span class="clock">${at}</span><div class="block-head"><h3>Water break</h3><span class="mins">${b.m} min</span></div></div>`;
+    const d=D[b.id]; const g=groupText(d,st.kids,st.hoops); const game=d.c==="games";
+    return `<div class="block ${game?"is-game":""}"><span class="clock">${at}</span>
+      <div class="block-head"><span class="tag ${game?"game":""}">${C[d.c].label}</span><h3><button type="button" data-open="${d.id}">${esc(d.n)}</button></h3><span class="mins">${b.m} min</span></div>
+      <div class="groups ${g.warn?"warn":""}">${esc(g.t)}</div>
+      <p class="muted">${esc(d.s)}</p>
+      <div class="acts"><button class="btn sm" data-swap="${idx}">Swap</button><button class="btn sm" data-open="${d.id}">Steps</button><button class="btn sm" data-tm="${idx}" data-d="-1">−1 min</button><button class="btn sm" data-tm="${idx}" data-d="1">+1 min</button><button class="btn sm" data-rm="${idx}">Remove</button></div></div>`;
+  }).join("");
+  const eq=new Set(); plan.forEach(b=>{if(b.brk)return; D[b.id].e.split(",").map(s=>s.trim().replace(/^\d+\s*/,"")).filter(Boolean).forEach(x=>eq.add(x))});
+  const balls = st.kids; eq.add(`about ${balls} balls`);
+  $("#equip").innerHTML=[...eq].filter(x=>!/^balls?( each| per.*)?$/.test(x)&&x!=="ball").map(x=>`<span>${esc(x)}</span>`).join("")+`<span>water</span>`;
+}
+
+function swap(idx){
+  const cur=D[plan[idx].id]; const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
+  const inPlan=new Set(plan.map(b=>b.id));
+  let p=D.filter(d=>d.c===cur.c&&fits(d,o)&&!inPlan.has(d.id));
+  if(!p.length) {toast("No other "+C[cur.c].label.toLowerCase()+" drills fit this group");return}
+  plan[idx].id=pick(p).id; store.set("plan",plan); renderPlan();
+}
+
+/* segmented controls */
+function seg(el,items,key,fn){
+  el.innerHTML=items.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${String(st[key])===String(v)}">${l}</button>`).join("");
+  el.onclick=e=>{const b=e.target.closest("button");if(!b)return;st[key]=isNaN(b.dataset.v)?b.dataset.v:+b.dataset.v;[...el.children].forEach(x=>x.setAttribute("aria-pressed",x===b));saveSet();fn()};
+}
+function saveSet(){store.set("settings",st)}
+seg($("#dur"),DUR.map(m=>[m,m+" min"]),"dur",regen);
+seg($("#lvl"),[[4,"Rep / Elite"],[3,"13–15"],[2,"9–12"],[1,"5–8"]],"lvl",regen);
+seg($("#focus"),Object.entries(FOCUS).map(([k,v])=>[k,v.label]),"focus",regen);
+["kids","hoops","teams"].forEach(k=>{const i=$("#"+k);i.value=st[k];i.addEventListener("change",()=>{let v=Math.max(+i.min,Math.min(+i.max,parseInt(i.value)||+i.min));i.value=v;st[k]=v;saveSet();k==="teams"?renderTeams():regen();if(k==="kids")renderTeams()})});
+document.addEventListener("click",e=>{
+  const s=e.target.closest("[data-step]"); if(s){const i=$("#"+s.dataset.step);i.value=(+i.value)+(+s.dataset.d);i.dispatchEvent(new Event("change"));return}
+  const o=e.target.closest("[data-open]"); if(o){openDrill(+o.dataset.open);return}
+  const sw=e.target.closest("[data-swap]"); if(sw){swap(+sw.dataset.swap);return}
+  const rm=e.target.closest("[data-rm]"); if(rm){plan.splice(+rm.dataset.rm,1);store.set("plan",plan);renderPlan();return}
+  const tm=e.target.closest("[data-tm]"); if(tm){const b=plan[+tm.dataset.tm];b.m=Math.max(1,b.m+(+tm.dataset.d));store.set("plan",plan);renderPlan();return}
+  const f=e.target.closest("[data-fav]"); if(f){const id=+f.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);store.set("favs",[...favs]);f.setAttribute("aria-pressed",favs.has(id));if(view==="saved")renderSaved();return}
+  const add=e.target.closest("[data-add]"); if(add){const d=D[+add.dataset.add];const at=plan.length&&!plan[plan.length-1].brk&&D[plan[plan.length-1].id].c==="cool"?plan.length-1:plan.length;plan.splice(at,0,{id:d.id,m:d.t});store.set("plan",plan);renderPlan();$("#dlg").close();toast("Added to session");return}
+  const ld=e.target.closest("[data-load]"); if(ld){const s=store.get("sessions",[])[+ld.dataset.load];Object.assign(st,s.st);plan=s.plan;saveSet();store.set("plan",plan);syncControls();renderPlan();location.hash="plan";return}
+  const dl=e.target.closest("[data-del]"); if(dl){const a=store.get("sessions",[]);a.splice(+dl.dataset.del,1);store.set("sessions",a);renderSaved();return}
+});
+$("#regen").onclick=regen;
+$("#save").onclick=()=>{const a=store.get("sessions",[]);const d=new Date();a.unshift({name:`${FOCUS[st.focus].label} · ${st.kids} kids · ${st.dur} min`,date:d.toLocaleDateString(undefined,{month:"short",day:"numeric"}),st:{...st},plan:JSON.parse(JSON.stringify(plan))});store.set("sessions",a.slice(0,30));toast("Session saved")};
+function syncControls(){["dur","lvl","focus"].forEach(k=>[...$("#"+k).children].forEach(b=>b.setAttribute("aria-pressed",String(st[k])===b.dataset.v)));["kids","hoops","teams"].forEach(k=>$("#"+k).value=st[k])}
+
+/* teams */
+const TEAMC=["var(--accent)","var(--court)","#7a5af5","#c2185b","#2e7d32","#f9a825","#0277bd","#6d4c41","#455a64","#ad1457","#00897b","#5e35b1"];
+const TEAMN=["Orange","Teal","Purple","Pink","Green","Gold","Blue","Brown","Slate","Rose","Jade","Violet"];
+function renderTeams(shuffle){
+  let names=$("#names").value.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean);
+  if(!names.length) names=Array.from({length:st.kids},(_,i)=>"Player "+(i+1));
+  if(shuffle!==false){for(let i=names.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[names[i],names[j]]=[names[j],names[i]]}}
+  const n=Math.min(st.teams,names.length); const t=Array.from({length:n},()=>[]);
+  names.forEach((x,i)=>t[i%n].push(x));
+  $("#teamOut").innerHTML=t.map((m,i)=>`<div class="team" style="--c:${TEAMC[i]}"><b>${TEAMN[i]}</b> <span class="muted" style="font-size:13px">${m.length}</span><ol>${m.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>`).join("");
+}
+$("#shuffleTeams").onclick=()=>renderTeams(true);
+$("#names").addEventListener("input",()=>renderTeams(false));
+
+/* library */
+let fCat="";
+function renderChips(){
+  const counts={};D.forEach(d=>counts[d.c]=(counts[d.c]||0)+1);
+  $("#catChips").innerHTML=`<button type="button" data-c="" aria-pressed="${fCat===""}">All<em>${D.length}</em></button>`+Object.entries(C).map(([k,v])=>`<button type="button" data-c="${k}" aria-pressed="${fCat===k}">${v.label}<em>${counts[k]||0}</em></button>`).join("");
+}
+$("#catChips").onclick=e=>{const b=e.target.closest("button");if(!b)return;fCat=b.dataset.c;renderChips();renderLib()};
+["q","fLvl","fKids","fHoop"].forEach(id=>$("#"+id).addEventListener("input",renderLib));
+function card(d){
+  return `<article class="card"><button class="star" data-fav="${d.id}" aria-pressed="${favs.has(d.id)}" aria-label="Favorite">★</button>
+  <div class="thumb" data-open="${d.id}">${drawDiagram(d)}</div>
+  <span class="tag ${d.c==="games"?"game":""}" style="width:max-content">${C[d.c].label}</span>
+  <h3><button type="button" data-open="${d.id}" style="all:unset;cursor:pointer">${esc(d.n)}</button></h3>
+  <p>${esc(d.s)}</p>
+  <div class="meta"><span>${d.t} min</span><span>${d.p[0]===d.p[1]?d.p[0]:d.p[0]+"+"} kids</span><span>${d.l.split("").map(x=>["","5–8","9–12","13–15","Rep"][x]).join(" · ")}</span>${d.h?"<span>Hoop</span>":"<span>No hoop</span>"}</div></article>`;
+}
+function renderLib(){
+  const q=$("#q").value.trim().toLowerCase(), lv=$("#fLvl").value, k=+$("#fKids").value, h=$("#fHoop").value;
+  const r=D.filter(d=>(!fCat||d.c===fCat)&&(!lv||d.l.includes(lv))&&(!k||d.p[0]<=k)&&(h===""||d.h===0)&&(!q||(d.n+" "+d.s+" "+d.d+" "+d.k+" "+d.e+" "+C[d.c].label).toLowerCase().includes(q)));
+  const NEW=window.DRILLS.length-(window.DRILLS.length-129);r.sort((a,b)=>(b.id>=NEW)-(a.id>=NEW));
+  $("#libCount").textContent=`${r.length} of ${D.length} drills`;
+  $("#grid").innerHTML=r.length?r.map(card).join(""):`<div class="empty">No drills match. Clear a filter or try another word.</div>`;
+}
+function openDrill(id){
+  const d=D[id];
+  $("#dlgBody").innerHTML=`<button class="x" onclick="this.closest('dialog').close()" aria-label="Close">×</button>
+  <div class="row"><span class="tag ${d.c==="games"?"game":""}">${C[d.c].label}</span><span class="meta">${d.t} min · ${d.p[0]}+ kids · groups of up to ${d.p[1]}</span></div>
+  <h2>${esc(d.n)}</h2>
+  <div class="dg-wrap">${drawDiagram(d)}</div>
+  <div class="legend"><span><svg viewBox="0 0 26 12"><circle cx="6" cy="6" r="4" fill="var(--surface)" stroke="var(--court)" stroke-width="1.2"/></svg>Offense</span><span><svg viewBox="0 0 26 12"><path d="M3,3 L9,9 M9,3 L3,9" stroke="var(--accent)" stroke-width="1.6"/></svg>Defense</span><span><svg viewBox="0 0 26 12"><path d="M2,6 H22" stroke="var(--ink)" stroke-width="1.2"/><path d="M19,3 L24,6 L19,9Z" fill="var(--ink)"/></svg>Cut / run</span><span><svg viewBox="0 0 26 12"><path d="M2,6 L5,4 L8,8 L11,4 L14,8 L17,6 H20" fill="none" stroke="var(--ink)" stroke-width="1.2"/><path d="M19,3 L24,6 L19,9Z" fill="var(--ink)"/></svg>Dribble</span><span><svg viewBox="0 0 26 12"><path d="M2,6 H20" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="3 2"/><path d="M19,3 L24,6 L19,9Z" fill="var(--ink)"/></svg>Pass</span><span><svg viewBox="0 0 26 12"><path d="M2,6 H20 M20,2 V10" stroke="var(--ink)" stroke-width="1.4"/></svg>Screen</span><span><svg viewBox="0 0 26 12"><path d="M8,2 L12,9 L4,9Z" fill="var(--accent)"/></svg>Cone</span><span><svg viewBox="0 0 26 12"><rect x="3" y="2" width="8" height="8" fill="var(--surface)" stroke="var(--ink)"/></svg>Coach</span></div>
+  <section><div class="eyebrow">Setup</div><div>${esc(d.s)}</div>${d.e?`<div class="muted">Equipment: ${esc(d.e)}</div>`:""}</section>
+  <section><div class="eyebrow">How to run it</div><ol>${d.d.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
+  <section><div class="eyebrow">Coaching points</div><ul>${d.k.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
+  <section><div class="eyebrow">Make it harder</div><div>${esc(d.v)}</div></section>
+  <section><div class="eyebrow">For ${st.kids} kids</div><div>${esc(groupText(d,st.kids,st.hoops).t)}</div></section>
+  <div class="row"><button class="btn primary" data-add="${d.id}">Add to session</button><button class="btn" data-fav="${d.id}" aria-pressed="${favs.has(d.id)}">★ Favorite</button></div>`;
+  $("#dlg").showModal();
+}
+$("#dlg").addEventListener("click",e=>{if(e.target===$("#dlg"))$("#dlg").close()});
+
+/* saved */
+function renderSaved(){
+  const s=store.get("sessions",[]);
+  $("#savedSessions").innerHTML=s.length?s.map((x,i)=>`<div class="panel row" style="justify-content:space-between;padding:12px 16px"><div><b>${esc(x.name)}</b><div class="muted" style="font-size:13px">${esc(x.date)} · ${x.plan.filter(b=>!b.brk).map(b=>D[b.id]?.n).join(", ")}</div></div><div class="row"><button class="btn sm primary" data-load="${i}">Open</button><button class="btn sm" data-del="${i}">Delete</button></div></div>`).join(""):`<div class="empty">No saved sessions yet. Build one on the Plan tab and press Save.</div>`;
+  const f=D.filter(d=>favs.has(d.id));
+  $("#favGrid").innerHTML=f.length?f.map(card).join(""):`<div class="empty">Tap ★ on any drill to keep it here.</div>`;
+}
+
+/* run mode */
+let R=null, wake=null, actx=null;
+function beep(n=1){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();for(let i=0;i<n;i++){const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);const t=actx.currentTime+i*0.3;g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);o.start(t);o.stop(t+.26)}}catch(e){}}
+function runStart(){
+  if(!plan.length) return;
+  R={i:0,left:plan[0].m*60,on:false,timer:null};
+  $("#run").hidden=false; beep(0); runRender();
+  try{navigator.wakeLock?.request("screen").then(w=>wake=w).catch(()=>{})}catch(e){}
+}
+function runStop(){clearInterval(R?.timer);R=null;$("#run").hidden=true;try{wake?.release()}catch(e){};wake=null}
+function runGo(i){clearInterval(R.timer);R.i=i;R.left=plan[i].m*60;R.on&&tick();runRender()}
+function tick(){clearInterval(R.timer);R.timer=setInterval(()=>{R.left--;if(R.left===10)beep(1);if(R.left<=0){beep(3);if(R.i<plan.length-1){R.i++;R.left=plan[R.i].m*60}else{R.on=false;clearInterval(R.timer);R.left=0}}runRender()},1000)}
+function runRender(){
+  const b=plan[R.i], d=b.brk?null:D[b.id], nb=plan[R.i+1];
+  const mm=Math.floor(R.left/60), ss=String(R.left%60).padStart(2,"0");
+  const tot=b.m*60;
+  $("#run").innerHTML=`<div class="run-top"><div class="eyebrow" style="color:inherit;opacity:.7">Block ${R.i+1} of ${plan.length}</div><button class="btn sm" id="rx">Close</button></div>
+  <div class="run-mid">
+    <div class="eyebrow" style="color:var(--accent)">${d?C[d.c].label:"Break"}</div>
+    <h2>${d?esc(d.n):"Water break"}</h2>
+    ${d?`<div class="groups">${esc(groupText(d,st.kids,st.hoops).t)}</div>`:""}
+    <div class="clock-big ${R.left<=10&&R.on?"low":""}">${mm}:${ss}</div>
+    <div class="bar"><i style="width:${100-R.left/tot*100}%"></i></div>
+    ${d?`<div class="run-body"><div class="dg-wrap">${drawDiagram(d)}</div><ol class="steps">${d.d.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>`:""}
+    <div class="next">${nb?"Next: "+(nb.brk?"Water break":esc(D[nb.id].n))+" · "+nb.m+" min":"Last block"}</div>
+  </div>
+  <div class="run-bot"><button class="btn" id="rp" ${R.i?"":"disabled"}>◀ Prev</button><button class="btn" id="rm1">−1 min</button><button class="btn primary" id="rt">${R.on?"Pause":"Start"}</button><button class="btn" id="ra1">+1 min</button><button class="btn" id="rn" ${R.i<plan.length-1?"":"disabled"}>Next ▶</button></div>`;
+  $("#rx").onclick=runStop;
+  $("#rt").onclick=()=>{R.on=!R.on;R.on?tick():clearInterval(R.timer);runRender()};
+  $("#rp").onclick=()=>runGo(R.i-1);
+  $("#rn").onclick=()=>runGo(R.i+1);
+  $("#ra1").onclick=()=>{R.left+=60;runRender()};
+  $("#rm1").onclick=()=>{R.left=Math.max(5,R.left-60);runRender()};
+}
+$("#runBtn").onclick=runStart;
+document.addEventListener("keydown",e=>{if(R&&e.key==="Escape")runStop();if(R&&e.key===" "&&e.target===document.body){e.preventDefault();$("#rt").click()}});
+
+/* routing */
+let view="plan";
+function route(){
+  const h=(location.hash||"#plan").slice(1); view=["plan","drills","saved"].includes(h)?h:"plan";
+  ["plan","drills","saved"].forEach(v=>{$("#view-"+v).hidden=v!==view});
+  document.querySelectorAll("nav a").forEach(a=>a.dataset.view===view?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  if(view==="saved")renderSaved();
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",route);
+
+renderChips(); renderLib();
+if(!plan||!plan.every(b=>b.brk||D[b.id])) regen(); else renderPlan();
+renderTeams(); route();
+})();
+</script>
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+</script>
+</body>
+</html>
