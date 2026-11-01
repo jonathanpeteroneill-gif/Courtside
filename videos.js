@@ -2,6 +2,7 @@
 // Drills not listed get a "Find videos" button that opens a YouTube search instead.
 window.VIDEOS = {
 "Mikan Drill":"YBQyynRRejg",
+"5-Man Weave into 3v2":"hRNyckLXipk",
 "Reverse Mikan":"R3Yk8tis-rQ",
 "Shell Drill":"WnAespTlUbk",
 "Shell Drill: Rotations":"TKkbqfQaEaY",

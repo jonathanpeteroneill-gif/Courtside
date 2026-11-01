@@ -316,6 +316,12 @@ def("2v1 Rapid",
  F("Read it: shoot, drive, or draw and kick",[O(32,26,"O"),B(33.6,27.6),O(11,23,"O"),X(30,23,"D"),PS(30.5,25.5,12.5,23.5),SH(12,21.5),T(25,36,"Defender steps up → kick for the open shot")]),
  F("Make it harder: at least 1 pass before a shot",[...OB(32,26,"O"),O(11,23,"O"),X(27,21,"D"),PS(30.5,25,12.5,22.5),D(12,21,18,9),SH(20,7)]),
  F("Race: one team at each end · first to 10 makes wins · run your lanes",[["L2",0,16.7,94,16.7],["L2",0,33.3,94,33.3],O(1,8,"A"),X(1,25,"A"),O(1,42,"A"),Q(-2.5,8,0,0,1),Q(-2.5,25,0,0,1),Q(-2.5,42,0,0,1),M(3,8,46,8),M(3,25,40,25),M(3,42,46,42),O(93,8,"B"),X(93,25,"B"),O(93,42,"B"),Q(96.5,8,0,0,1),Q(96.5,25,0,0,1),Q(96.5,42,0,0,1),M(91,8,48,8),M(91,25,54,25),M(91,42,48,42),T(23,48,"Team A: 0–10"),T(71,48,"Team B: 0–10")],1));
+def("5-Man Weave into 3v2",
+ F("Five lines on the baseline · middle (3) passes to 2 and goes behind 2 and 1",[O(2,5,"1"),O(2,15,"2"),...OB(2,25,"3"),O(2,35,"4"),O(2,45,"5"),Q(-1.5,5,0,0,1),Q(-1.5,15,0,0,1),Q(-1.5,25,0,0,1),Q(-1.5,35,0,0,1),Q(-1.5,45,0,0,1),PS(4,24,12.5,16),M(4,26.5,10,22,14,10,20,2.5),M(4,5,16,5),M(4,15,12,15),M(4,35,16,35),M(4,45,16,45)],1),
+ F("2 passes to 4 and goes behind 4 and 5 · keep weaving to the far end",[O(20,2,"3"),O(17,6,"1"),O(14,15,"2"),B(15.6,16.6),O(18,35,"4"),O(17,45,"5"),M(20,35,26,33),PS(16,16.5,25,32),M(15,17,22,30,30,44,36,48),M(19,6,30,7),M(22,2,34,3),M(19,45,30,42)],1),
+ F("Finish with a layup at the far end, no dribbles",[O(78,36,"A"),B(79.6,37.6),O(82,26,"S"),O(70,10),O(68,42),O(66,25),PS(79,34.5,83.5,27),SH(87,25),T(74,46,"S = shooter · A = assister")],1),
+ F("Shooter and assister sprint back on D · the other three attack 3-on-2",[X(86,26,"S"),X(80,36,"A"),O(70,10),...OB(66,25),O(68,42),M(84,27,22,25),M(78,37,10,28),D(64,25,30,25),M(68,10,14,10),M(66,42,14,40)],1),
+ F("Talk tax: Ball · Basket · Help · Gap · Split",[X(22,25,"S"),X(9,26,"A"),...OB(28,25),O(15,8),O(15,42),T(22,20.5,"BALL!"),T(9,21.5,"BASKET!"),T(17,15,"HELP / GAP"),T(32,31.5,"SPLIT?"),T(70,25,"Go quiet = you pay")],1));
 // ======================================================= CONDITIONING
 def("Line Sprints",F("FT line and back, half and back, far FT and back, full and back",[...lanes([25],2,null),M(4,9,19,9),M(19,11,4,11),M(4,19,47,19),M(47,21,4,21),M(4,29,75,29),M(75,31,4,31),M(4,39,92,39),M(92,41,4,41)],1));
 def("17s",F("Sideline to sideline 17 times in a minute",[O(25,1),O(30,1),O(35,1),M(25,3,25,48),M(27,48,27,3),T(47,25,"17 touches · 1 minute")],1));
