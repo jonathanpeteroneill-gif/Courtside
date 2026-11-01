@@ -128,14 +128,33 @@ function el(e,full){
   if(k==="s"){const p=e[1],n=p.length,x1=p[n-4],y1=p[n-3],x2=p[n-2],y2=p[n-1],L=Math.hypot(x2-x1,y2-y1),nx=-(y2-y1)/L*1.5,ny=(x2-x1)/L*1.5;
     return `<path class="dg-m" d="${poly(p)} M${f(x2+nx)},${f(y2+ny)} L${f(x2-nx)},${f(y2-ny)}"/>`}
   if(k==="sh"){const r=full?(e[1][0]>47?RR:RL):R;return `<path class="dg-sh" d="M${f(e[1][0])},${f(e[1][1])} L${r[0]},${r[1]}" marker-end="url(#dgA)"/>`}
+  if(k==="g") return `<circle class="dg-g" cx="${f(e[1])}" cy="${f(e[2])}" r="1.5"/>`;
+  if(k==="L2") return `<line class="dg-court" stroke-dasharray="1 1" x1="${e[1]}" y1="${e[2]}" x2="${e[3]}" y2="${e[4]}"/>`;
   if(k==="t") return `<text class="dg-t" x="${f(e[1])}" y="${f(e[2])}">${e[3]}</text>`;
   if(k==="L"){let s=`<rect class="dg-court" x="${e[1]}" y="${e[2]}" width="${e[3]}" height="${e[4]}"/>`;for(let y=e[2]+3;y<e[2]+e[4];y+=3)s+=`<line class="dg-court" x1="${e[1]}" y1="${y}" x2="${e[1]+e[3]}" y2="${y}"/>`;return s}
   if(k==="R") return `<rect class="dg-court" x="${e[1]}" y="${e[2]}" width="${e[3]}" height="${e[4]}" rx="1"/><text class="dg-t" x="${e[1]+e[3]/2}" y="${e[2]+e[4]/2}">${e[5]}</text>`;
   return "";
 }
-window.drawDiagram=function(d){
-  const t=T[BY_NAME[d.n]||BY_CAT[d.c]]||T.spread, full=!!t.full;
+const flat=els=>els.flatMap(x=>Array.isArray(x[0])?x:[x]);
+function svg(els,full,label){
   const vb=full?"-4 -4 102 58":"-4 -5 58 56";
-  return `<svg class="dg" viewBox="${vb}" role="img" aria-label="Court diagram for ${d.n.replace(/"/g,"")}"><defs><marker id="dgA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10Z" class="dg-ah"/></marker></defs>${courtSVG(full)}${t.e.map(e=>el(e,full)).join("")}</svg>`;
+  return `<svg class="dg" viewBox="${vb}" role="img" aria-label="${label.replace(/"/g,"")}"><defs><marker id="dgA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10Z" class="dg-ah"/></marker></defs>${courtSVG(full)}${flat(els).map(e=>el(e,full)).join("")}</svg>`;
+}
+// Frames for a drill: [{svg, cap}]
+window.drillFrames=function(d){
+  const fr=(window.PLAYS||{})[d.n];
+  if(fr&&fr.length) return fr.map((f,i)=>({svg:svg(f.e,f.full,`${d.n} step ${i+1}`),cap:f.c}));
+  const t=T[BY_NAME[d.n]||BY_CAT[d.c]]||T.spread;
+  return [{svg:svg(t.e,!!t.full,d.n),cap:""}];
 };
+window.drawDiagram=function(d){return window.drillFrames(d)[0].svg};
+// Swipeable step viewer
+window.drawCarousel=function(d){
+  const f=window.drillFrames(d), n=f.length;
+  const slides=f.map((x,i)=>`<figure class="dgc-slide"><div class="dg-wrap">${x.svg}</div><figcaption>${n>1?`<b>Step ${i+1} of ${n}</b>`:""}${x.cap?`<span>${x.cap}</span>`:""}</figcaption></figure>`).join("");
+  if(n<2) return `<div class="dgc single">${slides}</div>`;
+  return `<div class="dgc"><div class="dgc-track">${slides}</div><div class="dgc-nav"><button type="button" class="dgc-btn" data-dgc="-1" aria-label="Previous step">‹</button><span class="dgc-dots">${f.map((_,i)=>`<i${i?"":' class="on"'}></i>`).join("")}</span><button type="button" class="dgc-btn" data-dgc="1" aria-label="Next step">›</button></div><div class="dgc-hint">Swipe for each step</div></div>`;
+};
+document.addEventListener("click",e=>{const b=e.target.closest("[data-dgc]");if(!b)return;const tr=b.closest(".dgc").querySelector(".dgc-track");tr.scrollBy({left:tr.clientWidth*(+b.dataset.dgc),behavior:"smooth"})});
+document.addEventListener("scroll",e=>{const tr=e.target;if(!tr.classList||!tr.classList.contains("dgc-track"))return;const i=Math.round(tr.scrollLeft/tr.clientWidth);tr.parentNode.querySelectorAll(".dgc-dots i").forEach((d,k)=>d.classList.toggle("on",k===i))},true);
 })();
