@@ -144,9 +144,10 @@ dialog{border:0;padding:0;background:var(--surface);color:var(--ink);border-radi
 dialog[open]{display:flex;flex-direction:column}
 .dlg-top{flex:none;position:relative;display:flex;align-items:center;justify-content:flex-end;padding:12px 12px 8px;border-bottom:1px solid var(--line);background:var(--surface);touch-action:none}
 .dlg-top .grab{position:absolute;left:50%;top:7px;width:42px;height:5px;margin-left:-21px;border-radius:3px;background:var(--line)}
+.dlg-top .x:focus{outline:none}.dlg-top .x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .dlg-top .x{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--sunk);color:var(--ink);font-weight:700;font-size:15px;padding:8px 14px;border-radius:999px;min-height:40px}
 @media (max-width:600px){
-  dialog{width:100%;max-width:100%;margin:auto 0 0;border-radius:18px 18px 0 0;max-height:calc(88dvh - env(safe-area-inset-top,0px))}
+  dialog{position:fixed;top:auto;left:0;right:0;bottom:0;margin:0;width:100%;max-width:100%;height:86vh;height:calc(100dvh - env(safe-area-inset-top,0px) - 64px);max-height:none;border-radius:18px 18px 0 0}
   .dlg h2{font-size:22px}
   .dlg .dgc{max-width:300px}
 }
@@ -356,7 +357,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
   </section>
 </main>
 
-<dialog id="dlg" aria-label="Drill details"><div class="dlg-top" id="dlgTop"><span class="grab" aria-hidden="true"></span><button type="button" class="x" id="dlgClose">✕ Close</button></div><div class="dlg" id="dlgBody"></div></dialog>
+<dialog id="dlg" aria-label="Drill details"><div class="dlg-top" id="dlgTop"><span class="grab" aria-hidden="true"></span><button type="button" class="x" id="dlgClose">✕ Close</button></div><div class="dlg" id="dlgBody" tabindex="-1" autofocus style="outline:none"></div></dialog>
 <div class="run" id="run" hidden></div>
 <div class="follow" id="follow" hidden></div>
 <div class="toast" id="toast" hidden></div>
@@ -417,7 +418,8 @@ function build(){
   const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
   const pool=c=>D.filter(d=>d.c===c&&fits(d,o));
   const used=new Set(); const blocks=[];
-  const take=(c)=>{let p=pool(c).filter(d=>!used.has(d.id)); if(!p.length) p=pool(c); if(!p.length) return null; const d=pick(p); used.add(d.id); return d};
+  let reuse=false;
+  const take=(c)=>{let p=pool(c).filter(d=>!used.has(d.id)); if(!p.length&&reuse) p=pool(c); if(!p.length) return null; const d=pick(p); used.add(d.id); return d};
   const T=st.dur;
   let left=T;
   const warm=take("warm"); if(warm){const m=Math.min(warm.t+2,8);blocks.push({id:warm.id,m});left-=m}
@@ -425,9 +427,12 @@ function build(){
   const breakM = T>=60?2:0; left-=breakM;
   const gameD = takeGame(); const gameM = Math.max(8,Math.round(T*0.2)); left-=gameM;
   const seq=FOCUS[st.focus].seq; let i=0, mids=[];
-  while(left>=4 && i<20){
-    const d=take(seq[i%seq.length]); i++;
-    if(!d) continue;
+  const extra=["handle","shoot","finish","pass","defense","foot","rebound","condition","games","transition","offense","post"];
+  let guard=0;
+  while(left>=4 && guard++<60){
+    let d=take(seq[i%seq.length]); i++;
+    if(!d){ for(const c of extra){ d=take(c); if(d) break; } }
+    if(!d){ if(reuse) break; reuse=true; continue; }
     const m=Math.min(left, Math.max(5, d.t + (T>=75?3:1)));
     mids.push({id:d.id,m}); left-=m;
   }
@@ -556,7 +561,7 @@ function openDrill(id){
   <section><div class="eyebrow">Video</div>${VIDEOS[d.n]?`<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${VIDEOS[d.n]}?rel=0&playsinline=1" title="${esc(d.n)} video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe></div><a class="muted" style="font-size:13px" href="https://www.youtube.com/watch?v=${VIDEOS[d.n]}" target="_blank" rel="noopener">Open on YouTube ↗</a>`:`<a class="btn" style="width:max-content" href="https://www.youtube.com/results?search_query=${encodeURIComponent("basketball "+d.n+" drill")}" target="_blank" rel="noopener">▶ Find videos on YouTube</a><div class="muted" style="font-size:13px">No verified video for this one yet. This searches YouTube.</div>`}</section>
   <section><div class="eyebrow">For ${st.kids} kids</div><div>${esc(groupText(d,st.kids,st.hoops).t)}</div></section>
   <div class="row"><button class="btn primary" data-add="${d.id}">Add to session</button><button class="btn" data-fav="${d.id}" aria-pressed="${favs.has(d.id)}">★ Favorite</button></div>`;
-  $("#dlg").showModal();$("#dlgBody").scrollTop=0;
+  const dg=$("#dlg");dg.style.transform="";dg.style.transition="";dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
 }
 $("#dlg").addEventListener("click",e=>{if(e.target===$("#dlg"))$("#dlg").close()});
 $("#dlgClose").addEventListener("click",()=>$("#dlg").close());
@@ -658,7 +663,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v7";
+const APP_VERSION="v8";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
