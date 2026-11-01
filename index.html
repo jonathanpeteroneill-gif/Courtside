@@ -207,6 +207,27 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 .video{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:10px;overflow:hidden;background:var(--black)}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .run .dgc-slide figcaption{color:var(--white)}.run .dgc-btn{background:transparent;color:var(--white);border-color:rgba(255,255,255,.3)}.run .dgc-hint{color:rgba(255,255,255,.6)}
+.mv{display:block;width:100%;height:auto;color:var(--ink)}
+.mv-ground{stroke:var(--floorline);stroke-width:.8}.mv-tick{stroke:var(--floorline);stroke-width:.6}
+.mv-box{fill:var(--floorline);opacity:.45}
+.mv-limb{fill:none;stroke:currentColor;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}.mv-limb.far{opacity:.4}
+.mv-head{fill:currentColor}.mv-ball{fill:var(--accent)}.mv-ball.back{opacity:.4}
+.mv-band{stroke:var(--teal);stroke-width:1.5}.mv-rope{fill:none;stroke:var(--teal);stroke-width:1}
+.moves{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.move{background:var(--floor);border-radius:10px;padding:6px 6px 8px;display:grid;gap:2px;text-align:center}
+.move b{font-size:13px;line-height:1.2}.move span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.follow{position:fixed;inset:0;z-index:25;background:var(--black);color:var(--white);display:grid;grid-template-rows:auto 1fr auto;gap:10px;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px))}
+.follow-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.follow-mid{display:grid;justify-items:center;align-content:center;gap:8px;min-height:0;overflow:auto;text-align:center}
+.follow .stage{width:min(78vw,340px);background:#15151a;border-radius:20px;padding:8px}
+.follow .mv{color:var(--white)}.follow .mv-ground,.follow .mv-tick{stroke:#555}.follow .mv-box{fill:#555}
+.follow h2{font-size:clamp(24px,6vw,40px)}
+.follow .cue{opacity:.75;max-width:34ch}
+.follow .count{font-family:var(--display);font-style:italic;font-weight:900;font-size:clamp(56px,16vw,110px);line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.follow .btn{background:transparent;color:var(--white);border-color:rgba(255,255,255,.3)}
+.follow .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--white);min-width:120px}
+.follow .next{opacity:.65;font-size:14px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;font-size:12px;color:var(--muted);font-weight:600}
 .legend svg{width:26px;height:12px;vertical-align:middle;margin-right:4px}
 .thumb{background:var(--floor);border-radius:6px;padding:4px;margin:-2px 0 2px}
@@ -337,6 +358,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 
 <dialog id="dlg" aria-label="Drill details"><div class="dlg-top" id="dlgTop"><span class="grab" aria-hidden="true"></span><button type="button" class="x" id="dlgClose">✕ Close</button></div><div class="dlg" id="dlgBody"></div></dialog>
 <div class="run" id="run" hidden></div>
+<div class="follow" id="follow" hidden></div>
 <div class="toast" id="toast" hidden></div>
 
 <script src="drills.js"></script>
@@ -344,6 +366,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 <script src="plays.js"></script>
 <script src="diagrams.js"></script>
 <script src="videos.js"></script>
+<script src="moves.js"></script>
 <script>
 (function(){
 const D = window.DRILLS.map((d,i)=>({...d,l:d.l+(d.l.includes("3")&&!d.l.includes("1")&&!d.l.includes("4")?"4":""),id:i}));
@@ -525,6 +548,7 @@ function openDrill(id){
   <h2>${esc(d.n)}</h2>
   ${drawCarousel(d)}
   <div class="legend"><span><svg viewBox="0 0 26 12"><circle cx="6" cy="6" r="4" fill="var(--surface)" stroke="var(--court)" stroke-width="1.2"/></svg>Offense</span><span><svg viewBox="0 0 26 12"><path d="M3,3 L9,9 M9,3 L3,9" stroke="var(--accent)" stroke-width="1.6"/></svg>Defense</span><span><svg viewBox="0 0 26 12"><path d="M2,6 H22" stroke="var(--ink)" stroke-width="1.2"/><path d="M19,3 L24,6 L19,9Z" fill="var(--ink)"/></svg>Cut / run</span><span><svg viewBox="0 0 26 12"><path d="M2,6 L5,4 L8,8 L11,4 L14,8 L17,6 H20" fill="none" stroke="var(--ink)" stroke-width="1.2"/><path d="M19,3 L24,6 L19,9Z" fill="var(--ink)"/></svg>Dribble</span><span><svg viewBox="0 0 26 12"><path d="M2,6 H20" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="3 2"/><path d="M19,3 L24,6 L19,9Z" fill="var(--ink)"/></svg>Pass</span><span><svg viewBox="0 0 26 12"><path d="M2,6 H20 M20,2 V10" stroke="var(--ink)" stroke-width="1.4"/></svg>Screen</span><span><svg viewBox="0 0 26 12"><path d="M8,2 L12,9 L4,9Z" fill="var(--accent)"/></svg>Cone</span><span><svg viewBox="0 0 26 12"><rect x="3" y="2" width="8" height="8" fill="var(--surface)" stroke="var(--ink)"/></svg>Coach</span></div>
+  ${DRILL_MOVES[d.n]?`<section><div class="row" style="justify-content:space-between"><div class="eyebrow">Moves</div><button class="btn sm primary" data-follow="${d.id}">▶ Follow along</button></div><div class="moves">${DRILL_MOVES[d.n].map(x=>`<div class="move">${moveSVG(x.k)}<b>${esc(x.n||x.k)}</b><span>${x.s}s</span></div>`).join("")}</div></section>`:""}
   <section><div class="eyebrow">Setup</div><div>${esc(d.s)}</div>${d.e?`<div class="muted">Equipment: ${esc(d.e)}</div>`:""}</section>
   <section><div class="eyebrow">How to run it</div><ol>${d.d.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
   <section><div class="eyebrow">Coaching points</div><ul>${d.k.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
@@ -574,7 +598,7 @@ function runRender(){
     ${d?`<div class="groups">${esc(groupText(d,st.kids,st.hoops).t)}</div>`:""}
     <div class="clock-big ${R.left<=10&&R.on?"low":""}">${mm}:${ss}</div>
     <div class="bar"><i style="width:${100-R.left/tot*100}%"></i></div>
-    ${d?`<div class="run-body">${drawCarousel(d)}<ol class="steps">${d.d.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>`:""}
+    ${d&&DRILL_MOVES[d.n]?`<button class="btn primary" data-follow="${d.id}" style="justify-self:center">▶ Follow along with the moves</button>`:""}${d?`<div class="run-body">${drawCarousel(d)}<ol class="steps">${d.d.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>`:""}
     <div class="next">${nb?"Next: "+(nb.brk?"Water break":esc(D[nb.id].n))+" · "+nb.m+" min":"Last block"}</div>
   </div>
   <div class="run-bot"><button class="btn" id="rp" ${R.i?"":"disabled"}>◀ Prev</button><button class="btn" id="rm1">−1 min</button><button class="btn primary" id="rt">${R.on?"Pause":"Start"}</button><button class="btn" id="ra1">+1 min</button><button class="btn" id="rn" ${R.i<plan.length-1?"":"disabled"}>Next ▶</button></div>`;
@@ -587,6 +611,35 @@ function runRender(){
 }
 $("#runBtn").onclick=runStart;
 document.addEventListener("keydown",e=>{if(R&&e.key==="Escape")runStop();if(R&&e.key===" "&&e.target===document.body){e.preventDefault();$("#rt").click()}});
+
+/* follow-along move player */
+let FW=null;
+function followStart(id){
+  const d=D[id], list=DRILL_MOVES[d.n]; if(!list) return;
+  if(R&&R.on){R.on=false;clearInterval(R.timer);runRender()}
+  FW={d,list,i:0,left:list[0].s,on:false,timer:null};
+  $("#follow").hidden=false; followRender();
+  try{navigator.wakeLock?.request("screen").then(w=>wake=w).catch(()=>{})}catch(e){}
+}
+function followStop(){if(!FW)return;clearInterval(FW.timer);FW=null;$("#follow").hidden=true}
+function followGo(i){FW.i=Math.max(0,Math.min(FW.list.length-1,i));FW.left=FW.list[FW.i].s;followRender()}
+function followTick(){clearInterval(FW.timer);FW.timer=setInterval(()=>{FW.left--;if(FW.left<=3&&FW.left>0)beep(1);
+  if(FW.left<=0){beep(2);if(FW.i<FW.list.length-1){FW.i++;FW.left=FW.list[FW.i].s}else{FW.on=false;clearInterval(FW.timer);FW.left=0;FW.done=true}}followRender()},1000)}
+function followRender(){
+  const x=FW.list[FW.i], m=MOVES[x.k], nx=FW.list[FW.i+1];
+  const mm=Math.floor(FW.left/60), ss=String(FW.left%60).padStart(2,"0");
+  $("#follow").innerHTML=`<div class="follow-top"><div class="eyebrow" style="color:inherit;opacity:.7">${esc(FW.d.n)} · ${FW.i+1} of ${FW.list.length}</div><button class="btn sm" id="fx">✕ Close</button></div>
+  <div class="follow-mid"><div class="stage">${moveSVG(x.k)}</div><h2>${esc(x.n||x.k)}</h2><div class="cue">${esc(m.cue||"")}</div>
+  <div class="count">${FW.done?"Done":(mm?mm+":"+ss:FW.left)}</div><div class="bar" style="width:min(78vw,340px)"><i style="width:${100-FW.left/x.s*100}%"></i></div>
+  <div class="next">${nx?"Next: "+esc(nx.n||nx.k)+" · "+nx.s+"s":"Last move"}</div></div>
+  <div class="run-bot"><button class="btn" id="fp" ${FW.i?"":"disabled"}>◀ Prev</button><button class="btn primary" id="ft">${FW.on?"Pause":FW.done?"Restart":"Start"}</button><button class="btn" id="fn" ${nx?"":"disabled"}>Next ▶</button></div>`;
+  $("#fx").onclick=followStop;
+  $("#ft").onclick=()=>{if(FW.done){FW.done=false;FW.i=0;FW.left=FW.list[0].s}FW.on=!FW.on;FW.on?(beep(0),followTick()):clearInterval(FW.timer);followRender()};
+  $("#fp").onclick=()=>followGo(FW.i-1);
+  $("#fn").onclick=()=>followGo(FW.i+1);
+}
+document.addEventListener("click",e=>{const f=e.target.closest("[data-follow]");if(f){if($("#dlg").open)$("#dlg").close();followStart(+f.dataset.follow)}});
+document.addEventListener("keydown",e=>{if(FW&&e.key==="Escape")followStop()});
 
 /* routing */
 let view="plan";
@@ -605,7 +658,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v6";
+const APP_VERSION="v7";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
