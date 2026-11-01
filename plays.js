@@ -314,7 +314,8 @@ def("2v1 Rapid",
  F("On go: defender sprints to the bottom of the center circle, offense sprint to half court",[...OB(38,1,"O"),O(12,1,"O"),X(25,1,"D"),Q(12,-3.5,0,0,1),Q(25,-3.5,0,0,1),Q(38,-3.5,0,0,1),M(12,3,12,44.5),D(38,3,38,44.5),M(25,3,25,39)]),
  F("Offense turn at half court and attack 2-on-1 · defender closes out",[...OB(38,46,"O"),O(12,46,"O"),X(25,41,"D"),D(37,44,32,27),M(12,44,11,24),M(26,39.5,30,29)]),
  F("Read it: shoot, drive, or draw and kick",[O(32,26,"O"),B(33.6,27.6),O(11,23,"O"),X(30,23,"D"),PS(30.5,25.5,12.5,23.5),SH(12,21.5),T(25,36,"Defender steps up → kick for the open shot")]),
- F("Make it harder: at least 1 pass before a shot",[...OB(32,26,"O"),O(11,23,"O"),X(27,21,"D"),PS(30.5,25,12.5,22.5),D(12,21,18,9),SH(20,7),T(25,36,"Team goal: count every make together")]));
+ F("Make it harder: at least 1 pass before a shot",[...OB(32,26,"O"),O(11,23,"O"),X(27,21,"D"),PS(30.5,25,12.5,22.5),D(12,21,18,9),SH(20,7)]),
+ F("Race: one team at each end · first to 10 makes wins",[O(1,13,"A"),X(1,25,"A"),O(1,37,"A"),Q(-2.5,13,0,0,1),Q(-2.5,25,0,0,1),Q(-2.5,37,0,0,1),M(3,13,46,13),M(3,25,40,25),M(3,37,46,37),O(93,13,"B"),X(93,25,"B"),O(93,37,"B"),Q(96.5,13,0,0,1),Q(96.5,25,0,0,1),Q(96.5,37,0,0,1),M(91,13,48,13),M(91,25,54,25),M(91,37,48,37),T(23,46,"Team A: 0–10"),T(71,46,"Team B: 0–10")],1));
 // ======================================================= CONDITIONING
 def("Line Sprints",F("FT line and back, half and back, far FT and back, full and back",[...lanes([25],2,null),M(4,9,19,9),M(19,11,4,11),M(4,19,47,19),M(47,21,4,21),M(4,29,75,29),M(75,31,4,31),M(4,39,92,39),M(92,41,4,41)],1));
 def("17s",F("Sideline to sideline 17 times in a minute",[O(25,1),O(30,1),O(35,1),M(25,3,25,48),M(27,48,27,3),T(47,25,"17 touches · 1 minute")],1));

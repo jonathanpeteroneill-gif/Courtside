@@ -695,7 +695,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v11";
+const APP_VERSION="v12";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
