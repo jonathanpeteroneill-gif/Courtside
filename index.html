@@ -331,6 +331,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
     <div><div class="eyebrow">Stored in this browser</div><h1>Saved</h1></div>
     <div><h2 style="margin-bottom:12px">Sessions</h2><div id="savedSessions" style="display:grid;gap:10px"></div></div>
     <div><h2 style="margin-bottom:12px">Favorite drills</h2><div class="grid" id="favGrid"></div></div>
+    <div class="panel row" style="justify-content:space-between"><div><b>App version <span id="appVersion"></span></b><div class="muted" style="font-size:13px">Updates load on their own when you have signal. If something looks out of date, tap the button. Your saved sessions and favorites are kept.</div></div><button class="btn" id="forceUpdate" type="button">Get latest version</button></div>
   </section>
 </main>
 
@@ -604,7 +605,22 @@ renderTeams(); route();
 })();
 </script>
 <script>
-if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}))}
+const APP_VERSION="v6";
+if("serviceWorker" in navigator){
+  let reloaded=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(reg=>{
+    reg.update().catch(()=>{});
+    document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")reg.update().catch(()=>{})});
+  }).catch(()=>{}));
+}
+document.getElementById("appVersion").textContent=APP_VERSION;
+document.getElementById("forceUpdate").addEventListener("click",async e=>{
+  e.target.textContent="Updating…";
+  try{const rs=await navigator.serviceWorker?.getRegistrations();await Promise.all((rs||[]).map(r=>r.unregister()))}catch(_){}
+  try{const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)))}catch(_){}
+  location.reload();
+});
 </script>
 </body>
 </html>
