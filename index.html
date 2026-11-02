@@ -461,9 +461,20 @@ const byName={};D.forEach(d=>byName[d.n]=d.id);
 const toSave=pl=>pl?pl.map(b=>b.brk?b:{n:D[b.id].n,m:b.m}):pl;
 const fromSave=pl=>Array.isArray(pl)?pl.map(b=>b.brk?b:(b.n!=null?{id:byName[b.n],m:b.m}:b)).filter(b=>b.brk||(b.id!=null&&D[b.id])):null;
 const typeOK=(d,type)=>type==="skill"?d.tags.has("skill"):type==="iq"?d.tags.has("iq"):(d.tags.has("iq")||d.tags.has("team"));
-const FOCUS=TYPES[st.type].focus;
+// One focus list for every session type (the session type decides which kind of drill fills each slot)
+const FOCUS={
+  balanced:{label:"Balanced",seq:null},
+  shooting:{label:"Shooting",seq:["shoot","finish","shoot","foot","shoot"]},
+  handling:{label:"Ball handling",seq:["handle","finish","handle","pass","handle"]},
+  finishing:{label:"Finishing",seq:["finish","post","finish","foot","finish"]},
+  defense:{label:"Defense",seq:["defense","rebound","defense","transition","defense"]},
+  offense:{label:"Offense",seq:["offense","pass","offense","finish","offense"]},
+  team:{label:"Team play",seq:["pass","offense","transition","offense","defense"]},
+  transition:{label:"Transition",seq:["transition","transition","defense","pass","transition"]},
+  compete:{label:"Competitive",seq:["games","shoot","defense","games","offense"]}
+};
 const DUR=[30,45,60,75,90];
-if(!TYPES[st.type].focus[st.focus])st.focus="balanced";
+if(!FOCUS[st.focus])st.focus="balanced";
 
 function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
 const pick = a=>a[Math.floor(Math.random()*a.length)];
@@ -491,14 +502,15 @@ function build(){
   const pool=c=>c==="@skill"?D.filter(d=>d.tags.has("skill")&&fits(d,o)):c==="@iq"?D.filter(d=>d.tags.has("iq")&&fits(d,o)):(c==="warm"||c==="cool")?D.filter(d=>d.c===c&&fits(d,o)):D.filter(d=>d.c===c&&typeOK(d,type)&&fits(d,o));
   const used=new Set(); const blocks=[];
   let reuse=false;
-  const take=(c)=>{let p=pool(c).filter(d=>!used.has(d.id)); if(!p.length&&reuse) p=pool(c); if(!p.length) return null; const d=pick(p); used.add(d.id); return d};
+  const poolSoft=c=>{const a=pool(c);if(a.length||c.startsWith("@"))return a;return D.filter(d=>d.c===c&&fits(d,o))};
+  const take=(c)=>{let p=poolSoft(c).filter(d=>!used.has(d.id)); if(!p.length&&reuse) p=poolSoft(c); if(!p.length) return null; const d=pick(p); used.add(d.id); return d};
   const T=st.dur;
   let left=T;
   const warm=take("warm"); if(warm){const m=Math.min(warm.t+2,8);blocks.push({id:warm.id,m});left-=m}
   const coolD = T>=40 ? take("cool") : null; const coolM = coolD?Math.min(coolD.t,5):0; left-=coolM;
   const breakM = T>=60?2:0; left-=breakM;
   const gameD = takeGame(); const gameM = Math.max(8,Math.round(T*0.2)); left-=gameM;
-  const seq=TYPES[type].focus[st.focus].seq; let i=0, mids=[];
+  const seq=FOCUS[st.focus].seq||TYPES[type].focus.balanced.seq; let i=0, mids=[];
   const extra=["handle","shoot","finish","pass","defense","foot","rebound","condition","games","transition","offense","post"];
   let guard=0;
   while(left>=4 && guard++<60){
@@ -768,7 +780,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v22";
+const APP_VERSION="v23";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
