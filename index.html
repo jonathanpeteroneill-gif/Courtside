@@ -269,6 +269,16 @@ html.modal-open,html.modal-open body{overflow:hidden}
 .phase:first-child{margin-top:0}
 .phase.ph-skill{background:var(--court-soft);color:var(--court)}
 .phase.ph-game{background:var(--accent-soft);color:var(--accent)}
+.week{display:grid;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.week-head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.week-head b{font-family:var(--display);font-style:italic;font-weight:900;font-size:20px;color:var(--accent)}
+.week-head h3{font-size:18px}
+.week .sess{display:grid;gap:4px;font-size:14px}
+.week .sess .row{gap:6px}
+.week .drills{color:var(--muted);font-size:13px}
+.pbt{border-collapse:collapse;width:100%;font-size:14px}.pbt th,.pbt td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+.pbt input{width:72px;border:1px solid var(--line);border-radius:6px;padding:5px 6px;background:var(--sunk);font-variant-numeric:tabular-nums}
+.pbt .up{color:var(--good);font-weight:700}.pbt .down{color:var(--warn);font-weight:700}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;font-size:12px;color:var(--muted);font-weight:600}
 .legend svg{width:26px;height:12px;vertical-align:middle;margin-right:4px}
 .thumb{background:var(--floor);border-radius:6px;padding:4px;margin:-2px 0 2px}
@@ -301,6 +311,7 @@ html.modal-open,html.modal-open body{overflow:hidden}
       <a href="#plan" data-view="plan">Plan session</a>
       <a href="#drills" data-view="drills">Drills</a>
       <a href="#plays" data-view="plays">Plays</a>
+      <a href="#term" data-view="term">Term</a>
       <a href="#saved" data-view="saved">Saved</a>
     </nav>
   </div>
@@ -408,6 +419,26 @@ html.modal-open,html.modal-open body{overflow:hidden}
     <div id="playsBody" style="display:grid;gap:18px"></div>
   </section>
 
+  <!-- TERM -->
+  <section id="view-term" hidden style="display:grid;gap:18px">
+    <div class="lib-head"><div><div class="eyebrow">Curriculum</div><h1>Term plan</h1></div></div>
+    <div class="panel" style="display:grid;gap:14px">
+      <div class="field"><span class="lbl">Template</span><div class="seg" id="termTpl"></div></div>
+      <div class="row" style="gap:24px">
+        <div class="field"><span class="lbl">Weeks</span><div class="stepper"><button type="button" data-tstep="weeks" data-d="-1" aria-label="Fewer weeks">−</button><input id="termWeeks" type="number" min="4" max="12" value="10" aria-label="Weeks"><button type="button" data-tstep="weeks" data-d="1" aria-label="More weeks">+</button></div></div>
+        <div class="field"><span class="lbl">Sessions a week</span><div class="stepper"><button type="button" data-tstep="per" data-d="-1" aria-label="Fewer sessions">−</button><input id="termPer" type="number" min="1" max="3" value="1" aria-label="Sessions per week"><button type="button" data-tstep="per" data-d="1" aria-label="More sessions">+</button></div></div>
+      </div>
+      <div class="muted" style="font-size:13px">Sessions use your planner settings (kids, length, age group, hoops). Change those on the Plan tab, then tap Build term.</div>
+      <div class="row"><button class="btn primary" id="termBuild" type="button">Build term</button></div>
+    </div>
+    <div id="termWeeksList" style="display:grid;gap:12px"></div>
+    <div class="panel" style="display:grid;gap:12px">
+      <div><h2>Player PBs</h2><div class="muted" style="font-size:14px">From Skills Testing. Enter week 1 and the latest result. Players come from your roster on the Plan tab.</div></div>
+      <div class="seg" id="pbTest"></div>
+      <div id="pbTable" style="overflow-x:auto"></div>
+    </div>
+  </section>
+
   <!-- SAVED -->
   <section id="view-saved" hidden style="display:grid;gap:28px">
     <div><div class="eyebrow" id="savedEyebrow">Stored on this phone</div><h1>Saved</h1></div>
@@ -482,7 +513,7 @@ const TYPES={
     games:["Kill Scrimmage","Situational 5v5","Scrimmage with Rules","3 Stops Drill","Advantage / Disadvantage","3v3 Cutthroat"]}
 };
 // In-play decision drills (IQ building)
-const IQ=new Set(["5-Out Screen Away","5-Out Hand-Off","Monkey in the Middle","Bull in the Ring","5-Pass Game","1v1 From the Wing","Help & Recover 2v2","Deny the Wing","Pick & Roll Defense","Shell Drill","Rebound War","Give & Go","Backdoor Cuts","Pick & Roll Basics","Pass & Screen Away","Drive & Kick","5-Out Motion","Fill the Spot","3v3 Cutthroat","3-on-2, 2-on-1","11-Man Break","2v1 Full Court","Sprint Back Transition","Chase-Down Layups","Pressure Dribble","Retreat Dribble vs Trap","King of the Court","Scrimmage with Rules","1v1 Battle Ladder","Handle into Reads","1v2 Pressure Breaker","Movement Shooting Reads","Closeout Attack Reads","Inside / Outside Hand Reads","Rim Protector Reads","Advantage Finishing","Pocket & Lob Reads 2v1","Get Open vs Denial","Drive, Draw, Dish","Hit-Ahead Drill","Shell Rebounding","Offensive Rebound Pursuit","Shell Drill: Rotations","Ball Screen Coverages","Closeout 1v1: 3 Stops","X-Out Scramble","Defensive Transition: Tag-Up & Load","Post Defense","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Reads vs Coverage","Advantage 4v3","Horns Set & Counters","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations","Read & React 5v0","Make/Miss Transition 5v5","4v3 Continuous","Numbers Defense: Tandem","3 Stops Drill","Advantage / Disadvantage","Situational 5v5","Kill Scrimmage","2v1 Rapid","5-Man Weave into 3v2","High-Low Entry 2v2","Press Break","Inbounds Play: Box","Crash the Boards"]);
+const IQ=new Set(["Screening Fundamentals","5-Out Screen Away","5-Out Hand-Off","Monkey in the Middle","Bull in the Ring","5-Pass Game","1v1 From the Wing","Help & Recover 2v2","Deny the Wing","Pick & Roll Defense","Shell Drill","Rebound War","Give & Go","Backdoor Cuts","Pick & Roll Basics","Pass & Screen Away","Drive & Kick","5-Out Motion","Fill the Spot","3v3 Cutthroat","3-on-2, 2-on-1","11-Man Break","2v1 Full Court","Sprint Back Transition","Chase-Down Layups","Pressure Dribble","Retreat Dribble vs Trap","King of the Court","Scrimmage with Rules","1v1 Battle Ladder","Handle into Reads","1v2 Pressure Breaker","Movement Shooting Reads","Closeout Attack Reads","Inside / Outside Hand Reads","Rim Protector Reads","Advantage Finishing","Pocket & Lob Reads 2v1","Get Open vs Denial","Drive, Draw, Dish","Hit-Ahead Drill","Shell Rebounding","Offensive Rebound Pursuit","Shell Drill: Rotations","Ball Screen Coverages","Closeout 1v1: 3 Stops","X-Out Scramble","Defensive Transition: Tag-Up & Load","Post Defense","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Reads vs Coverage","Advantage 4v3","Horns Set & Counters","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations","Read & React 5v0","Make/Miss Transition 5v5","4v3 Continuous","Numbers Defense: Tandem","3 Stops Drill","Advantage / Disadvantage","Situational 5v5","Kill Scrimmage","2v1 Rapid","5-Man Weave into 3v2","High-Low Entry 2v2","Press Break","Inbounds Play: Box","Crash the Boards"]);
 const TEAMX=new Set(["Shell Drill","Shell Drill: Rotations","Ball Screen Coverages","X-Out Scramble","Defensive Transition: Tag-Up & Load","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Defense","Crash the Boards","Shell Rebounding","3 Stops Drill","Kill Scrimmage","Situational 5v5","Scrimmage with Rules","Advantage / Disadvantage","3v3 Cutthroat","Line Sprints","17s","Weave into Layup Race","Layup Race"]);
 const tagsOf=d=>{const t=new Set();const iq=IQ.has(d.n);if(iq)t.add("iq");
   if(["offense","transition"].includes(d.c)||TEAMX.has(d.n))t.add("team");
@@ -545,36 +576,48 @@ const IMPL={
   compete:["Kill Scrimmage","Situational 5v5","3v3 Cutthroat","King of the Court","Advantage / Disadvantage","Scrimmage with Rules"]
 };
 const PHASE={warm:"Warm-up",skill:"Skills",game:"Game implementation",cool:"Wrap-up"};
-function implPool(o,used){
-  const names=IMPL[st.focus]||IMPL.balanced;
+function implPool(o,used,focus,type){
+  focus=focus||st.focus; type=type||st.type;
+  const names=IMPL[focus]||IMPL.balanced;
   let p=D.filter(d=>names.includes(d.n)&&fits(d,o)&&!used.has(d.id));
-  if(!p.length) p=D.filter(d=>(IMPL.balanced.includes(d.n)||TYPES[st.type].games.includes(d.n))&&fits(d,o)&&!used.has(d.id));
+  if(!p.length) p=D.filter(d=>(IMPL.balanced.includes(d.n)||TYPES[type].games.includes(d.n))&&fits(d,o)&&!used.has(d.id));
   if(!p.length) p=D.filter(d=>d.c==="games"&&fits(d,o)&&!used.has(d.id)&&!(st.lvl>=3&&/Steal the Bacon|Relay|Treasure|Sharks/.test(d.n)));
   return p;
 }
-function build(){
+function build(opts){
+  opts=opts||{};
   const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
-  const type=st.type;
-  const pool=c=>c==="@skill"?D.filter(d=>d.tags.has("skill")&&fits(d,o)):c==="@iq"?D.filter(d=>d.tags.has("iq")&&fits(d,o)):(c==="warm"||c==="cool")?D.filter(d=>d.c===c&&fits(d,o)):D.filter(d=>d.c===c&&typeOK(d,type)&&fits(d,o));
+  const type=opts.type||st.type, focus=opts.focus||st.focus;
+  const ONLY_IF_ASKED=new Set(["Pre-Game Warm-Up Routine","Skills Testing (PBs)"]);
+  const pool0=c=>c==="@skill"?D.filter(d=>d.tags.has("skill")&&fits(d,o)):c==="@iq"?D.filter(d=>d.tags.has("iq")&&fits(d,o)):(c==="warm"||c==="cool")?D.filter(d=>d.c===c&&fits(d,o)):D.filter(d=>d.c===c&&typeOK(d,type)&&fits(d,o));
+  const pool=c=>pool0(c).filter(d=>!ONLY_IF_ASKED.has(d.n));
   const used=new Set();
   let reuse=false;
-  const poolSoft=c=>{const a=pool(c);if(a.length||c.startsWith("@"))return a;return D.filter(d=>d.c===c&&fits(d,o))};
+  const poolSoft=c=>{const a=pool(c);if(a.length||c.startsWith("@"))return a;return D.filter(d=>d.c===c&&fits(d,o)&&!ONLY_IF_ASKED.has(d.n))};
   const take=(c)=>{let p=poolSoft(c).filter(d=>!used.has(d.id)); if(!p.length&&reuse) p=poolSoft(c); if(!p.length) return null; const d=pick(p); used.add(d.id); return d};
   const T=st.dur;
   // 1 · Warm-up
-  const warm=take("warm"); const warmM=warm?Math.min(warm.t+2,Math.max(6,Math.round(T*0.12))):0;
+  const warm=(()=>{const mw=(opts.must||[]).map(n=>D.find(d=>d.n===n)).find(d=>d&&d.c==="warm");if(mw){used.add(mw.id);return mw}return take("warm")})(); const warmM=warm?Math.min(warm.t+2,Math.max(6,Math.round(T*0.12))):0;
   // Wrap-up and water
   const coolD = T>=40 ? take("cool") : null; const coolM = coolD?Math.min(coolD.t,5):0;
   const breakM = T>=60?2:0;
   // 3 · Game implementation (about a third of the session)
   let implM=Math.max(8,Math.round(T*0.35));
   const impl=[];
-  let p=implPool(o,used);
-  if(p.length){const d1=pick(p);used.add(d1.id);impl.push(d1);
-    if(implM>=18){const p2=implPool(o,used).filter(d=>d.c!==d1.c||/Scrimmage|5v5|Cutthroat|King/.test(d.n));const d2=p2.length?pick(p2):null;if(d2){used.add(d2.id);impl.push(d2)}}}
+  // drills this week must include
+  const must=(opts.must||[]).map(n=>D.find(d=>d.n===n)).filter(d=>d&&!NO_GEAR.test(d.e));
+  const mustImpl=must.filter(d=>(IMPL[focus]||[]).includes(d.n)||d.c==="games");
+  const mustSkill=must.filter(d=>!mustImpl.includes(d)&&d.c!=="warm");
+  const mustWarm=must.find(d=>d.c==="warm");
+  must.forEach(d=>used.add(d.id));
+  let p=implPool(o,used,focus,type);
+  if(mustImpl.length){impl.push(...mustImpl.slice(0,2))}
+  else if(p.length){const d1=pick(p);used.add(d1.id);impl.push(d1);
+    if(implM>=18){const p2=implPool(o,used,focus,type).filter(d=>d.c!==d1.c||/Scrimmage|5v5|Cutthroat|King/.test(d.n));const d2=p2.length?pick(p2):null;if(d2){used.add(d2.id);impl.push(d2)}}}
   // 2 · Skills (what's left)
   let left=T-warmM-coolM-breakM-(impl.length?implM:0);
-  const seq=FOCUS[st.focus].seq||TYPES[type].focus.balanced.seq; let i=0; const skills=[];
+  const seq=FOCUS[focus].seq||TYPES[type].focus.balanced.seq; let i=0; const skills=[];
+  mustSkill.forEach(d=>{const m=Math.min(left,Math.max(5,d.t+(T>=75?3:1)));if(m>=4){skills.push({id:d.id,m,ph:"skill"});left-=m}});
   const extra=["handle","shoot","finish","pass","defense","foot","rebound","condition","transition","offense","post"];
   let guard=0;
   while(left>=4 && guard++<60){
@@ -780,6 +823,72 @@ function openPlay(i){
 }
 document.addEventListener("click",e=>{const c=e.target.closest("[data-play]");if(c&&!e.target.closest("[data-open]"))openPlay(+c.dataset.play)});
 
+/* term plan */
+const TERM_TPL={
+  atw:{label:"All The Way (academy skills)",per:1,weeks:[
+    {theme:"Testing + footwork and handling basics",focus:"handling",type:"skill",must:["Skills Testing (PBs)"]},
+    {theme:"Ball handling under pressure",focus:"handling",type:"skill"},
+    {theme:"Finishing: both hands, euro, bump euro",focus:"finishing",type:"skill",must:["Bump Euro Finish"]},
+    {theme:"Shooting: form to catch and shoot",focus:"shooting",type:"skill"},
+    {theme:"Passing and cutting: give and go, backdoor",focus:"offense",type:"iq",must:["Give & Go","Backdoor Cuts"]},
+    {theme:"Defense: stance, closeouts, help",focus:"defense",type:"skill"},
+    {theme:"Rebounding and transition",focus:"transition",type:"iq",must:["2v1 Rapid"]},
+    {theme:"Screens and 5-Out",focus:"offense",type:"iq",must:["Screening Fundamentals","5-Out Motion"]},
+    {theme:"Putting it together",focus:"balanced",type:"team"},
+    {theme:"Retest + showcase game",focus:"compete",type:"team",must:["Skills Testing (PBs)"]},
+    {theme:"Bonus: shooting under fatigue",focus:"shooting",type:"skill",must:["Pressure Free Throws"]},
+    {theme:"Bonus: competition week",focus:"compete",type:"team"}]},
+  spectres:{label:"Spectres (team)",per:2,weeks:[
+    {theme:"Our shapes: 5-Out, shell, 1-3-1",focus:"offense",type:"team",must:["5-Out Motion","Shell Drill"],plays:["1-3-1 Press (Spectres)","Shell vs 5-Out (Spectres rules)"]},
+    {theme:"Beat the press: Dragon · our 1-3-1",focus:"transition",type:"team",must:["2-2-1 Press Trap Reads"],plays:["Dragon (Spectres press break)","1-3-1 Press (Spectres)"]},
+    {theme:"Inbounds: Ghost, Box, Graveyard",focus:"offense",type:"team",must:["Screening Fundamentals","Pass & Screen Away"],plays:["Ghost (Spectres SLOB)","Box (Spectres BLOB)","Graveyard (Spectres BLOB)"]},
+    {theme:"Defense and rebounding: talk tax",focus:"defense",type:"team",must:["Shell Drill: Rotations","Rebound War"],plays:["Shell vs 5-Out (Spectres rules)"]},
+    {theme:"Transition: run your lanes",focus:"transition",type:"team",must:["2v1 Rapid","5-Man Weave into 3v2"]},
+    {theme:"5-Out: screen away and hand-off",focus:"offense",type:"iq",must:["5-Out Screen Away","5-Out Hand-Off"]},
+    {theme:"Shooting and free throws under fatigue",focus:"shooting",type:"team",must:["Pressure Free Throws"]},
+    {theme:"Game sim: all our calls",focus:"compete",type:"team",must:["Situational 5v5"],plays:["Dragon (Spectres press break)","Ghost (Spectres SLOB)","Box (Spectres BLOB)","Graveyard (Spectres BLOB)"]},
+    {theme:"Fix what the games showed us",focus:"balanced",type:"team"},
+    {theme:"Finals prep: late game",focus:"compete",type:"team",must:["Late-Game Situations"],plays:["Dragon (Spectres press break)"]},
+    {theme:"Bonus: press and break refresh",focus:"transition",type:"team",plays:["Dragon (Spectres press break)","1-3-1 Press (Spectres)"]},
+    {theme:"Bonus: competition week",focus:"compete",type:"team"}]}
+};
+let term=store.get("term",null);
+const tset=Object.assign({tpl:"atw",weeks:10,per:TERM_TPL.atw.per},store.get("termSet",{}));
+function buildTerm(){
+  const tpl=TERM_TPL[tset.tpl];
+  const weeks=tpl.weeks.slice(0,tset.weeks).map((w,i)=>({...w,n:i+1,sessions:Array.from({length:tset.per},()=>toSave(build({focus:w.focus,type:w.type,must:w.must})))}));
+  term={tpl:tset.tpl,weeks,made:new Date().toLocaleDateString(undefined,{month:"short",day:"numeric"})};store.set("term",term);renderTerm();
+}
+function renderTerm(){
+  $("#termTpl").innerHTML=Object.entries(TERM_TPL).map(([k,v])=>`<button type="button" data-ttpl="${k}" aria-pressed="${tset.tpl===k}">${v.label}</button>`).join("");
+  $("#termWeeks").value=tset.weeks;$("#termPer").value=tset.per;
+  if(!term){$("#termWeeksList").innerHTML=`<div class="empty">Pick a template and tap Build term.</div>`}
+  else $("#termWeeksList").innerHTML=term.weeks.map((w,wi)=>`<div class="week"><div class="week-head"><b>Week ${w.n}</b><h3>${esc(w.theme)}</h3><span class="tag">${esc(TYPES[w.type].label)}</span><span class="tag game">${esc(FOCUS[w.focus].label)}</span></div>
+    ${(w.plays||[]).length?`<div class="row" style="gap:6px"><span class="eyebrow">Install</span>${w.plays.map(n=>{const i=PBK.findIndex(p=>p.n===n&&!p.alias);return i<0?"":`<button class="btn sm" data-play="${i}">${esc(n.replace(/ \(Spectres.*\)/,""))}</button>`}).join("")}</div>`:""}
+    ${w.sessions.map((ses,si)=>`<div class="sess"><div class="row"><span class="eyebrow">Session ${si+1}</span><button class="btn sm primary" data-tload="${wi}:${si}">Open in planner</button><button class="btn sm" data-tre="${wi}:${si}">New drills</button></div><div class="drills">${ses.filter(b=>!b.brk).map(b=>esc(b.n)).join(" · ")}</div></div>`).join("")}</div>`).join("");
+  renderPB();
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-ttpl]");if(t){tset.tpl=t.dataset.ttpl;tset.per=TERM_TPL[tset.tpl].per;store.set("termSet",tset);renderTerm();return}
+  const ts=e.target.closest("[data-tstep]");if(ts){const k=ts.dataset.tstep;if(k==="weeks")tset.weeks=Math.max(4,Math.min(12,tset.weeks+(+ts.dataset.d)));else tset.per=Math.max(1,Math.min(3,tset.per+(+ts.dataset.d)));store.set("termSet",tset);renderTerm();return}
+  const tl=e.target.closest("[data-tload]");if(tl){const [wi,si]=tl.dataset.tload.split(":").map(Number);const w=term.weeks[wi];st.focus=w.focus;st.type=w.type;saveSet();plan=fromSave(w.sessions[si])||[];store.set("plan",toSave(plan));syncControls();renderPlan();location.hash="plan";toast(`Week ${w.n} loaded`);return}
+  const tr=e.target.closest("[data-tre]");if(tr){const [wi,si]=tr.dataset.tre.split(":").map(Number);const w=term.weeks[wi];w.sessions[si]=toSave(build({focus:w.focus,type:w.type,must:w.must}));store.set("term",term);renderTerm();return}
+});
+$("#termBuild").onclick=buildTerm;
+/* player PBs */
+const PB_TESTS=[["s17","17s (touches in 1 min)"],["l24","24 in 2 (layups made)"],["s5","5-spot shooting (/25)"],["ft","Free throws (/10)"],["sl","Lane slides (30s)"]];
+let pbT="s17";let pbs=store.get("pbs",{});
+function roster(){let n=($("#names").value||"").split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);return n.length?n:Array.from({length:st.kids},(_,i)=>"Player "+(i+1))}
+function renderPB(){
+  $("#pbTest").innerHTML=PB_TESTS.map(([k,l])=>`<button type="button" data-pbt="${k}" aria-pressed="${pbT===k}">${l}</button>`).join("");
+  const rows=roster().map(n=>{const r=(pbs[pbT]||{})[n]||{};const ch=(r.a!==""&&r.a!=null&&r.b!==""&&r.b!=null)?(+r.b)-(+r.a):null;
+    return `<tr><td>${esc(n)}</td><td><input inputmode="numeric" data-pb="${esc(n)}" data-pbk="a" value="${r.a??""}" aria-label="${esc(n)} week 1"></td><td><input inputmode="numeric" data-pb="${esc(n)}" data-pbk="b" value="${r.b??""}" aria-label="${esc(n)} latest"></td><td class="${ch>0?"up":ch<0?"down":""}">${ch==null?"":(ch>0?"+":"")+ch}</td></tr>`}).join("");
+  $("#pbTable").innerHTML=`<table class="pbt"><thead><tr><th>Player</th><th>Week 1</th><th>Latest</th><th>Change</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-pbt]");if(b){pbT=b.dataset.pbt;renderPB()}});
+document.addEventListener("input",e=>{const i=e.target.closest("[data-pb]");if(!i)return;pbs[pbT]=pbs[pbT]||{};const r=pbs[pbT][i.dataset.pb]=pbs[pbT][i.dataset.pb]||{};r[i.dataset.pbk]=i.value.replace(/[^0-9.]/g,"");store.set("pbs",pbs);
+  const tr=i.closest("tr"),c=tr.lastElementChild;const ch=(r.a&&r.b)?(+r.b)-(+r.a):null;c.textContent=ch==null?"":(ch>0?"+":"")+ch;c.className=ch>0?"up":ch<0?"down":""});
+
 /* saved */
 function renderSaved(){
   $("#savedEyebrow").textContent="Stored on this phone";
@@ -873,11 +982,12 @@ document.addEventListener("keydown",e=>{if(FW&&e.key==="Escape")followStop()});
 /* routing */
 let view="plan";
 function route(){
-  const h=(location.hash||"#plan").slice(1); view=["plan","drills","plays","saved"].includes(h)?h:"plan";
-  ["plan","drills","plays","saved"].forEach(v=>{$("#view-"+v).hidden=v!==view});
+  const h=(location.hash||"#plan").slice(1); view=["plan","drills","plays","term","saved"].includes(h)?h:"plan";
+  ["plan","drills","plays","term","saved"].forEach(v=>{$("#view-"+v).hidden=v!==view});
   document.querySelectorAll("nav a").forEach(a=>a.dataset.view===view?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
   if(view==="saved")renderSaved();
   if(view==="plays")renderPlays();
+  if(view==="term")renderTerm();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange",route);
@@ -888,7 +998,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v34";
+const APP_VERSION="v35";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});

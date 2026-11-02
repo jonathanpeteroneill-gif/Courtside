@@ -493,4 +493,10 @@ def("5-Out Hand-Off",
  F("2 reads: trail = attack · under = shoot · jump = backdoor",[O(19,31,"2"),B(20.6,32.6),O(14,27,"1"),X(12.5,24.5,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),D(20.5,29.5,24,14),SH(19.5,29.5),T(25,41,"jumped the hand-off? 2 goes backdoor instead")]),
  F("1 rolls or pops · the empty wing gets filled from the corner",[O(21,30,"2"),B(22.6,31.6),O(14,27,"1"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),M(15,25,20,11),M(4.5,6,7,20)]),
  F("Chain it: 2 dribbles straight into the next hand-off with 3 · then play live",[O(21,30,"2"),B(22.6,31.6),O(42,23,"3"),O(7,21,"4"),O(20,10,"1"),O(47,4,"5"),D(23,30,36,26.5),T(25,41,"5v0 → shadow D → live")]));
+def("Screening Fundamentals",
+ F("Screener sprints in and stops: wide base, arms in",[...OB(25,30,"P"),O(33,20,"S"),O(37,9,"C"),K(37,12),S(33,21.5,36,13.5),T(25,40,"Feet still, wide base")]),
+ F("Cutter waits, comes off shoulder to shoulder · curl or pop",[O(25,30,"P"),B(26.6,31.6),O(36,13.5,"S"),O(37,9,"C"),K(37,12),M(38.5,9,41,14,38,19,30,21),PS(24,28.5,29,22)]),
+ F("Screener's second move: roll to the rim",[O(30,21,"C"),B(31.6,22.6),O(36,13.5,"S"),M(35,12,29,8),PS(30,19.5,29.5,9.5),SH(28,7)]));
+def("Pre-Game Warm-Up Routine",F("Jog and dynamic movement",lanes([12,25,38],2,45),1),F("Layups, partner shooting, closeouts, free throws, huddle",[...OB(42,22,"S"),D(41,20,30,9),SH(29,8),O(9,22,"R"),M(10,20,21,9),C(25,35),T(25,43,"Same routine every game")]));
+def("Skills Testing (PBs)",F("Stations: 17s, 24 in 2, 5-spot shooting, free throws, lane slides",[["R",3,14,20,13,"17s"],["R",27,14,20,13,"24 in 2"],["R",3,31,20,13,"5-spot"],["R",27,31,20,13,"FTs + slides"],T(25,49,"Record scores in the Term tab")]));
 })();
