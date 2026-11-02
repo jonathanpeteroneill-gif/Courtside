@@ -213,6 +213,20 @@ add({n:"Beat the Run and Jump",sec:"break",type:"break",call:"HEADS UP",
  [F("Dribbler sees the jump coming",[...OB(82,8),X(84,11),O(60,20),X(62,17),D(80,8,66,7),M(62,15,62,8)],1),
   F("Pass ahead to the player the jumper left · attack",[O(66,7),B(67.6,8.6),X(62,8),O(60,20),PS(66,9,61,18.5),D(58,20,30,22),T(55,46,"Eyes up · pass ahead")],1)]);
 
+// ============================== HALF-COURT SETS ==============================
+add({n:"Flex Offense",sec:"halfcourt",type:"offense",call:"FLEX",
+ when:"Half-court offense against man-to-man when you want patience, screens and layups off cuts. A continuity: the same two screens on every ball reversal.",
+ s:"1 and 2 at the top (outside the arc, elbows extended) · 4 on the left block · 3 in the left corner · 5 in the right corner.",
+ d:"Reverse the ball across the top: 1 passes to 2|Flex screen: 4 back screens on the baseline for 3 in the corner|3 flex cuts across the lane, tight off the screen, to the ball-side block. Hit him for the layup|Down screen: 1 (the passer) screens down for 4, who pops to the top for the catch and shot|1 steps out to the corner after screening|Next reversal runs it the other way with the same rules: block screens for the corner, passer screens down for the screener",
+ counters:"Defender cheats over the flex screen: cutter goes over the top of the screen instead|They switch the flex screen: screener seals and posts up|Top denied on reversal: back door to the rim, or dribble at the wing for a hand-off|Down screen defender sags: screener slips to the rim",
+ k:"Patience: reverse the ball, make the defense move|Flex cutter waits for the screen, then cuts tight, hand up|Screeners: still, wide base, arms in|Every pass: two screens, two options",
+ links:["Screening Fundamentals","Pass & Screen Away","5-Out Screen Away","Backdoor Cuts"]},
+ [F("Flex set: 1 and 2 at the top, 4 on the left block, 3 in the left corner, 5 in the right corner",[...OB(16,27,"1"),O(34,27,"2"),O(15.5,8,"4"),O(3,4,"3"),O(47,4,"5"),T(25,40,"FLEX")]),
+  F("Reverse the ball across the top: 1 passes to 2",[...OB(16,27,"1"),O(34,27,"2"),O(15.5,8,"4"),O(3,4,"3"),O(47,4,"5"),PS(17.5,27,32.5,27)]),
+  F("Flex screen: 4 back screens on the baseline · 3 cuts across the lane to the ball-side block",[O(16,27,"1"),O(34,27,"2"),B(35.6,28.6),O(15.5,8,"4"),O(3,4,"3"),O(47,4,"5"),S(14,8,9,6),M(4.5,5,12,4,23,6,32,8),PS(33,25.5,32.5,10),SH(31,8)]),
+  F("Down screen: 1 screens down for 4 · 4 pops to the top for the shot · 1 steps out to the corner",[O(16,27,"1"),O(34,27,"2"),B(35.6,28.6),O(9,6,"4"),O(32,8,"3"),O(47,4,"5"),S(15,25.5,10.5,9.5),M(9,8,13,16,16,26),PS(32.5,27,17.5,27),SH(16,25),M(10,9,3,5)]),
+  F("Flex it the other way: 3 screens for 5 · 5 flex cuts · 2 screens down for 3",[O(16,27,"4"),B(17.6,28.6),O(34,27,"2"),O(32,8,"3"),O(47,4,"5"),O(3,4,"1"),S(34,7.5,40,6),M(45.5,5,38,4,27,6,18,8),S(34,25.5,39,9.5),M(40,8,37,16,34,26),PS(17.5,26,18,10),T(25,40,"Same two screens every reversal")])]);
+
 // ============================== INBOUNDS (aliases) ==============================
 PB.push({n:"Ghost (Spectres SLOB)",sec:"inbound",alias:true},{n:"Box (Spectres BLOB)",sec:"inbound",alias:true},{n:"Graveyard (Spectres BLOB)",sec:"inbound",alias:true});
 
