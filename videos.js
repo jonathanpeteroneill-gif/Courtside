@@ -32,6 +32,7 @@ window.VIDEOS = {
 "Sharks & Minnows":"EXrA7GlS99g",
 "21":"QzfE4letwqg",
 "Pick & Roll Basics":"ffjo8ReDzhA",
+"5-Out Screen Away":"QrZxLwRHxl0",
 "Pick & Roll Reads vs Coverage":"_D_PuriQ7Tk",
 "Give & Go":"njTCssKLmkY",
 "Backdoor Cuts":"Is7GyXhvvag",

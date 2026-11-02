@@ -279,6 +279,12 @@ def("Pass & Screen Away",
  F("Pass to one wing",[...OB(25,29,"1"),O(8,22,"2"),O(42,22,"3"),PS(23.5,28,9.5,23)]),
  F("Passer screens away for the other wing",[O(8,22,"2"),B(9.6,23.6),O(25,29,"1"),O(42,22,"3"),S(26.5,28.5,38,23.5)]),
  F("Wing curls or pops off the screen · pass",[O(8,22,"2"),O(38,23.5,"1"),O(42,22,"3"),M(42,20,37,19,28,25),PS(10,22,26.5,25),M(37,25,40,28)]));
+def("5-Out Screen Away",
+ F("5-out spacing · 1 passes to the wing (2)",[...OB(25,30,"1"),O(8,23,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),PS(23.5,29,9.5,24)]),
+ F("1 screens away for the opposite wing (3)",[O(8,23,"2"),B(9.6,24.6),O(25,30,"1"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),S(26.5,29.5,38.5,25)]),
+ F("3 reads the defender: curl to the rim, or pop to the top if they go under",[O(8,23,"2"),B(9.6,24.6),O(38,25,"1"),O(42,23,"3"),X(43,20,"3"),O(3,4,"4"),O(47,4,"5"),M(41,21,36,20,30,13,27,8),M(40,25.5,34,31,28,33),PS(10,22,26,10),T(32,38,"curl ↑ · pop ↓")]),
+ F("Refill: 5 lifts to the wing, 3 fills the corner, 1 pops back to the top",[O(8,23,"2"),B(9.6,24.6),O(38,25,"1"),O(27,8,"3"),O(3,4,"4"),O(47,4,"5"),M(46.5,6,43,20),M(29,8,45,4),M(36.5,26,27,30)]),
+ F("Same rules on every pass · then play it 5v5 live",[O(25,30,"1"),O(8,23,"2"),B(9.6,24.6),O(43,21,"5"),O(3,4,"4"),O(47,4,"3"),X(10,20),X(25,26),X(39,18),X(6,8),X(42,8),T(25,40,"5v0 → shadow D → live")]));
 def("Drive & Kick",
  F("Drive into the lane to draw help",[...OB(25,30,"1"),O(3,4,"2"),O(47,4,"3"),X(14,12),D(25,28,26,16),M(14,12,21,14)]),
  F("Kick to the open corner · catch ready, shoot",[O(26,16,"1"),O(3,4,"2"),O(47,4,"3"),X(21,14),PS(27.5,15,45.5,5),SH(46,5)]));
