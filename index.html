@@ -21,7 +21,7 @@
 :root{
   /* All The Way brand: hot pink #FB1365, teal #00A3B5, black, white */
   --bg:#f4f5f7; --surface:#ffffff; --sunk:#eceef1; --ink:#0b0b0d; --muted:#5b5f68; --line:#dcdfe4;
-  --accent:#fb1365; --accent-ink:#ffffff; --court:#007f8e; --court-soft:#d6f1f4; --teal:#00a3b5; --black:#000000; --white:#ffffff;
+  --accent:#fb1365; --accent-soft:rgba(251,19,101,.14); --accent-ink:#ffffff; --court:#007f8e; --court-soft:#d6f1f4; --teal:#00a3b5; --black:#000000; --white:#ffffff;
   --good:#1f7a3f; --warn:#a15c00;
   --display:"Archivo","Arial Black",Impact,sans-serif;
   --body:"Barlow","Segoe UI",system-ui,sans-serif;
@@ -29,7 +29,7 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#08080a; --surface:#141417; --sunk:#1c1c21; --ink:#f2f2f4; --muted:#9a9ca5; --line:#2a2a31;
-  --accent:#ff2a77; --accent-ink:#ffffff; --court:#22c3d4; --court-soft:#0b3237; --good:#5fcf87; --warn:#f0a840; --floor:#2a2219; --floorline:#7d6443; color-scheme:dark}}
+  --accent:#ff2a77; --accent-soft:rgba(255,42,119,.2); --accent-ink:#ffffff; --court:#22c3d4; --court-soft:#0b3237; --good:#5fcf87; --warn:#f0a840; --floor:#2a2219; --floorline:#7d6443; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e1217; --surface:#161b22; --sunk:#1d242d; --ink:#e8ecf1; --muted:#97a2b0; --line:#2a333e;
   --accent:#ff7a2e; --accent-ink:#1a0d04; --court:#5bbcc6; --court-soft:#163238; --good:#5fcf87; --warn:#f0a840; --floor:#2a2219; --floorline:#7d6443; color-scheme:dark}
@@ -109,7 +109,7 @@ a.btn{color:var(--ink);text-decoration:none}
 .block-head h3 button:hover{color:var(--accent)}
 .mins{font-family:var(--display);font-style:italic;font-weight:800;font-size:18px;color:var(--court);font-variant-numeric:tabular-nums}
 .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:4px;background:var(--court-soft);color:var(--court)}
-.tag.game{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.tag.game{background:var(--accent-soft);color:var(--accent)}
 .groups{font-weight:600;font-size:14px}
 .groups.warn{color:var(--warn)}
 .block p{margin:0;max-width:68ch}
@@ -145,19 +145,23 @@ textarea{width:100%;min-height:76px;border:1px solid var(--line);border-radius:8
 .empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
 
 /* ---------- modal ---------- */
-dialog{border:0;padding:0;background:var(--surface);color:var(--ink);border-radius:16px;width:min(600px,calc(100vw - 32px));max-height:min(820px,calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 48px));overflow:hidden}
-dialog[open]{display:flex;flex-direction:column}
+.modal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:40;background:rgba(5,8,12,.55);display:flex;align-items:center;justify-content:center;
+  padding:calc(env(safe-area-inset-top,0px) + 20px) 20px calc(env(safe-area-inset-bottom,0px) + 20px)}
+.modal[hidden]{display:none!important}
+.modal-panel{background:var(--surface);color:var(--ink);border-radius:16px;width:100%;max-width:760px;height:100%;max-height:900px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+html.modal-open,html.modal-open body{overflow:hidden}
 .dlg-top{flex:none;position:relative;display:flex;align-items:center;justify-content:flex-end;padding:12px 12px 8px;border-bottom:1px solid var(--line);background:var(--surface);touch-action:none}
 .dlg-top .grab{position:absolute;left:50%;top:7px;width:42px;height:5px;margin-left:-21px;border-radius:3px;background:var(--line)}
 .dlg-top .x:focus{outline:none}.dlg-top .x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .dlg-top .x{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--sunk);color:var(--ink);font-weight:700;font-size:15px;padding:8px 14px;border-radius:999px;min-height:40px}
 @media (max-width:600px){
-  dialog{position:fixed;top:auto;left:0;right:0;bottom:0;margin:0;width:100%;max-width:100%;height:86vh;height:calc(100dvh - env(safe-area-inset-top,0px) - 64px);max-height:none;border-radius:18px 18px 0 0}
+  .modal{align-items:flex-end;padding:calc(env(safe-area-inset-top,0px) + 56px) 0 0}
+  .modal-panel{max-width:none;max-height:none;border-radius:18px 18px 0 0}
   .dlg h2{font-size:22px}
   .dlg .dgc{max-width:300px}
 }
-dialog::backdrop{background:rgba(5,8,12,.55)}
-.dlg{flex:1;min-height:0;padding:16px 18px calc(20px + env(safe-area-inset-bottom,0px));display:grid;gap:14px;align-content:start;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.dlg .dgc{max-width:560px}
+.dlg{flex:1 1 auto;min-height:0;-webkit-flex:1 1 auto;padding:16px 18px calc(20px + env(safe-area-inset-bottom,0px));display:grid;gap:14px;align-content:start;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .dlg h2{font-size:26px}
 .dlg ol,.dlg ul{margin:0;padding-left:22px;display:grid;gap:4px}
 .dlg section{display:grid;gap:6px}
@@ -264,7 +268,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 .phase{margin:14px 0 2px -46px;padding:4px 10px;width:max-content;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;background:var(--sunk);color:var(--muted)}
 .phase:first-child{margin-top:0}
 .phase.ph-skill{background:var(--court-soft);color:var(--court)}
-.phase.ph-game{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.phase.ph-game{background:var(--accent-soft);color:var(--accent)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;font-size:12px;color:var(--muted);font-weight:600}
 .legend svg{width:26px;height:12px;vertical-align:middle;margin-right:4px}
 .thumb{background:var(--floor);border-radius:6px;padding:4px;margin:-2px 0 2px}
@@ -413,7 +417,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
   </section>
 </main>
 
-<dialog id="dlg" aria-label="Drill details"><div class="dlg-top" id="dlgTop"><span class="grab" aria-hidden="true"></span><button type="button" class="x" id="dlgClose">✕ Close</button></div><div class="dlg" id="dlgBody" tabindex="-1" autofocus style="outline:none"></div></dialog>
+<div id="dlg" class="modal" role="dialog" aria-modal="true" aria-label="Drill details" hidden><div class="modal-panel" id="dlgPanel"><div class="dlg-top" id="dlgTop"><span class="grab" aria-hidden="true"></span><button type="button" class="x" id="dlgClose">✕ Close</button></div><div class="dlg" id="dlgBody" tabindex="-1" style="outline:none"></div></div></div>
 <div class="run" id="run" hidden></div>
 <div class="follow" id="follow" hidden></div>
 <div class="toast" id="toast" hidden></div>
@@ -430,6 +434,13 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 const D = window.DRILLS.map((d,i)=>({...d,l:d.l+(d.l.includes("3")&&!d.l.includes("1")&&!d.l.includes("4")?"4":""),id:i}));
 const C = window.CATS;
 const $ = s=>document.querySelector(s);
+// Pop-up that works on every iPad/iPhone (no reliance on <dialog>)
+(()=>{const m=document.getElementById("dlg");
+  Object.defineProperty(m,"open",{get(){return !m.hidden}});
+  m.showModal=()=>{m.hidden=false;document.documentElement.classList.add("modal-open")};
+  m.close=()=>{if(m.hidden)return;m.hidden=true;document.documentElement.classList.remove("modal-open");m.dispatchEvent(new Event("close"))};
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!m.hidden)m.close()});
+})();
 const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const LV = {1:"Ages 5–8",2:"Ages 9–12",3:"Ages 13–15",4:"Rep / Elite"};
 const PROGRAMS={
@@ -715,13 +726,13 @@ function openDrill(id){
   <section><div class="eyebrow">Video</div>${videoHTML(d)}</section>
   <section><div class="eyebrow">For ${st.kids} kids</div><div>${esc(groupText(d,st.kids,st.hoops).t)}</div></section>
   <div class="row"><button class="btn primary" data-add="${d.id}">Add to session</button><button class="btn" data-fav="${d.id}" aria-pressed="${favs.has(d.id)}">★ Favorite</button></div>`;
-  const dg=$("#dlg");dg.style.transform="";dg.style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
+  const dg=$("#dlg");$("#dlgPanel").style.transform="";$("#dlgPanel").style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
 }
 $("#dlg").addEventListener("click",e=>{if(e.target===$("#dlg"))$("#dlg").close()});
 $("#dlgClose").addEventListener("click",()=>$("#dlg").close());
 $("#dlg").addEventListener("close",()=>window.stopDiagramPlay&&stopDiagramPlay());
 /* swipe the top bar down to close */
-(()=>{let y0=null;const top=$("#dlgTop"),dlg=$("#dlg");
+(()=>{let y0=null;const top=$("#dlgTop"),dlg=$("#dlgPanel");
  top.addEventListener("touchstart",e=>{y0=e.touches[0].clientY;dlg.style.transition="none"},{passive:true});
  top.addEventListener("touchmove",e=>{if(y0==null)return;const dy=Math.max(0,e.touches[0].clientY-y0);dlg.style.transform=`translateY(${dy}px)`},{passive:true});
  top.addEventListener("touchend",e=>{if(y0==null)return;const dy=e.changedTouches[0].clientY-y0;y0=null;dlg.style.transition="transform .2s";dlg.style.transform="";if(dy>80)dlg.close()});
@@ -765,7 +776,7 @@ function openPlay(i){
   <section><div class="eyebrow">Coaching points</div><ul>${p.k.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
   ${links.length?`<section><div class="eyebrow">Teach it with</div><div class="related">${links.map(d=>`<button class="btn sm" data-open="${d.id}">${esc(d.n)}</button>`).join("")}</div></section>`:""}
   ${isSpec?"":`<div class="muted" style="font-size:13px">Calls for these standard plays are suggestions. Rename them to match your team.</div>`}`;
-  const dg=$("#dlg");dg.style.transform="";dg.style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
+  const dg=$("#dlg");$("#dlgPanel").style.transform="";$("#dlgPanel").style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
 }
 document.addEventListener("click",e=>{const c=e.target.closest("[data-play]");if(c&&!e.target.closest("[data-open]"))openPlay(+c.dataset.play)});
 
@@ -877,7 +888,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v27";
+const APP_VERSION="v28";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});

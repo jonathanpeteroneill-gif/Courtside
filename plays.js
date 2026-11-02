@@ -357,7 +357,7 @@ def("Free Throw Cool-Down",F("10 free throws each · stretch between shots",ftLi
 def("Shot of the Day",F("Coach picks a shot · one attempt each",[...OB(25,45),SH(25,43),Q(10,46,2,0,4)]));
 def("Team Huddle & Shout-outs",F("Key point · shout-outs · team break",[...circle(10,25,40,6.5),C(25,40)]));
 // ======================================================= REP / ELITE
-def("Movement Prep & Activation",F("Band walks and mobility on the baseline",lanes([12,25,38],2,14),1),F("Skips and build-up sprints to half court",lanes([12,25,38],2,45),1));
+def("Movement Prep & Activation",F("Lateral lunge walks and mobility on the baseline",lanes([12,25,38],2,14),1),F("Skips and build-up sprints to half court",lanes([12,25,38],2,45),1));
 def("Shooting Ramp",
  F("Form: 10 makes inside 5 feet",[...OB(30,9,"S"),SH(29,8),O(22,7,"R")]),
  F("Mid-range: 5 spots, 2 makes each",[K(10,12),K(17,19),K(25,21),K(33,19),K(40,12),O(33,19,"S"),SH(32,17),O(25,8,"R"),PS(26.5,9,32,17.5)]),
