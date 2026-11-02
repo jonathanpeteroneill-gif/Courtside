@@ -209,6 +209,8 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 .dgc-hint{text-align:center;font-size:12px;color:var(--muted)}
 .steps-badge{position:absolute;left:22px;top:20px;background:var(--black);color:var(--white);font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
 .video{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:10px;overflow:hidden;background:var(--black)}
+.reel{width:100%;max-width:340px;height:600px;max-height:75vh;border-radius:12px;overflow:hidden;background:var(--black);margin:0 auto}
+.reel iframe{width:100%;height:100%;border:0}
 .video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .run .dgc-slide figcaption{color:var(--white)}.run .dgc-btn{background:transparent;color:var(--white);border-color:rgba(255,255,255,.3)}.run .dgc-hint{color:rgba(255,255,255,.6)}
 .mv{display:block;width:100%;height:auto;color:var(--ink)}
@@ -566,6 +568,13 @@ function renderLib(){
   $("#libCount").textContent=`${r.length} of ${D.length} drills`;
   $("#grid").innerHTML=r.length?r.map(card).join(""):`<div class="empty">No drills match. Clear a filter or try another word.</div>`;
 }
+function videoHTML(d){
+  const v=VIDEOS[d.n], yt=typeof v==="string"?v:v&&v.yt, ig=v&&v.ig;
+  const ytFrame=id=>`<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1" title="${esc(d.n)} video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe></div>`;
+  if(ig) return `<div class="reel"><iframe src="https://www.instagram.com/reel/${ig}/embed/" title="${esc(d.n)} reel" loading="lazy" allowfullscreen scrolling="no"></iframe></div><div class="row" style="font-size:13px"><a class="muted" href="https://www.instagram.com/reel/${ig}/" target="_blank" rel="noopener">Open on Instagram ↗</a>${yt?`<a class="muted" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener">More on YouTube ↗</a>`:""}</div>`;
+  if(yt) return `${ytFrame(yt)}<a class="muted" style="font-size:13px" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener">Open on YouTube ↗</a>`;
+  return `<a class="btn" style="width:max-content" href="https://www.youtube.com/results?search_query=${encodeURIComponent("basketball "+d.n+" drill")}" target="_blank" rel="noopener">▶ Find videos on YouTube</a><div class="muted" style="font-size:13px">No verified video for this one yet. This searches YouTube.</div>`;
+}
 function openDrill(id){
   const d=D[id];
   $("#dlgBody").innerHTML=`  <div class="row"><span class="tag ${d.c==="games"?"game":""}">${C[d.c].label}</span><span class="meta">${d.t} min · ${d.p[0]}+ kids · groups of up to ${d.p[1]}</span></div>
@@ -577,7 +586,7 @@ function openDrill(id){
   <section><div class="eyebrow">How to run it</div><ol>${d.d.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
   <section><div class="eyebrow">Coaching points</div><ul>${d.k.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
   <section><div class="eyebrow">Make it harder</div><div>${esc(d.v)}</div></section>
-  <section><div class="eyebrow">Video</div>${VIDEOS[d.n]?`<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${VIDEOS[d.n]}?rel=0&playsinline=1" title="${esc(d.n)} video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe></div><a class="muted" style="font-size:13px" href="https://www.youtube.com/watch?v=${VIDEOS[d.n]}" target="_blank" rel="noopener">Open on YouTube ↗</a>`:`<a class="btn" style="width:max-content" href="https://www.youtube.com/results?search_query=${encodeURIComponent("basketball "+d.n+" drill")}" target="_blank" rel="noopener">▶ Find videos on YouTube</a><div class="muted" style="font-size:13px">No verified video for this one yet. This searches YouTube.</div>`}</section>
+  <section><div class="eyebrow">Video</div>${videoHTML(d)}</section>
   <section><div class="eyebrow">For ${st.kids} kids</div><div>${esc(groupText(d,st.kids,st.hoops).t)}</div></section>
   <div class="row"><button class="btn primary" data-add="${d.id}">Add to session</button><button class="btn" data-fav="${d.id}" aria-pressed="${favs.has(d.id)}">★ Favorite</button></div>`;
   const dg=$("#dlg");dg.style.transform="";dg.style.transition="";dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
@@ -695,7 +704,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v15";
+const APP_VERSION="v16";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
