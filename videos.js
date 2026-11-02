@@ -33,6 +33,8 @@ window.VIDEOS = {
 "21":"QzfE4letwqg",
 "Pick & Roll Basics":"ffjo8ReDzhA",
 "5-Out Screen Away":"QrZxLwRHxl0",
+"5-Out Motion":"n985g5aqSQg",
+"5-Out Hand-Off":"uE0ZHTqiJO0",
 "Pick & Roll Reads vs Coverage":"_D_PuriQ7Tk",
 "Give & Go":"njTCssKLmkY",
 "Backdoor Cuts":"Is7GyXhvvag",

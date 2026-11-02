@@ -421,7 +421,7 @@ const store = {
   get(k,f){try{const v=localStorage.getItem("cs_"+PROG+"_"+k);return v?JSON.parse(v):f}catch(e){return f}},
   set(k,v){try{localStorage.setItem("cs_"+PROG+"_"+k,JSON.stringify(v))}catch(e){}}
 };
-let favs = new Set(store.get("favs",[]));
+let favs = new Set();
 const st = Object.assign({},PROGRAMS[PROG].defaults, store.get("settings",{}));
 if(!st.type) st.type=PROGRAMS[PROG].defaults.type;
 
@@ -448,7 +448,7 @@ const TYPES={
     games:["Kill Scrimmage","Situational 5v5","Scrimmage with Rules","3 Stops Drill","Advantage / Disadvantage","3v3 Cutthroat"]}
 };
 // In-play decision drills (IQ building)
-const IQ=new Set(["5-Out Screen Away","Monkey in the Middle","Bull in the Ring","5-Pass Game","1v1 From the Wing","Help & Recover 2v2","Deny the Wing","Pick & Roll Defense","Shell Drill","Rebound War","Give & Go","Backdoor Cuts","Pick & Roll Basics","Pass & Screen Away","Drive & Kick","5-Out Motion","Fill the Spot","3v3 Cutthroat","3-on-2, 2-on-1","11-Man Break","2v1 Full Court","Sprint Back Transition","Chase-Down Layups","Pressure Dribble","Retreat Dribble vs Trap","King of the Court","Scrimmage with Rules","1v1 Battle Ladder","Handle into Reads","1v2 Pressure Breaker","Movement Shooting Reads","Closeout Attack Reads","Inside / Outside Hand Reads","Rim Protector Reads","Advantage Finishing","Pocket & Lob Reads 2v1","Get Open vs Denial","Drive, Draw, Dish","Hit-Ahead Drill","Shell Rebounding","Offensive Rebound Pursuit","Shell Drill: Rotations","Ball Screen Coverages","Closeout 1v1: 3 Stops","X-Out Scramble","Defensive Transition: Tag-Up & Load","Post Defense","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Reads vs Coverage","Advantage 4v3","Horns Set & Counters","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations","Read & React 5v0","Make/Miss Transition 5v5","4v3 Continuous","Numbers Defense: Tandem","3 Stops Drill","Advantage / Disadvantage","Situational 5v5","Kill Scrimmage","2v1 Rapid","5-Man Weave into 3v2","High-Low Entry 2v2","Press Break","Inbounds Play: Box","Crash the Boards"]);
+const IQ=new Set(["5-Out Screen Away","5-Out Hand-Off","Monkey in the Middle","Bull in the Ring","5-Pass Game","1v1 From the Wing","Help & Recover 2v2","Deny the Wing","Pick & Roll Defense","Shell Drill","Rebound War","Give & Go","Backdoor Cuts","Pick & Roll Basics","Pass & Screen Away","Drive & Kick","5-Out Motion","Fill the Spot","3v3 Cutthroat","3-on-2, 2-on-1","11-Man Break","2v1 Full Court","Sprint Back Transition","Chase-Down Layups","Pressure Dribble","Retreat Dribble vs Trap","King of the Court","Scrimmage with Rules","1v1 Battle Ladder","Handle into Reads","1v2 Pressure Breaker","Movement Shooting Reads","Closeout Attack Reads","Inside / Outside Hand Reads","Rim Protector Reads","Advantage Finishing","Pocket & Lob Reads 2v1","Get Open vs Denial","Drive, Draw, Dish","Hit-Ahead Drill","Shell Rebounding","Offensive Rebound Pursuit","Shell Drill: Rotations","Ball Screen Coverages","Closeout 1v1: 3 Stops","X-Out Scramble","Defensive Transition: Tag-Up & Load","Post Defense","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Reads vs Coverage","Advantage 4v3","Horns Set & Counters","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations","Read & React 5v0","Make/Miss Transition 5v5","4v3 Continuous","Numbers Defense: Tandem","3 Stops Drill","Advantage / Disadvantage","Situational 5v5","Kill Scrimmage","2v1 Rapid","5-Man Weave into 3v2","High-Low Entry 2v2","Press Break","Inbounds Play: Box","Crash the Boards"]);
 const TEAMX=new Set(["Shell Drill","Shell Drill: Rotations","Ball Screen Coverages","X-Out Scramble","Defensive Transition: Tag-Up & Load","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Defense","Crash the Boards","Shell Rebounding","3 Stops Drill","Kill Scrimmage","Situational 5v5","Scrimmage with Rules","Advantage / Disadvantage","3v3 Cutthroat","Line Sprints","17s","Weave into Layup Race","Layup Race"]);
 const tagsOf=d=>{const t=new Set();const iq=IQ.has(d.n);if(iq)t.add("iq");
   if(["offense","transition"].includes(d.c)||TEAMX.has(d.n))t.add("team");
@@ -456,6 +456,10 @@ const tagsOf=d=>{const t=new Set();const iq=IQ.has(d.n);if(iq)t.add("iq");
   if(d.c==="games"&&TYPES.skill.games.includes(d.n))t.add("skill");
   return t};
 D.forEach(d=>d.tags=tagsOf(d));
+// Saved data uses drill names (stable), not list positions
+const byName={};D.forEach(d=>byName[d.n]=d.id);
+const toSave=pl=>pl?pl.map(b=>b.brk?b:{n:D[b.id].n,m:b.m}):pl;
+const fromSave=pl=>Array.isArray(pl)?pl.map(b=>b.brk?b:(b.n!=null?{id:byName[b.n],m:b.m}:b)).filter(b=>b.brk||(b.id!=null&&D[b.id])):null;
 const typeOK=(d,type)=>type==="skill"?d.tags.has("skill"):type==="iq"?d.tags.has("iq"):(d.tags.has("iq")||d.tags.has("team"));
 const FOCUS=TYPES[st.type].focus;
 const DUR=[30,45,60,75,90];
@@ -520,8 +524,10 @@ function build(){
   }
 }
 
-let plan = store.get("plan",null);
-function regen(){plan=build();store.set("plan",plan);renderPlan()}
+favs = new Set((store.get("favs",[])||[]).map(x=>typeof x==="string"?byName[x]:x).filter(x=>x!=null&&D[x]));
+const saveFavs=()=>store.set("favs",[...favs].map(id=>D[id].n));
+let plan = fromSave(store.get("plan",null));
+function regen(){plan=build();store.set("plan",toSave(plan));renderPlan()}
 
 function fmt(m){return `${Math.floor(m/60)?Math.floor(m/60)+":"+String(m%60).padStart(2,"0"):"0:"+String(m).padStart(2,"0")}`}
 function renderPlan(){
@@ -552,7 +558,7 @@ function swap(idx){
   let p=D.filter(d=>d.c===cur.c&&fits(d,o)&&!inPlan.has(d.id)&&(["warm","cool","games"].includes(d.c)||typeOK(d,st.type)));
   if(!p.length) p=D.filter(d=>d.c===cur.c&&fits(d,o)&&!inPlan.has(d.id));
   if(!p.length) {toast("No other "+C[cur.c].label.toLowerCase()+" drills fit this group");return}
-  plan[idx].id=pick(p).id; store.set("plan",plan); renderPlan();
+  plan[idx].id=pick(p).id; store.set("plan",toSave(plan)); renderPlan();
 }
 
 /* segmented controls */
@@ -571,15 +577,15 @@ document.addEventListener("click",e=>{
   const s=e.target.closest("[data-step]"); if(s){const i=$("#"+s.dataset.step);i.value=(+i.value)+(+s.dataset.d);i.dispatchEvent(new Event("change"));return}
   const o=e.target.closest("[data-open]"); if(o){openDrill(+o.dataset.open);return}
   const sw=e.target.closest("[data-swap]"); if(sw){swap(+sw.dataset.swap);return}
-  const rm=e.target.closest("[data-rm]"); if(rm){plan.splice(+rm.dataset.rm,1);store.set("plan",plan);renderPlan();return}
-  const tm=e.target.closest("[data-tm]"); if(tm){const b=plan[+tm.dataset.tm];b.m=Math.max(1,b.m+(+tm.dataset.d));store.set("plan",plan);renderPlan();return}
-  const f=e.target.closest("[data-fav]"); if(f){const id=+f.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);store.set("favs",[...favs]);f.setAttribute("aria-pressed",favs.has(id));if(view==="saved")renderSaved();return}
-  const add=e.target.closest("[data-add]"); if(add){const d=D[+add.dataset.add];const at=plan.length&&!plan[plan.length-1].brk&&D[plan[plan.length-1].id].c==="cool"?plan.length-1:plan.length;plan.splice(at,0,{id:d.id,m:d.t});store.set("plan",plan);renderPlan();$("#dlg").close();toast("Added to session");return}
-  const ld=e.target.closest("[data-load]"); if(ld){const s=store.get("sessions",[])[+ld.dataset.load];const prevType=st.type;Object.assign(st,s.st);if(!st.type)st.type=prevType;plan=s.plan;saveSet();store.set("plan",plan);if(st.type!==prevType){location.hash="plan";location.reload();return}syncControls();renderPlan();location.hash="plan";return}
+  const rm=e.target.closest("[data-rm]"); if(rm){plan.splice(+rm.dataset.rm,1);store.set("plan",toSave(plan));renderPlan();return}
+  const tm=e.target.closest("[data-tm]"); if(tm){const b=plan[+tm.dataset.tm];b.m=Math.max(1,b.m+(+tm.dataset.d));store.set("plan",toSave(plan));renderPlan();return}
+  const f=e.target.closest("[data-fav]"); if(f){const id=+f.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);saveFavs();f.setAttribute("aria-pressed",favs.has(id));if(view==="saved")renderSaved();return}
+  const add=e.target.closest("[data-add]"); if(add){const d=D[+add.dataset.add];const at=plan.length&&!plan[plan.length-1].brk&&D[plan[plan.length-1].id].c==="cool"?plan.length-1:plan.length;plan.splice(at,0,{id:d.id,m:d.t});store.set("plan",toSave(plan));renderPlan();$("#dlg").close();toast("Added to session");return}
+  const ld=e.target.closest("[data-load]"); if(ld){const s=store.get("sessions",[])[+ld.dataset.load];const prevType=st.type;Object.assign(st,s.st);if(!st.type)st.type=prevType;plan=fromSave(s.plan)||[];saveSet();store.set("plan",toSave(plan));if(st.type!==prevType){location.hash="plan";location.reload();return}syncControls();renderPlan();location.hash="plan";return}
   const dl=e.target.closest("[data-del]"); if(dl){const a=store.get("sessions",[]);a.splice(+dl.dataset.del,1);store.set("sessions",a);renderSaved();return}
 });
 $("#regen").onclick=regen;
-$("#save").onclick=()=>{const a=store.get("sessions",[]);const d=new Date();a.unshift({name:`${TYPES[st.type].label} · ${FOCUS[st.focus].label} · ${st.kids} kids · ${st.dur} min`,date:d.toLocaleDateString(undefined,{month:"short",day:"numeric"}),st:{...st},plan:JSON.parse(JSON.stringify(plan))});store.set("sessions",a.slice(0,30));toast("Session saved")};
+$("#save").onclick=()=>{const a=store.get("sessions",[]);const d=new Date();a.unshift({name:`${TYPES[st.type].label} · ${FOCUS[st.focus].label} · ${st.kids} kids · ${st.dur} min`,date:d.toLocaleDateString(undefined,{month:"short",day:"numeric"}),st:{...st},plan:toSave(plan)});store.set("sessions",a.slice(0,30));toast("Session saved")};
 function syncControls(){["dur","lvl","focus","type"].forEach(k=>[...$("#"+k).children].forEach(b=>b.setAttribute("aria-pressed",String(st[k])===b.dataset.v)));["kids","hoops","teams"].forEach(k=>$("#"+k).value=st[k])}
 
 /* teams */
@@ -658,7 +664,7 @@ $("#dlgClose").addEventListener("click",()=>$("#dlg").close());
 function renderSaved(){
   $("#savedEyebrow").textContent=`${PROGRAMS[PROG].name} · stored on this phone`;
   const s=store.get("sessions",[]);
-  $("#savedSessions").innerHTML=s.length?s.map((x,i)=>`<div class="panel row" style="justify-content:space-between;padding:12px 16px"><div><b>${esc(x.name)}</b><div class="muted" style="font-size:13px">${esc(x.date)} · ${x.plan.filter(b=>!b.brk).map(b=>D[b.id]?.n).join(", ")}</div></div><div class="row"><button class="btn sm primary" data-load="${i}">Open</button><button class="btn sm" data-del="${i}">Delete</button></div></div>`).join(""):`<div class="empty">No saved sessions yet. Build one on the Plan tab and press Save.</div>`;
+  $("#savedSessions").innerHTML=s.length?s.map((x,i)=>`<div class="panel row" style="justify-content:space-between;padding:12px 16px"><div><b>${esc(x.name)}</b><div class="muted" style="font-size:13px">${esc(x.date)} · ${x.plan.filter(b=>!b.brk).map(b=>b.n||D[b.id]?.n).join(", ")}</div></div><div class="row"><button class="btn sm primary" data-load="${i}">Open</button><button class="btn sm" data-del="${i}">Delete</button></div></div>`).join(""):`<div class="empty">No saved sessions yet. Build one on the Plan tab and press Save.</div>`;
   const f=D.filter(d=>favs.has(d.id));
   $("#favGrid").innerHTML=f.length?f.map(card).join(""):`<div class="empty">Tap ★ on any drill to keep it here.</div>`;
 }
@@ -759,7 +765,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v19";
+const APP_VERSION="v20";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});

@@ -289,8 +289,10 @@ def("Drive & Kick",
  F("Drive into the lane to draw help",[...OB(25,30,"1"),O(3,4,"2"),O(47,4,"3"),X(14,12),D(25,28,26,16),M(14,12,21,14)]),
  F("Kick to the open corner · catch ready, shoot",[O(26,16,"1"),O(3,4,"2"),O(47,4,"3"),X(21,14),PS(27.5,15,45.5,5),SH(46,5)]));
 def("5-Out Motion",
- F("Pass and basket cut",[O(3,4,"5"),O(8,22,"4"),...OB(25,29,"1"),O(42,22,"2"),O(47,4,"3"),PS(26.5,28,40.5,23),M(25,27,26,8)]),
- F("Everyone fills the open spot",[O(3,4,"5"),O(8,22,"4"),O(26,8,"1"),O(42,22,"2"),B(43.6,23.6),O(47,4,"3"),M(9,24,23,29),M(4.5,5,8,20),M(26,8,3,5)]));
+ F("5-out spacing · 1 passes to the wing and basket cuts",[...OB(25,30,"1"),O(8,23,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),PS(26.5,29,40.5,24),M(24,28,23,18,26,8)]),
+ F("No pass back: 1 exits to the weak-side corner · everyone fills toward the ball",[O(26,8,"1"),O(8,23,"2"),O(42,23,"3"),B(43.6,24.6),O(3,4,"4"),O(47,4,"5"),M(24,8,6,4),M(4.5,6,8,20),M(10,24.5,23,29)]),
+ F("Spots refilled · 3 passes to the top and the pattern repeats",[O(5,4,"1"),O(8,21,"4"),O(25,30,"2"),O(42,23,"3"),B(43.6,24.6),O(47,4,"5"),PS(40.5,23,26.5,29)]),
+ F("Denied on the wing, or dribbled at: go backdoor",[O(25,30,"2"),B(26.6,31.6),O(42,23,"3"),X(40,20.5),O(8,21,"4"),O(5,4,"1"),O(47,4,"5"),M(43,21,35,12,29,7),PS(25,28,30,9),T(25,40,"Denied = backdoor")]));
 def("Fill the Spot",F("A player cuts · next player fills the empty spot",[K(3,6),K(8,24),K(25,31),K(42,24),K(47,6),O(3,4),O(8,22),...OB(25,29),O(42,22),O(47,4),M(42,20,30,8),M(46,6,42,20)]));
 def("Inbounds Play: Box",
  F("Box set: four players around the lane",[...OB(31,-2,"1"),O(19,8,"4"),O(31,8,"5"),O(19,18,"2"),O(31,18,"3")]),
@@ -485,4 +487,10 @@ def("3 Stops Drill",F("Defense needs 3 straight stops to rotate to offense",[O(8
 def("Advantage / Disadvantage",F("Start 2v2 · coach adds a player to one team",[...OB(18,28),O(32,28),X(19,24.5),X(31,24.5),C(48,30),O(48,40),M(46,40,38,22)]));
 def("Situational 5v5",F("Coach sets the score and clock",[O(30,10),O(30,40),...OB(20,25),O(12,13),O(10,36),X(26,12),X(26,38),X(16,25),X(9,16),X(8,33),T(65,25,"Up 1 · 30 seconds · our ball")],1));
 def("Kill Scrimmage",F("Stop = 1 point · 3 straight stops = a kill (3 points)",[O(30,10),O(30,40),...OB(20,25),O(12,13),O(10,36),X(26,12),X(26,38),X(16,25),X(9,16),X(8,33),T(65,25,"Play to 10")],1));
+def("5-Out Hand-Off",
+ F("5-out spacing · 1 dribbles at the wing (2)",[...OB(25,30,"1"),O(8,23,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),D(23.5,30,13,26)]),
+ F("Hand-off: 2 comes off 1's hip, tight · 1 sits down like a screen",[O(14,27,"1"),B(15.6,28.6),O(7,19,"2"),X(4.5,16.5,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),M(8,21,11,28,19,31),T(14,35,"hand-off")]),
+ F("2 reads: trail = attack · under = shoot · jump = backdoor",[O(19,31,"2"),B(20.6,32.6),O(14,27,"1"),X(12.5,24.5,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),D(20.5,29.5,24,14),SH(19.5,29.5),T(25,41,"jumped the hand-off? 2 goes backdoor instead")]),
+ F("1 rolls or pops · the empty wing gets filled from the corner",[O(21,30,"2"),B(22.6,31.6),O(14,27,"1"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),M(15,25,20,11),M(4.5,6,7,20)]),
+ F("Chain it: 2 dribbles straight into the next hand-off with 3 · then play live",[O(21,30,"2"),B(22.6,31.6),O(42,23,"3"),O(7,21,"4"),O(20,10,"1"),O(47,4,"5"),D(23,30,36,26.5),T(25,41,"5v0 → shadow D → live")]));
 })();
