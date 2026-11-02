@@ -62,7 +62,6 @@ window.VIDEOS = {
 "Two-Ball Full Court":"vDf1_hYaL5Q",
 "Stationary Pound Series":"DvxpDuV03WE",
 "Change of Pace (Hesi)":"UawPTvo99uw",
-"Tennis Ball Toss Dribble":"wkusPZJKkis",
 "3v3 Cutthroat":"tFAQIax5wSg",
 "Post Entry Passing":"XefDqM9nrTo",
 "High-Low Entry 2v2":"OfiV-0qRtr0",

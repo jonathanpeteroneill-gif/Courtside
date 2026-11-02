@@ -64,6 +64,12 @@ twoBall:{v:FRONT,ms:180,k:[S({...stanceF,ra:[30,60],la:[-30,-60],b:[["rh",1],["l
 slaps:{v:FRONT,ms:180,k:[S({la:[-40,40],ra:[40,-40],b:[["rh",1]]}),S({la:[-60,10],ra:[60,-10],b:[[[3,-46],1]]})],cue:"Slap the ball hard, both hands"},
 jab:{v:SIDE,ms:380,k:[S({...tripleS,b:[["rh",1]]}),S({...tripleS,rl:[50,15],b:[["rh",1]]}),S({...tripleS,b:[["rh",1]]})],cue:"Ball on the hip, short sharp jab, stay balanced"},
 bumpEuro:{v:SIDE,ms:340,dir:1,k:[S({...jogA,b:[["ch",1]]}),S({t:15,rl:[50,5],ll:[-25,-40],la:[55,140],ra:[55,140],b:[["ch",1]]}),S({t:-5,rl:[35,0],ll:[-20,-30],la:[60,150],ra:[40,110],b:[["ch",1]]}),S({t:10,ll:[45,0],rl:[-15,-45],la:[60,150],ra:[60,150],b:[["ch",1]]}),S({rl:[95,0],ll:[0,0],ra:[168,176],la:[120,160],y:7,b:[["rh",1]]})],cue:"Plant, bump with the shoulder, step across, finish high"},
+lateralWalk:{v:FRONT,ms:320,dir:.6,k:[S({...squatF}),S({...squatF,rl:[42,15]}),S({...squatF,ll:[-20,0],rl:[32,6]})],cue:"Stay low, push the knees out, small steps"},
+lineHops:{v:FRONT,ms:220,k:[S({la:[-15,40],ra:[15,-40]}),S({la:[-15,40],ra:[15,-40],y:5})],cue:"Two feet, quick hops over the line"},
+sideHops:{v:FRONT,ms:220,k:[S({la:[-15,40],ra:[15,-40],x:-4}),S({la:[-15,40],ra:[15,-40],y:5}),S({la:[-15,40],ra:[15,-40],x:4}),S({la:[-15,40],ra:[15,-40],y:5})],cue:"Side to side over the line, feet together"},
+singleHops:{v:FRONT,ms:220,k:[S({la:[-15,40],ra:[15,-40],ll:[-8,-120]}),S({la:[-15,40],ra:[15,-40],ll:[-8,-120],y:5})],cue:"One leg, stay balanced"},
+tuckJump:{v:SIDE,ms:300,k:[S({}),S({t:30,ll:[35,-25],rl:[35,-25],la:[-40,-30],ra:[-40,-30]}),S({y:14,ll:[100,-10],rl:[100,-10],la:[60,100],ra:[60,100]}),S({t:25,ll:[35,-25],rl:[35,-25],la:[60,90],ra:[60,90]})],cue:"Knees to chest, land soft"},
+verticalJump:{v:SIDE,ms:320,k:[S({t:35,ll:[40,-25],rl:[40,-25],la:[-50,-40],ra:[-50,-40]}),S({y:16,la:[170,176],ra:[170,176]}),S({t:25,ll:[35,-25],rl:[35,-25],la:[60,90],ra:[60,90]}),S({})],cue:"Swing the arms, explode straight up"},
 shoot:{v:SIDE,ms:300,k:[S({ll:[25,-15],rl:[30,-15],ra:[40,160],la:[50,150],b:[["rh",1]]}),S({ra:[160,175],la:[150,170],y:2,b:[["rh",1]]}),S({ra:[165,205],la:[150,165],y:2,b:[[[16,-78],1]]}),S({ra:[160,205],la:[140,150],b:[[[26,-82],1]]})],cue:"Legs, elbow under, hold the follow-through"}
 };
 window.MOVES=M;
@@ -71,8 +77,8 @@ window.MOVES=M;
 const L=(...a)=>a.map(x=>Array.isArray(x)?{k:x[0],s:x[1],n:x[2]}:{k:x,s:30});
 window.DRILL_MOVES={
 "Dynamic Line Warm-up":L(["highKnees",30,"High knees"],["buttKicks",30,"Butt kicks"],["karaoke",30,"Karaoke"],["lunge",30,"Walking lunge + twist"],["backpedal",30,"Backpedal"],["slide",30,"Defensive slides"]),
-"Movement Prep & Activation":L(["bandWalk",40,"Band walks"],["hipAirplane",40,"Hip airplanes"],["worldsGreatest",40,"World's greatest stretch"],["aSkip",30,"A-skips"],["bSkip",30,"B-skips"],["karaoke",30,"Carioca"],["pogo",30,"Pogo jumps"],["sprint",20,"Build-up sprints"]),
-"Jump Rope Footwork":L(["ropeTwo",30,"Two feet"],["ropeAlt",30,"Alternating feet"],["ropeSide",30,"Side to side"],["ropeSingle",30,"Single leg"],["ropeTwo",30,"Fast feet"]),
+"Movement Prep & Activation":L(["lateralWalk",40,"Lateral lunge walks"],["hipAirplane",40,"Hip airplanes"],["worldsGreatest",40,"World's greatest stretch"],["aSkip",30,"A-skips"],["bSkip",30,"B-skips"],["karaoke",30,"Carioca"],["pogo",30,"Pogo jumps"],["sprint",20,"Build-up sprints"]),
+"Fast Feet Footwork":L(["lineHops",30,"Two-foot hops"],["fastFeet",30,"Alternating feet"],["sideHops",30,"Side to side"],["singleHops",30,"Single leg"],["fastFeet",30,"Fast feet"]),
 "Fast Feet & Sprints":L(["fastFeet",10,"Fast feet"],["sprint",10,"Sprint"],["fastFeet",10,"Fast feet"],["sprint",10,"Sprint"]),
 "Jog & Stretch Circle":L(["jog",60,"Easy laps"],["armCircles",30,"Arm circles"],["legSwings",30,"Leg swings"],["worldsGreatest",40,"Hip opener"]),
 "Ball Slaps & Wraps":L(["slaps",20,"Ball slaps"],["wraps",30,"Waist wraps"],["betweenLegs",30,"Figure 8 through the legs"]),
@@ -82,7 +88,7 @@ window.DRILL_MOVES={
 "Elite Combo Series":L(["crossover",30,"Snatchback into crossover"],["betweenLegs",30,"In-and-out into between"],["behindBack",30,"Between, behind, explode"],["pound",30,"Shift into crossover"]),
 "Blind Dribble":L(["pound",20,"Eyes closed, right hand"],["pound",20,"Eyes closed, left hand"],["crossover",20,"Eyes closed crossovers"]),
 "Dribble Simon Says":L(["pound",20,"Right hand"],["crossover",20,"Crossover"]),
-"Tennis Ball Toss Dribble":L(["pound",30,"Dribble while tossing"]),
+"Eyes-Up Number Dribble":L(["pound",30,"Dribble, eyes on the caller"]),
 "Defensive Slides":L(["slide",30,"Slide"],["stance",15,"Rest in stance"],["slide",30,"Slide"]),
 "Defensive Slide Ladder":L(["slide",30,"Slide"],["stance",15,"Rest"],["slide",30,"Slide"],["stance",15,"Rest"],["slide",30,"Slide"]),
 "Minute Drills":L(["slide",30,"Slides"],["sprint",30,"Sprints"],["stance",30,"Rest"]),
@@ -94,7 +100,7 @@ window.DRILL_MOVES={
 "Agility Ladder":L(["fastFeet",20,"Two feet in each box"],["inOut",20,"In and out"],["slide",20,"Lateral shuffle"],["inOut",20,"Ickey shuffle"]),
 "Triple Threat Series":L(["jab",30,"Jab step"]),
 "Shot Prep Footwork":L(["jab",30,"Jab series"]),
-"Plyometric Circuit":L(["boxJump",40,"Box jumps"],["lateralBound",40,"Lateral bounds"],["depthJump",40,"Depth jumps"],["broadJump",40,"Broad jumps"]),
+"Plyometric Circuit":L(["tuckJump",40,"Tuck jumps"],["lateralBound",40,"Lateral bounds over a cone"],["verticalJump",40,"Vertical jumps"],["broadJump",40,"Broad jumps"]),
 "Line Sprints":L(["sprint",30,"Line sprints"]),
 "17s":L(["sprint",60,"Sideline to sideline"]),
 "Partner Chase":L(["sprint",15,"Chase"]),

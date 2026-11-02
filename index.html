@@ -497,7 +497,9 @@ if(!FOCUS[st.focus])st.focus="balanced";
 
 function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
 const pick = a=>a[Math.floor(Math.random()*a.length)];
-const fits = (d,{kids,lvl,hoops})=> d.l.includes(String(lvl)) && d.p[0]<=kids && !(d.h && hoops<1);
+// Equipment on hand: balls, court, hoops, D-men, cones, pads, coaches. Anything else is left out.
+const NO_GEAR=/rope|band|ladder|tennis|boxes|steps|chair|mats|pinnie|bib|clock|tape/i;
+const fits = (d,{kids,lvl,hoops})=> d.l.includes(String(lvl)) && d.p[0]<=kids && !(d.h && hoops<1) && !NO_GEAR.test(d.e);
 
 function groupText(d,kids,hoops){
   const [mn,mx]=d.p;
@@ -842,7 +844,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v25";
+const APP_VERSION="v26";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});

@@ -28,7 +28,7 @@ def("Partner Mirror",
 def("Everybody's It",
  F("Everyone dribbles inside the box and tries to tag",[K(6,18),K(44,18),K(6,45),K(44,45),...OB(14,24),...OB(30,26),...OB(20,36),...OB(36,38),...OB(11,40),D(14,24,20,28),D(30,26,35,31),D(20,36,15,33)]),
  F("Tagged or lost the ball: 5 crossovers outside, then back in",[K(6,18),K(44,18),K(6,45),K(44,45),...OB(14,24),...OB(30,26),...OB(36,38),...OB(48,30),M(48,32,42,36),T(25,12,"Shrink the box each minute")]));
-def("Jump Rope Footwork",F("Spread out with a rope each · 30s per variation",spread(0)));
+def("Fast Feet Footwork",F("Spread out on the court lines · 30s per variation",spread(0)));
 def("Jog & Stretch Circle",
  F("Two easy laps around the court",[O(4,4),O(8,4),O(12,4),M(16,3,90,3,91,47,3,47,3,8)],1),
  F("Circle at center court · captain leads stretches",[...circle(10,47,25,9),C(47,25)],1));
@@ -55,7 +55,7 @@ def("Full-Court Combo Moves",
  F("Cone 2 (half court): between the legs",[K(19,25),K(47,25),K(75,25),O(28,21),D(30,21,45,25),M(47,23.5,50,29,56,29)],1),
  F("Cone 3: behind the back, finish at the far hoop",[K(19,25),K(47,25),K(75,25),O(56,29),D(58,29,73,25),M(75,23.5,78,21,86,24),SH(86,24)],1));
 def("Spider Dribble",F("Wide stance, ball between the feet · front-front-back-back",spread(1)));
-def("Tennis Ball Toss Dribble",F("Dribble one hand, toss and catch the tennis ball with the other",spread(1)),F("Partner version: dribble and play catch",[...pairs("over"),T(25,44,"Dashed line = tennis ball toss")]));
+def("Eyes-Up Number Dribble",F("Pairs: caller flashes fingers, dribbler calls the number",[O(10,22,"D"),B(11.6,23.6),C(10,32),O(25,22,"D"),B(26.6,23.6),C(25,32),O(40,22,"D"),B(41.6,23.6),C(40,32),T(25,40,"Eyes on the caller")]));
 def("Change of Pace (Hesi)",
  F("Speed dribble to the FT line",lanes([12,25,38],2,17,{ball:1,drib:1}),1),
  F("Hesitate: chest up, feet chopping · then explode",[O(19,12),O(19,25),O(19,38),T(19,6,"hesi"),D(21,12,45,12),D(21,25,45,25),D(21,38,45,38)],1),
@@ -244,7 +244,7 @@ def("Jump Stop & Pivot",
  F("Jog and jump stop on the whistle",lanes([10,20,30,40],2,18),1),
  F("Front pivot 4, reverse pivot 4, continue",[O(20,10),O(20,20),O(20,30),O(20,40),T(20,4,"pivot"),M(22,10,34,10),M(22,20,34,20),M(22,30,34,30),M(22,40,34,40)],1));
 def("Triple Threat Series",F("Triple threat: jab, jab-shot, jab-drive, rip through",spread(1)));
-def("Agility Ladder",F("Two feet in each box, in-and-out, lateral, Ickey shuffle",[["L",21,14,8,24],O(25,42),Q(25,45,0,1.8,2),M(25,40,25,12)]));
+def("Agility Ladder",F("Cones laid out as a ladder · two feet in each box, in-and-out, lateral, Ickey shuffle",[["L",21,14,8,24],O(25,42),Q(25,45,0,1.8,2),M(25,40,25,12)]));
 def("Sprint & Stop",F("Sprint on the whistle",lanes([10,20,30,40],2,20),1),F("Jump stop on the next whistle, hold 2 seconds",[O(22,10),O(22,20),O(22,30),O(22,40),M(24,10,44,10),M(24,20,44,20),M(24,30,44,30),M(24,40,44,40)],1));
 def("Inside Pivot Catch",
  F("Cut from the elbow to the wing for the pass",[...OB(25,32,"P"),O(32,19,"S"),M(33,20,39,22),PS(26.5,31,38,23.5)]),
@@ -458,7 +458,7 @@ def("2-2-1 Press Trap Reads",
  F("2-2-1 alignment against the inbound",[...OB(95,30,"1"),O(84,18),O(84,34),O(60,25),O(45,12),X(78,18),X(78,34),X(60,13),X(60,37),X(32,25)],1),
  F("Trap the sideline after the first pass · others rotate",[O(84,9),B(85.6,10.6),O(84,34),O(60,25),O(45,12),X(81,12),X(78,7),X(68,25),X(56,22),X(40,15),M(78,18,81,13),M(60,13,77,8),M(78,34,68,26),M(60,37,56,24),M(32,25,40,16)],1));
 def("Shot Prep Footwork",F("Catch, pivot, rip · square up",[...OB(41,22),T(25,30,"Turn and face")]),F("Jab series: jab-shot, jab-drive",[O(41,22),M(39.5,21,37,20),SH(40,21),D(40,20,32,10)]));
-def("Plyometric Circuit",F("40s work · 20s rest · rotate stations",[["R",3,14,20,13,"Box jumps"],["R",27,14,20,13,"Lateral bounds"],["R",3,31,20,13,"Depth jumps"],["R",27,31,20,13,"Broad jumps"],M(23,20,27,20),M(37,27,37,31),M(27,37,23,37),M(13,31,13,27)]));
+def("Plyometric Circuit",F("40s work · 20s rest · rotate stations",[["R",3,14,20,13,"Tuck jumps"],["R",27,14,20,13,"Lateral bounds"],["R",3,31,20,13,"Vertical jumps"],["R",27,31,20,13,"Broad jumps"],M(23,20,27,20),M(37,27,37,31),M(27,37,23,37),M(13,31,13,27)]));
 def("Post Seal & Duck-in",F("Seal on the block",[O(33,9,"5"),X(35,11),...OB(44,20,"2"),O(25,30,"1")]),F("Ball reverses · duck into the lane, catch, finish",[O(28,10,"5"),X(32,10),O(44,20,"2"),...OB(25,30,"1"),PS(42.5,20,26.5,28.5),M(33,9,28,10),PS(24,28,27.5,12),SH(26,7)]));
 def("High-Low Entry 2v2",F("High post catches",[...OB(25,19,"4"),O(33,9,"5"),X(25,22.5),X(31,11)]),F("Low post seals · lob or bounce in",[O(25,19,"4"),B(26.6,20.6),O(30,7,"5"),X(32,10),X(25,22.5),PS(25,17,28,12,30,8.5),SH(27,6)]));
 def("Pick & Roll Reads vs Coverage",
