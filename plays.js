@@ -487,12 +487,27 @@ def("3 Stops Drill",F("Defense needs 3 straight stops to rotate to offense",[O(8
 def("Advantage / Disadvantage",F("Start 2v2 · coach adds a player to one team",[...OB(18,28),O(32,28),X(19,24.5),X(31,24.5),C(48,30),O(48,40),M(46,40,38,22)]));
 def("Situational 5v5",F("Coach sets the score and clock",[O(30,10),O(30,40),...OB(20,25),O(12,13),O(10,36),X(26,12),X(26,38),X(16,25),X(9,16),X(8,33),T(65,25,"Up 1 · 30 seconds · our ball")],1));
 def("Kill Scrimmage",F("Stop = 1 point · 3 straight stops = a kill (3 points)",[O(30,10),O(30,40),...OB(20,25),O(12,13),O(10,36),X(26,12),X(26,38),X(16,25),X(9,16),X(8,33),T(65,25,"Play to 10")],1));
-def("5-Out Hand-Off",
- F("5-out spacing · 1 dribbles at the wing (2)",[...OB(25,30,"1"),O(8,23,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),D(23.5,30,13,26)]),
- F("Hand-off: 2 comes off 1's hip, tight · 1 sits down like a screen",[O(14,27,"1"),B(15.6,28.6),O(7,19,"2"),X(4.5,16.5,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),M(8,21,11,28,19,31),T(14,35,"hand-off")]),
- F("2 reads: trail = attack · under = shoot · jump = backdoor",[O(19,31,"2"),B(20.6,32.6),O(14,27,"1"),X(12.5,24.5,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),D(20.5,29.5,24,14),SH(19.5,29.5),T(25,41,"jumped the hand-off? 2 goes backdoor instead")]),
- F("1 rolls or pops · the empty wing gets filled from the corner",[O(21,30,"2"),B(22.6,31.6),O(14,27,"1"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),M(15,25,20,11),M(4.5,6,7,20)]),
- F("Chain it: 2 dribbles straight into the next hand-off with 3 · then play live",[O(21,30,"2"),B(22.6,31.6),O(42,23,"3"),O(7,21,"4"),O(20,10,"1"),O(47,4,"5"),D(23,30,36,26.5),T(25,41,"5v0 → shadow D → live")]));
+// 5-Out Hand-Off: one continuous chain, right side then left side. Frames are generated so every frame starts where the last one ended.
+(function(){
+  const mir=(e,m)=>{if(!m)return e;const fx=a=>a.map((v,k)=>k%2===0?50-v:v);
+    if(e[0]==="o"||e[0]==="b"||e[0]==="t")return [e[0],50-e[1],...e.slice(2)];
+    if(e[0]==="m"||e[0]==="d"||e[0]==="p")return [e[0],fx(e[1])];return e};
+  const side=(L,m,first)=>{ // L = {h:top, w:wing on this side, ow:other wing, oc:other corner, c:corner on this side}
+    const sd=m?"left":"right";const f=(c,els)=>F(c,els.map(e=>mir(e,m)));
+    const out=[];
+    out.push(f((first?"5-out spacing · ":"Keep it going, now to the "+sd+" · ")+L.h+" dribbles at the "+sd+" wing ("+L.w+") for the hand-off",[...OB(25,30,L.h),O(40,24,L.w),O(10,24,L.ow),O(3,8,L.oc),O(47,8,L.c),D(26.5,30,35,27.5)]));
+    out.push(f("Hand-off: "+L.w+" curls tight around "+L.h+", takes it and drives the lane · "+L.h+" dives to the rim",[...OB(36,27,L.h),O(40,24,L.w),O(10,24,L.ow),O(3,8,L.oc),O(47,8,L.c),M(41.5,25.5,41,30,34,31),PS(37.5,28.5,34.5,30.5),D(33.5,29.5,30,16),M(36,25.5,34.5,10)]));
+    out.push(f(L.w+" looks to dump it to "+L.h+" at the rim · everyone else fills: "+L.ow+" up to the top, "+L.oc+" up to the wing, "+L.c+" up to the wing",[...OB(30,16,L.w),O(34.5,9,L.h),O(10,24,L.ow),O(3,8,L.oc),O(47,8,L.c),M(11.5,25.5,18,30,25,30),M(3.5,10,6,18,9.5,23),M(46.5,10,44,18,40,24)]));
+    out.push(f("No layup: kick it to "+L.ow+" at the top · the two in the hand-off get to the outside: "+L.h+" clears to the far corner, "+L.w+" to the near corner",[...OB(30,16,L.w),O(34.5,9,L.h),O(25,30,L.ow),O(9.5,23,L.oc),O(40,24,L.c),PS(29.5,17.5,25.5,28.5),M(33,8,24,6.5,4.5,8),M(32,15,41,12,46,9)]));
+    return {fr:out,next:{top:L.ow,near:L.c,far:L.oc,nc:L.w,fc:L.h}}; // near = wing on this side now, far = other wing
+  };
+  const a=side({h:"1",w:"2",ow:"3",oc:"4",c:"5"},false,true);
+  const n=a.next; // after the right side: top=3, right wing=5, left wing=4, left corner=1, right corner=2
+  const b=side({h:n.top,w:n.far,ow:n.near,oc:n.nc,c:n.fc},true,false);
+  P["5-Out Hand-Off"]=[...a.fr,...b.fr,
+    F("From any spot: the wing can dribble at the corner too · corner lifts, takes it, drives middle · same rules: dive, drive, fill, get out",[...OB(40,24,"5"),O(25,30,"3"),O(10,24,"4"),O(3,8,"1"),O(47,8,"2"),D(41,22.5,43.5,16.5),M(46.5,9,46,14.5),PS(44.5,17.5,45.5,15.5),D(44.5,14,33,14),M(42,18,30,22),T(25,41,"Top → wing · wing → corner · corner → wing")])];
+  P["5-Out Hand-Off"].loop=8;
+})();
 def("Screening Fundamentals",
  F("Screener sprints in and stops: wide base, arms in",[...OB(25,30,"P"),O(33,20,"S"),O(37,9,"C"),K(37,12),S(33,21.5,36,13.5),T(25,40,"Feet still, wide base")]),
  F("Cutter waits, comes off shoulder to shoulder · curl or pop",[O(25,30,"P"),B(26.6,31.6),O(36,13.5,"S"),O(37,9,"C"),K(37,12),M(38.5,9,41,14,38,19,30,21),PS(24,28.5,29,22)]),

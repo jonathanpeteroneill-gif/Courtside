@@ -236,7 +236,7 @@ function playFrom(root,i){
   const plans=plansFor(root.dataset.dn);const svgs=[...root.querySelectorAll("svg.dg")];const track=root.querySelector(".dgc-track");
   const P={root,plans,raf:0,to:0};PLAYING=P;const btn=root.querySelector("[data-dgplay]");if(btn)btn.textContent="■ Stop";
   const run=k=>{if(PLAYING!==P)return;
-    if(k>=svgs.length){stopPlay(false);return}
+    const LP=(window.PLAYS&&window.PLAYS[root.dataset.dn]||{}).loop;if(LP&&(k>=svgs.length||(k===LP&&i<LP)))k=0;if(k>=svgs.length){stopPlay(false);return}
     if(track&&svgs.length>1)track.scrollTo({left:track.clientWidth*k,behavior:"smooth"});
     svgs.forEach((sv,j)=>{if(j!==k)resetSvg(sv,plans[j])});
     const sv=svgs[k],pl=plans[k];sv.classList.add("playing");const t0=performance.now()+450;
