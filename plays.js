@@ -387,6 +387,10 @@ def("25-Spot Challenge",F("5 spots × 5 shot types · catch, fake-one, side-step
 def("Pressure Free Throws",F("Sprint baseline to baseline twice",[...lanes([25],2,92),M(92,27,4,27)],1),F("Straight to the line for a one-and-one",ftLine()));
 def("Beat the Clock Threes",F("2 minutes · 5 spots around the arc · 50% to finish",[...spotsMarks(),O(42,22,"S"),SH(41,21),O(25,8,"R"),M(41,24,33,30,9,24)]));
 def("Finishing Gauntlet",F("Drive into the lane",[...OB(25,32),X(19.5,14,"P"),X(30.5,14,"P"),D(25,30,25,17)]),F("Both pads bump on the gather · finish",[O(25,14),X(22,14,"P"),X(28,14,"P"),SH(25,12)]));
+def("Bump Euro Finish",
+ F("Drive hard from the wing at the pad",[...OB(43,25),X(31,14,"P"),D(42,23,35,17.5)]),
+ F("First euro step: plant into the pad and bump with your shoulder",[O(34,16.5),B(35.2,14.6),X(31.5,14,"P"),M(35.5,18.5,33,16),T(40,13,"BUMP")]),
+ F("Step across away from the pad, finish with the outside hand",[G(34,16.5),O(37,10),X(31.5,14,"P"),M(35,15,38,11.5),SH(35,8.5),T(25,26,"Long step · quick step · finish high")]));
 def("Inside / Outside Hand Reads",
  F("Defender on your hip: inside hand off the glass",[O(32,14),B(33.6,15.6),X(35,15),D(32,12,29,8),SH(27,6)]),
  F("Defender ahead of you: outside hand, extend away",[O(34,14),X(30,10),D(35,12,32,6),SH(28,5.5)]),

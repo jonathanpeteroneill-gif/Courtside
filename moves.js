@@ -63,6 +63,7 @@ spider:{v:FRONT,ms:150,k:[S({ll:[-28,-12],rl:[28,12],t:0,ra:[15,10],la:[-15,-10]
 twoBall:{v:FRONT,ms:180,k:[S({...stanceF,ra:[30,60],la:[-30,-60],b:[["rh",1],["lh",1]]}),S({...stanceF,ra:[35,15],la:[-35,-15],b:[[[10,-3],1],[[-10,-3],1]]})],cue:"Weak hand sets the pace"},
 slaps:{v:FRONT,ms:180,k:[S({la:[-40,40],ra:[40,-40],b:[["rh",1]]}),S({la:[-60,10],ra:[60,-10],b:[[[3,-46],1]]})],cue:"Slap the ball hard, both hands"},
 jab:{v:SIDE,ms:380,k:[S({...tripleS,b:[["rh",1]]}),S({...tripleS,rl:[50,15],b:[["rh",1]]}),S({...tripleS,b:[["rh",1]]})],cue:"Ball on the hip, short sharp jab, stay balanced"},
+bumpEuro:{v:SIDE,ms:340,dir:1,k:[S({...jogA,b:[["ch",1]]}),S({t:15,rl:[50,5],ll:[-25,-40],la:[55,140],ra:[55,140],b:[["ch",1]]}),S({t:-5,rl:[35,0],ll:[-20,-30],la:[60,150],ra:[40,110],b:[["ch",1]]}),S({t:10,ll:[45,0],rl:[-15,-45],la:[60,150],ra:[60,150],b:[["ch",1]]}),S({rl:[95,0],ll:[0,0],ra:[168,176],la:[120,160],y:7,b:[["rh",1]]})],cue:"Plant, bump with the shoulder, step across, finish high"},
 shoot:{v:SIDE,ms:300,k:[S({ll:[25,-15],rl:[30,-15],ra:[40,160],la:[50,150],b:[["rh",1]]}),S({ra:[160,175],la:[150,170],y:2,b:[["rh",1]]}),S({ra:[165,205],la:[150,165],y:2,b:[[[16,-78],1]]}),S({ra:[160,205],la:[140,150],b:[[[26,-82],1]]})],cue:"Legs, elbow under, hold the follow-through"}
 };
 window.MOVES=M;
@@ -98,6 +99,7 @@ window.DRILL_MOVES={
 "17s":L(["sprint",60,"Sideline to sideline"]),
 "Partner Chase":L(["sprint",15,"Chase"]),
 "Static Stretch & Huddle":L(["hamstring",20,"Hamstring, right"],["hamstring",20,"Hamstring, left"],["quad",20,"Quad"],["calf",20,"Calf"]),
+"Bump Euro Finish":L(["bumpEuro",30,"Bump euro, right side"],["bumpEuro",30,"Bump euro, left side"]),
 "Form Shooting":L(["shoot",30,"Form shot"]),
 "Free Throw Routine Builder":L(["shoot",30,"Routine + shot"])
 };

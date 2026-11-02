@@ -1,5 +1,5 @@
 // Bump VERSION on every release (keep it in sync with APP_VERSION in index.html).
-const VERSION = "atw-courtside-v14";
+const VERSION = "atw-courtside-v15";
 const CORE = ["./","index.html","drills.js","drills_adv.js","plays.js","diagrams.js","videos.js","moves.js","manifest.webmanifest","icons/atw-icon-192.png","icons/atw-icon-512.png","icons/atw-apple-touch-icon.png","assets/wordmark-white.webp"];
 // Always fetch fresh copies from the server (skip the browser's HTTP cache) when installing.
 self.addEventListener("install", e => {
