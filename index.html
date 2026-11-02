@@ -211,6 +211,10 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 .dgc-nav{display:flex;align-items:center;justify-content:center;gap:14px}
 .dgc-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:20px;line-height:1}
 .dgc-dots{display:flex;gap:6px}.dgc-dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.dgc-dots i.on{background:var(--accent)}
+.dgc-play{border:0;background:var(--accent);color:var(--white);font-weight:800;font-size:14px;padding:8px 16px;border-radius:999px;min-height:36px}
+.dg.playing .dg-m,.dg.playing .dg-p,.dg.playing .dg-sh{opacity:.22}
+.dg [data-a]{transition:none}
+.dgc.single{display:grid;gap:8px;max-width:460px;width:100%;margin:0 auto}
 .dgc-hint{text-align:center;font-size:12px;color:var(--muted)}
 .steps-badge{position:absolute;left:22px;top:20px;background:var(--black);color:var(--white);font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px}
 .video{position:relative;aspect-ratio:16/9;max-width:100%;border-radius:10px;overflow:hidden;background:var(--black)}
@@ -653,6 +657,7 @@ function openDrill(id){
 }
 $("#dlg").addEventListener("click",e=>{if(e.target===$("#dlg"))$("#dlg").close()});
 $("#dlgClose").addEventListener("click",()=>$("#dlg").close());
+$("#dlg").addEventListener("close",()=>window.stopDiagramPlay&&stopDiagramPlay());
 /* swipe the top bar down to close */
 (()=>{let y0=null;const top=$("#dlgTop"),dlg=$("#dlg");
  top.addEventListener("touchstart",e=>{y0=e.touches[0].clientY;dlg.style.transition="none"},{passive:true});
@@ -678,8 +683,8 @@ function runStart(){
   $("#run").hidden=false; beep(0); runRender();
   try{navigator.wakeLock?.request("screen").then(w=>wake=w).catch(()=>{})}catch(e){}
 }
-function runStop(){clearInterval(R?.timer);R=null;$("#run").hidden=true;try{wake?.release()}catch(e){};wake=null}
-function runGo(i){clearInterval(R.timer);R.i=i;R.mi=null;R.left=plan[i].m*60;R.on&&tick();runRender()}
+function runStop(){window.stopDiagramPlay&&stopDiagramPlay();clearInterval(R?.timer);R=null;$("#run").hidden=true;try{wake?.release()}catch(e){};wake=null}
+function runGo(i){window.stopDiagramPlay&&stopDiagramPlay();clearInterval(R.timer);R.i=i;R.mi=null;R.left=plan[i].m*60;R.on&&tick();runRender()}
 function tick(){clearInterval(R.timer);R.timer=setInterval(()=>{R.left--;if(R.left===10)beep(1);if(R.left<=0){beep(3);if(R.i<plan.length-1){R.i++;R.left=plan[R.i].m*60}else{R.on=false;clearInterval(R.timer);R.left=0}}runRender()},1000)}
 function runMoves(d,tot){
   const ml=DRILL_MOVES[d.n], cyc=ml.reduce((a,x)=>a+x.s,0), el=Math.max(0,tot-R.left);
@@ -695,6 +700,7 @@ function runRender(){
   const b=plan[R.i], d=b.brk?null:D[b.id], nb=plan[R.i+1];
   const mm=Math.floor(R.left/60), ss=String(R.left%60).padStart(2,"0");
   const tot=b.m*60;
+  const keep=R.dgcFor===R.i?$("#run .dgc"):null; if(keep) keep.remove();
   $("#run").innerHTML=`<div class="run-top"><div class="eyebrow" style="color:inherit;opacity:.7">Block ${R.i+1} of ${plan.length}</div><button class="btn sm" id="rx">Close</button></div>
   <div class="run-mid">
     <div class="eyebrow" style="color:var(--accent)">${d?C[d.c].label:"Break"}</div>
@@ -709,6 +715,7 @@ function runRender(){
     <div class="run-row timer"><button class="btn" id="rm1" aria-label="Take a minute off">−1 min</button><button class="btn primary big" id="rt">${R.on?"❚❚ Pause":"▶ Start"}</button><button class="btn" id="ra1" aria-label="Add a minute">+1 min</button></div>
     <div class="run-row nav"><button class="btn" id="rp" ${R.i?"":"disabled"}>◀ Prev drill</button><button class="btn" id="rn" ${R.i<plan.length-1?"":"disabled"}>Next drill ▶</button></div>
   </div>`;
+  if(keep){const fresh=$("#run .dgc"); if(fresh) fresh.replaceWith(keep);} R.dgcFor=R.i;
   $("#rx").onclick=runStop;
   $("#rt").onclick=()=>{R.on=!R.on;R.on?tick():clearInterval(R.timer);runRender()};
   $("#rp").onclick=()=>runGo(R.i-1);
@@ -765,7 +772,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v20";
+const APP_VERSION="v21";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
