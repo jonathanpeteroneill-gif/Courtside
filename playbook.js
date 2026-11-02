@@ -22,8 +22,8 @@ window.SPECTRES_SHEET={
   motto:"We see everything, we strike hard & fast. Together, we're unstoppable.",
   chant:"What do we see? EVERYONE! · How do we move? AS ONE! · How do we play? TOGETHER!",
   rules:["Feet, not hands. Beat your player to the spot. Don't reach or swipe. Reaching gives them free throws.","Shot goes up, one goes back. Someone sprints back on defence straight away. No easy layups.","Everyone talks: BALL, HELP, SCREEN. Quiet on defence costs your team a point (talk tax).","Box out every shot. Find a body, hit it, then go get the ball."],
-  situations:[["Made basket","Inbound vs their press: run DRAGON"],["Sideline out","Run GHOST"],["Baseline out","Run BOX or GRAVEYARD"],["Half court","5-Out motion vs man-to-man"],["Our defence","1-3-1 in the backcourt, MATCH at halfway, then man-to-man"]],
-  calls:["DRAGON RIGHT","DRAGON LEFT","GHOST (SLOB)","BOX (BLOB)","GRAVEYARD (BLOB)","TRAP","BALL","MATCH"],
+  situations:[["Made basket","Inbound vs their press: run DRAGON or V"],["Sideline out","Run GHOST"],["Baseline out","Run BOX or GRAVEYARD"],["Half court","5-Out motion vs man-to-man"],["Our defence","1-3-1 in the backcourt, MATCH at halfway, then man-to-man"]],
+  calls:["DRAGON RIGHT","DRAGON LEFT","V","GHOST (SLOB)","BOX (BLOB)","GRAVEYARD (BLOB)","TRAP","BALL","MATCH"],
   note:"League rule: press in the backcourt only. Once the ball crosses halfway it's strict man-to-man."
 };
 
@@ -56,6 +56,20 @@ add({n:"Dragon (Spectres press break)",sec:"spectres",type:"break",call:"DRAGON 
   F("2 hits 4 on the sideline and keeps running the middle",[O(73,25,"2"),B(74.6,26.6),O(89,38,"3"),O(89,13,"1"),O(52,46,"4"),O(52,4,"5"),X(88,41),X(76,22),X(55,39),X(55,11),X(30,25,"S"),PS(71.5,26.5,53.5,44.5),M(71,25,55,25,42,25),M(55,37,51,42),M(55,13,48,19),M(89,40,70,44),M(89,15,70,10)],1),
   F("4 takes a couple of dribbles up the sideline and hits 2 in the middle · 5 sprints the far side to the rim",[O(52,46,"4"),B(53.6,47.6),O(42,25,"2"),O(70,44,"3"),O(70,10,"1"),O(52,4,"5"),X(51,42),X(48,19),X(30,25,"S"),D(50,46,42,46),PS(42,44.5,40,26.5),M(52,6,24,6,12,17),M(70,42,50,40,30,40),M(70,12,50,12,32,12),M(48,21,44,24)],1),
   F("Safety steps up to 2: hit 5 at the rim for the layup",[O(38,25,"2"),B(39.6,26.6),X(33,25,"S"),O(12,17,"5"),O(30,40,"3"),O(32,12,"1"),M(31,25,34,25),PS(36.5,24,13.5,18),SH(11,19),T(30,47,"5 sprints the lane every time")],1)]);
+
+add({n:"V (Spectres press break)",sec:"spectres",type:"break",call:"V",
+ when:"Our press break against the 1-3-1 or the 2-2-1. Get it in, reverse it, hit the middle, then throw ahead in a V to either sideline.",
+ s:"2 inbounds left of the lane · 1 in the lane · 4 in the middle at the center circle · 5 deep over halfway on the ball side · 3 on the far sideline at the free-throw line extended.",
+ d:"2 inbounds to 1 in the lane and steps in to the elbow|1 dribbles out to the side, away from the pressure|Trap coming: 1 reverses it back to 2 before it closes, 2 swings it to 3 on the far side|3 hits 4 in the middle, then everyone runs: 3 up the sideline, 1 ahead on the diagonal, 2 up the middle|The V: 4 catches, turns and throws ahead to either side, 5 deep or 3 on the other sideline|5 catches and attacks the rim, everyone fills the lanes",
+ counters:"Middle denied: 2 running the middle is the outlet|Trap on 1's dribble: pass back to 2 before it closes, never dribble into the corner|Safety takes 5: hit 3 on the other side of the V",
+ k:"Catch facing up the floor|Reverse it before the trap closes|The middle is the hub: catch, turn, throw ahead|Everyone runs after the pass, no watching",
+ links:["Hit-Ahead Drill","Outlet Passing","3-Lane Fill"]},
+ [F("Setup vs their press: 2 inbounds left of the lane, 1 in the lane, 4 in the middle, 5 deep, 3 on the far sideline",[...OB(95.5,15,"2"),O(81,23,"1"),O(52,26,"4"),O(36,6,"5"),O(63,45,"3"),X(78,14),X(78,34),X(56,11),X(56,39),X(28,25,"S"),L2(47,0,47,50),T(66,49,"V")],1),
+  F("2 inbounds to 1 in the lane and steps in to the elbow",[O(95.5,15,"2"),B(97.1,16.6),O(81,23,"1"),O(52,26,"4"),O(36,6,"5"),O(63,45,"3"),X(78,14),X(78,34),X(56,11),X(56,39),X(28,25,"S"),PS(94,16.5,82.5,21.5),M(94,14,86,15,80,17),M(78,16,79,20)],1),
+  F("1 dribbles out to the side, away from the pressure · the trap comes",[O(80,17,"2"),O(81,23,"1"),B(82.6,24.6),O(52,26,"4"),O(36,6,"5"),O(63,45,"3"),X(79,20),X(78,34),X(56,11),X(56,39),X(28,25,"S"),D(80,21,72,13,64,7),M(79,18,68,9),M(56,9,61,5)],1),
+  F("Reverse it to 2 before the trap closes · 2 swings it to 3 on the far side",[O(80,17,"2"),O(64,7,"1"),B(65.6,8.6),O(52,26,"4"),O(36,6,"5"),O(63,45,"3"),X(68,9),X(61,5),X(78,34),X(56,39),X(28,25,"S"),PS(65.5,8,78.5,16),PS(80,18.5,64.5,43.5),M(78,36,69,41),M(56,41,59,43),T(70,22,"Before the trap!")],1),
+  F("3 hits 4 in the middle · everyone runs: 3 up the sideline, 1 ahead, 2 up the middle",[O(63,45,"3"),B(64.6,46.6),O(52,26,"4"),O(80,17,"2"),O(64,7,"1"),O(36,6,"5"),X(69,41),X(59,43),X(68,9),X(61,5),X(28,25,"S"),PS(62,43.5,53.5,27.5),M(61,45,26,44),M(62,7,33,18),M(78,18,65,29,33,30),M(68,11,50,18),M(61,7,45,12),M(28,23,32,16)],1),
+  F("The V: 4 throws ahead to either side · 5 deep attacks the rim (or hit 3 on the other sideline)",[O(52,26,"4"),B(53.6,27.6),O(36,6,"5"),O(26,44,"3"),O(33,18,"1"),O(33,30,"2"),X(32,16,"S"),X(45,12),X(50,18),PS(50.5,24.5,37.5,8),D(34,7,22,10,16,14),SH(13,17),M(31,16,24,13),T(30,48,"or the V the other way to 3")],1)]);
 
 add({n:"Ghost (Spectres SLOB)",sec:"spectres",type:"inbound",call:"GHOST",
  when:"Every sideline out of bounds in the frontcourt.",
@@ -155,7 +169,7 @@ add({n:"1-2-2 Half-Court Trap",sec:"press",type:"press",call:"1-2-2",
   F("Ball crosses halfway on the sideline: TRAP in the halfway corner · everyone shifts",[O(48,6),B(49.6,7.6),O(62,42),O(40,20),O(30,35),X(70,25,"P"),X(50,9),X(50,41),X(32,17),X(32,33),M(70,23,52,8),M(50,11,46,8),M(50,39,42,26),M(32,19,36,10),M(32,31,24,24),T(50,16,"TRAP!")],1)]);
 
 // ============================== PRESS BREAKS ==============================
-PB.push({n:"Dragon (Spectres press break)",sec:"break",alias:true});
+PB.push({n:"Dragon (Spectres press break)",sec:"break",alias:true},{n:"V (Spectres press break)",sec:"break",alias:true});
 
 add({n:"1-4 Flat vs Man Press",sec:"break",type:"break",call:"FLAT",
  when:"Against man-to-man full-court denial. Spreads the floor so your best ball handler can catch and beat their player 1v1.",

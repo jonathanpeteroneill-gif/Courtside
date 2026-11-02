@@ -800,7 +800,7 @@ function renderPlays(){
     <h2>Game situations</h2><div class="sit">${T.situations.map(([a,b])=>`<b>${esc(a)}</b><span>${esc(b)}</span>`).join("")}</div>
     <h2>Our calls</h2><div class="callchips">${T.calls.map(c=>`<span class="callchip">${esc(c)}</span>`).join("")}</div><div class="note">${esc(T.note)}</div></div>`}
   if(pSec==="press")h+=`<div class="panel" style="font-size:14px"><b>Picking a press:</b> 2-2-1 to slow them down and stay safe · 1-2-1-1 or run and jump when you need turnovers · man-to-man denial to steal the inbound late in games · 1-3-1 to trap the sidelines · 1-2-2 to trap at halfway and save legs. <span class="muted">League rules for juniors often limit presses to the backcourt.</span></div>`;
-  if(pSec==="break")h+=`<div class="panel" style="font-size:14px"><b>Every press break:</b> catch facing up the floor · meet the pass · never dribble into a corner · get it to the middle · pass back to the inbounder to swing it · attack the numbers once it's broken. <b>2-2-1</b> = Dragon or Middle Flash · <b>diamond</b> = Catch High · <b>man denial</b> = 1-4 Flat · <b>run and jump</b> = heads up, pass ahead.</div>`;
+  if(pSec==="break")h+=`<div class="panel" style="font-size:14px"><b>Every press break:</b> catch facing up the floor · meet the pass · never dribble into a corner · get it to the middle · pass back to the inbounder to swing it · attack the numbers once it's broken. <b>2-2-1</b> = Dragon, V or Middle Flash · <b>1-3-1</b> = V · <b>diamond</b> = Catch High · <b>man denial</b> = 1-4 Flat · <b>run and jump</b> = heads up, pass ahead.</div>`;
   h+=list.length?`<div class="grid">${list.map(playCard).join("")}</div>`:"";
   if(links.length)h+=`<div><div class="eyebrow" style="margin-bottom:8px">${pSec==="halfcourt"?"Sets and offenses in the drill library":"Related drills"}</div><div class="grid">${links.map(card).join("")}</div></div>`;
   $("#playsBody").innerHTML=h;
@@ -840,7 +840,7 @@ const TERM_TPL={
     {theme:"Bonus: competition week",focus:"compete",type:"team"}]},
   spectres:{label:"Spectres (team)",per:2,weeks:[
     {theme:"Our shapes: 5-Out, shell, 1-3-1",focus:"offense",type:"team",must:["5-Out Motion","Shell Drill"],plays:["1-3-1 Press (Spectres)","Shell vs 5-Out (Spectres rules)"]},
-    {theme:"Beat the press: Dragon · our 1-3-1",focus:"transition",type:"team",must:["2-2-1 Press Trap Reads"],plays:["Dragon (Spectres press break)","1-3-1 Press (Spectres)"]},
+    {theme:"Beat the press: Dragon and V · our 1-3-1",focus:"transition",type:"team",must:["2-2-1 Press Trap Reads"],plays:["Dragon (Spectres press break)","V (Spectres press break)","1-3-1 Press (Spectres)"]},
     {theme:"Inbounds: Ghost, Box, Graveyard",focus:"offense",type:"team",must:["Screening Fundamentals","Pass & Screen Away"],plays:["Ghost (Spectres SLOB)","Box (Spectres BLOB)","Graveyard (Spectres BLOB)"]},
     {theme:"Defense and rebounding: talk tax",focus:"defense",type:"team",must:["Shell Drill: Rotations","Rebound War"],plays:["Shell vs 5-Out (Spectres rules)"]},
     {theme:"Transition: run your lanes",focus:"transition",type:"team",must:["2v1 Rapid","5-Man Weave into 3v2"]},
@@ -849,7 +849,7 @@ const TERM_TPL={
     {theme:"Game sim: all our calls",focus:"compete",type:"team",must:["Situational 5v5"],plays:["Dragon (Spectres press break)","Ghost (Spectres SLOB)","Box (Spectres BLOB)","Graveyard (Spectres BLOB)"]},
     {theme:"Fix what the games showed us",focus:"balanced",type:"team"},
     {theme:"Finals prep: late game",focus:"compete",type:"team",must:["Late-Game Situations"],plays:["Dragon (Spectres press break)"]},
-    {theme:"Bonus: press and break refresh",focus:"transition",type:"team",plays:["Dragon (Spectres press break)","1-3-1 Press (Spectres)"]},
+    {theme:"Bonus: press and break refresh",focus:"transition",type:"team",plays:["Dragon (Spectres press break)","V (Spectres press break)","1-3-1 Press (Spectres)"]},
     {theme:"Bonus: competition week",focus:"compete",type:"team"}]}
 };
 let term=store.get("term",null);
@@ -998,7 +998,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v36";
+const APP_VERSION="v37";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
