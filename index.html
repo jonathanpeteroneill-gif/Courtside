@@ -279,10 +279,6 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
       <img src="assets/wordmark-white.webp" alt="All The Way Academy" width="900" height="186">
       <div class="chip"><span>Courtside</span></div>
     </div>
-    <div class="prog" role="group" aria-label="Program">
-      <button type="button" data-prog="atw">All The Way</button>
-      <button type="button" data-prog="spectres">Spectres</button>
-    </div>
     <nav aria-label="Sections">
       <a href="#plan" data-view="plan">Plan session</a>
       <a href="#drills" data-view="drills">Drill library</a>
@@ -344,7 +340,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 
       <div class="panel">
         <div class="row" style="justify-content:space-between">
-          <div><h2>Split into teams</h2><div class="muted" style="font-size:14px">Roster for this program, one per line or comma separated. Saved on this phone. Leave empty to use numbers.</div></div>
+          <div><h2>Split into teams</h2><div class="muted" style="font-size:14px">Your roster, one per line or comma separated. Saved on this phone. Leave empty to use numbers.</div></div>
           <div class="row">
             <div class="stepper" title="Teams">
               <button type="button" data-step="teams" data-d="-1" aria-label="Fewer teams">−</button>
@@ -418,7 +414,7 @@ const PROGRAMS={
   spectres:{name:"Spectres",defaults:{kids:10,dur:90,lvl:4,type:"team",focus:"balanced",hoops:2,teams:2}}
 };
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-let PROG=ls.get("cs_program"); if(!PROGRAMS[PROG]) PROG="atw";
+const PROG="atw"; // single program; data lives under the existing All The Way keys
 // one-time move of pre-program data into All The Way
 if(ls.get("cs_settings")!=null&&ls.get("cs_atw_settings")==null){["settings","plan","sessions","favs"].forEach(k=>{const v=ls.get("cs_"+k);if(v!=null)ls.set("cs_atw_"+k,v)})}
 const store = {
@@ -536,7 +532,7 @@ function regen(){plan=build();store.set("plan",toSave(plan));renderPlan()}
 function fmt(m){return `${Math.floor(m/60)?Math.floor(m/60)+":"+String(m%60).padStart(2,"0"):"0:"+String(m).padStart(2,"0")}`}
 function renderPlan(){
   $("#planTitle").textContent = st.type==="team"?`${FOCUS[st.focus].label} practice`:FOCUS[st.focus].label;
-  $("#planEyebrow").textContent = `${PROGRAMS[PROG].name} · ${TYPES[st.type].label} · ${st.kids} kids · ${LV[st.lvl]} · ${st.hoops} hoop${st.hoops===1?"":"s"}`;
+  $("#planEyebrow").textContent = `${TYPES[st.type].label} · ${st.kids} kids · ${LV[st.lvl]} · ${st.hoops} hoop${st.hoops===1?"":"s"}`;
   const total=plan.reduce((a,b)=>a+b.m,0);
   const drills=plan.filter(b=>!b.brk).length;
   $("#stats").innerHTML=`<div class="stat"><b>${total}</b><span>Minutes</span></div><div class="stat"><b>${drills}</b><span>Drills</span></div><div class="stat"><b>${st.kids}</b><span>Kids</span></div>`;
@@ -575,7 +571,7 @@ seg($("#dur"),DUR.map(m=>[m,m+" min"]),"dur",regen);
 seg($("#lvl"),[[4,"Rep / Elite"],[3,"13–15"],[2,"9–12"],[1,"5–8"]],"lvl",regen);
 seg($("#type"),Object.entries(TYPES).map(([k,v])=>[k,v.label]),"type",()=>{store.set("plan",null);location.reload()});
 seg($("#focus"),Object.entries(FOCUS).map(([k,v])=>[k,v.label]),"focus",regen);
-document.querySelectorAll("[data-prog]").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.prog===PROG);b.onclick=()=>{if(b.dataset.prog===PROG)return;ls.set("cs_program",b.dataset.prog);location.reload()}});
+
 ["kids","hoops","teams"].forEach(k=>{const i=$("#"+k);i.value=st[k];i.addEventListener("change",()=>{let v=Math.max(+i.min,Math.min(+i.max,parseInt(i.value)||+i.min));i.value=v;st[k]=v;saveSet();k==="teams"?renderTeams():regen();if(k==="kids")renderTeams()})});
 document.addEventListener("click",e=>{
   const s=e.target.closest("[data-step]"); if(s){const i=$("#"+s.dataset.step);i.value=(+i.value)+(+s.dataset.d);i.dispatchEvent(new Event("change"));return}
@@ -667,7 +663,7 @@ $("#dlg").addEventListener("close",()=>window.stopDiagramPlay&&stopDiagramPlay()
 
 /* saved */
 function renderSaved(){
-  $("#savedEyebrow").textContent=`${PROGRAMS[PROG].name} · stored on this phone`;
+  $("#savedEyebrow").textContent="Stored on this phone";
   const s=store.get("sessions",[]);
   $("#savedSessions").innerHTML=s.length?s.map((x,i)=>`<div class="panel row" style="justify-content:space-between;padding:12px 16px"><div><b>${esc(x.name)}</b><div class="muted" style="font-size:13px">${esc(x.date)} · ${x.plan.filter(b=>!b.brk).map(b=>b.n||D[b.id]?.n).join(", ")}</div></div><div class="row"><button class="btn sm primary" data-load="${i}">Open</button><button class="btn sm" data-del="${i}">Delete</button></div></div>`).join(""):`<div class="empty">No saved sessions yet. Build one on the Plan tab and press Save.</div>`;
   const f=D.filter(d=>favs.has(d.id));
@@ -772,7 +768,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v21";
+const APP_VERSION="v22";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
