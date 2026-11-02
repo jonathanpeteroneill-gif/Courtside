@@ -227,7 +227,7 @@ function resetSvg(svgEl,pl){ // back to the drawn diagram
     if(pl&&pl.B0[i]&&!String(i).startsWith("v")){n.setAttribute("cx",pl.B0[i][0].toFixed(2));n.setAttribute("cy",pl.B0[i][1].toFixed(2))}});
 }
 const PLAN_CACHE={};
-function plansFor(name){if(PLAN_CACHE[name])return PLAN_CACHE[name];const d=(window.DRILLS||[]).find(x=>x.n===name);if(!d)return[];return PLAN_CACHE[name]=window.drillFrames(d).map(fr=>fr.els?planFrame(fr.els,fr.full):{A0:{},B0:{},ev:[],total:0})}
+function plansFor(name){if(PLAN_CACHE[name])return PLAN_CACHE[name];const d=(window.DRILLS||[]).find(x=>x.n===name)||(window.PLAYBOOK||[]).find(x=>x.n===name&&!x.alias);if(!d)return[];return PLAN_CACHE[name]=window.drillFrames(d).map(fr=>fr.els?planFrame(fr.els,fr.full):{A0:{},B0:{},ev:[],total:0})}
 let PLAYING=null;
 function stopPlay(reset=true){if(!PLAYING)return;const P=PLAYING;PLAYING=null;cancelAnimationFrame(P.raf);clearTimeout(P.to);
   P.root.querySelectorAll("svg.dg").forEach((sv,i)=>{sv.classList.remove("playing");if(reset)resetSvg(sv,P.plans[i])});

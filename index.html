@@ -251,6 +251,16 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 .follow .btn{background:transparent;color:var(--white);border-color:rgba(255,255,255,.3)}
 .follow .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--white);min-width:120px}
 .follow .next{opacity:.65;font-size:14px}
+.sheet{display:grid;gap:12px;background:var(--black);color:var(--white);border-radius:var(--r);padding:18px}
+.sheet h2{color:var(--white)}.sheet .motto{font-family:var(--display);font-style:italic;font-weight:900;font-size:18px;line-height:1.2;color:var(--accent)}
+.sheet .chant{font-size:13px;opacity:.75;letter-spacing:.04em}
+.sheet ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.sheet .sit{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px}.sheet .sit b{color:var(--teal)}
+.callchips{display:flex;flex-wrap:wrap;gap:6px}.callchip{font-weight:800;font-size:12px;letter-spacing:.06em;padding:3px 9px;border-radius:6px;background:var(--teal);color:var(--white)}
+.sheet .note{font-size:13px;opacity:.7}
+.call{display:inline-block;font-weight:800;font-size:11px;letter-spacing:.08em;padding:2px 8px;border-radius:5px;background:var(--black);color:var(--white)}
+.play-when{font-size:14px;color:var(--muted);margin:0}
+.related{display:flex;flex-wrap:wrap;gap:6px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:center;font-size:12px;color:var(--muted);font-weight:600}
 .legend svg{width:26px;height:12px;vertical-align:middle;margin-right:4px}
 .thumb{background:var(--floor);border-radius:6px;padding:4px;margin:-2px 0 2px}
@@ -281,7 +291,8 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
     </div>
     <nav aria-label="Sections">
       <a href="#plan" data-view="plan">Plan session</a>
-      <a href="#drills" data-view="drills">Drill library</a>
+      <a href="#drills" data-view="drills">Drills</a>
+      <a href="#plays" data-view="plays">Plays</a>
       <a href="#saved" data-view="saved">Saved</a>
     </nav>
   </div>
@@ -382,6 +393,13 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
     <div class="grid" id="grid"></div>
   </section>
 
+  <!-- PLAYS -->
+  <section id="view-plays" hidden>
+    <div class="lib-head"><div><div class="eyebrow">Playbook</div><h1>Plays</h1></div></div>
+    <div class="chips" id="playChips" style="margin-bottom:16px"></div>
+    <div id="playsBody" style="display:grid;gap:18px"></div>
+  </section>
+
   <!-- SAVED -->
   <section id="view-saved" hidden style="display:grid;gap:28px">
     <div><div class="eyebrow" id="savedEyebrow">Stored on this phone</div><h1>Saved</h1></div>
@@ -399,6 +417,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 <script src="drills.js"></script>
 <script src="drills_adv.js"></script>
 <script src="plays.js"></script>
+<script src="playbook.js"></script>
 <script src="diagrams.js"></script>
 <script src="videos.js"></script>
 <script src="moves.js"></script>
@@ -661,7 +680,7 @@ function openDrill(id){
   <section><div class="eyebrow">Video</div>${videoHTML(d)}</section>
   <section><div class="eyebrow">For ${st.kids} kids</div><div>${esc(groupText(d,st.kids,st.hoops).t)}</div></section>
   <div class="row"><button class="btn primary" data-add="${d.id}">Add to session</button><button class="btn" data-fav="${d.id}" aria-pressed="${favs.has(d.id)}">★ Favorite</button></div>`;
-  const dg=$("#dlg");dg.style.transform="";dg.style.transition="";dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
+  const dg=$("#dlg");dg.style.transform="";dg.style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
 }
 $("#dlg").addEventListener("click",e=>{if(e.target===$("#dlg"))$("#dlg").close()});
 $("#dlgClose").addEventListener("click",()=>$("#dlg").close());
@@ -672,6 +691,48 @@ $("#dlg").addEventListener("close",()=>window.stopDiagramPlay&&stopDiagramPlay()
  top.addEventListener("touchmove",e=>{if(y0==null)return;const dy=Math.max(0,e.touches[0].clientY-y0);dlg.style.transform=`translateY(${dy}px)`},{passive:true});
  top.addEventListener("touchend",e=>{if(y0==null)return;const dy=e.changedTouches[0].clientY-y0;y0=null;dlg.style.transition="transform .2s";dlg.style.transform="";if(dy>80)dlg.close()});
 })();
+
+/* plays */
+const PBK=window.PLAYBOOK||[], PSEC=window.PLAYBOOK_SECTIONS||[];
+const playByName=n=>PBK.find(p=>p.n===n&&!p.alias);
+let pSec="spectres";
+function playCard(p){const i=PBK.indexOf(p);const nSteps=(PLAYS[p.n]||[]).length;
+  return `<article class="card" data-play="${i}"><div class="thumb">${drawDiagram(p)}</div>${nSteps>1?`<span class="steps-badge">${nSteps} steps</span>`:""}
+  <div class="row" style="gap:6px"><span class="call">${esc(p.call)}</span></div>
+  <h3>${esc(p.n)}</h3><p class="play-when">${esc(p.when)}</p></article>`}
+function renderPlays(){
+  $("#playChips").innerHTML=PSEC.map(x=>`<button type="button" data-psec="${x.k}" aria-pressed="${pSec===x.k}">${x.label}</button>`).join("");
+  const list=PBK.filter(p=>p.sec===pSec).map(p=>p.alias?playByName(p.n):p).filter(Boolean);
+  const links=((window.PLAYBOOK_LINKS||{})[pSec]||[]).map(n=>D.find(d=>d.n===n)).filter(Boolean);
+  let h="";
+  if(pSec==="spectres"){const T=window.SPECTRES_SHEET;
+    h+=`<div class="sheet"><div class="eyebrow" style="color:inherit;opacity:.7">${esc(T.team)}</div><div class="motto">${esc(T.motto)}</div><div class="chant">${esc(T.chant)}</div>
+    <h2>Our 4 rules</h2><ol>${T.rules.map(r=>`<li>${esc(r)}</li>`).join("")}</ol>
+    <h2>Game situations</h2><div class="sit">${T.situations.map(([a,b])=>`<b>${esc(a)}</b><span>${esc(b)}</span>`).join("")}</div>
+    <h2>Our calls</h2><div class="callchips">${T.calls.map(c=>`<span class="callchip">${esc(c)}</span>`).join("")}</div><div class="note">${esc(T.note)}</div></div>`}
+  if(pSec==="press")h+=`<div class="panel" style="font-size:14px"><b>Picking a press:</b> 2-2-1 to slow them down and stay safe · 1-2-1-1 or run and jump when you need turnovers · man-to-man denial to steal the inbound late in games · 1-3-1 to trap the sidelines · 1-2-2 to trap at halfway and save legs. <span class="muted">League rules for juniors often limit presses to the backcourt.</span></div>`;
+  if(pSec==="break")h+=`<div class="panel" style="font-size:14px"><b>Every press break:</b> catch facing up the floor · meet the pass · never dribble into a corner · get it to the middle · pass back to the inbounder to swing it · attack the numbers once it's broken. <b>Zone press</b> (traps) = Dragon or Middle Flash · <b>diamond</b> = Catch High · <b>man denial</b> = 1-4 Flat · <b>run and jump</b> = heads up, pass ahead.</div>`;
+  h+=list.length?`<div class="grid">${list.map(playCard).join("")}</div>`:"";
+  if(links.length)h+=`<div><div class="eyebrow" style="margin-bottom:8px">${pSec==="halfcourt"?"Sets and offenses in the drill library":"Related drills"}</div><div class="grid">${links.map(card).join("")}</div></div>`;
+  $("#playsBody").innerHTML=h;
+}
+$("#playChips").onclick=e=>{const b=e.target.closest("[data-psec]");if(!b)return;pSec=b.dataset.psec;renderPlays()};
+function openPlay(i){
+  const p=PBK[i];const isSpec=p.sec==="spectres";
+  const links=(p.links||[]).map(n=>D.find(d=>d.n===n)).filter(Boolean);
+  $("#dlgBody").innerHTML=`<div class="row"><span class="tag">${esc((PSEC.find(x=>x.k===p.sec)||{}).label||"Play")}</span><span class="call">${isSpec?"Our call":"Call"}: ${esc(p.call)}</span></div>
+  <h2>${esc(p.n)}</h2>
+  ${drawCarousel(p)}
+  <section><div class="eyebrow">When to use it</div><div>${esc(p.when)}</div></section>
+  <section><div class="eyebrow">Setup</div><div>${esc(p.s)}</div></section>
+  <section><div class="eyebrow">How it runs</div><ol>${p.d.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
+  <section><div class="eyebrow">If they…</div><ul>${p.counters.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
+  <section><div class="eyebrow">Coaching points</div><ul>${p.k.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
+  ${links.length?`<section><div class="eyebrow">Teach it with</div><div class="related">${links.map(d=>`<button class="btn sm" data-open="${d.id}">${esc(d.n)}</button>`).join("")}</div></section>`:""}
+  ${isSpec?"":`<div class="muted" style="font-size:13px">Calls for these standard plays are suggestions. Rename them to match your team.</div>`}`;
+  const dg=$("#dlg");dg.style.transform="";dg.style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
+}
+document.addEventListener("click",e=>{const c=e.target.closest("[data-play]");if(c&&!e.target.closest("[data-open]"))openPlay(+c.dataset.play)});
 
 /* saved */
 function renderSaved(){
@@ -766,10 +827,11 @@ document.addEventListener("keydown",e=>{if(FW&&e.key==="Escape")followStop()});
 /* routing */
 let view="plan";
 function route(){
-  const h=(location.hash||"#plan").slice(1); view=["plan","drills","saved"].includes(h)?h:"plan";
-  ["plan","drills","saved"].forEach(v=>{$("#view-"+v).hidden=v!==view});
+  const h=(location.hash||"#plan").slice(1); view=["plan","drills","plays","saved"].includes(h)?h:"plan";
+  ["plan","drills","plays","saved"].forEach(v=>{$("#view-"+v).hidden=v!==view});
   document.querySelectorAll("nav a").forEach(a=>a.dataset.view===view?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
   if(view==="saved")renderSaved();
+  if(view==="plays")renderPlays();
   window.scrollTo(0,0);
 }
 window.addEventListener("hashchange",route);
@@ -780,7 +842,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v23";
+const APP_VERSION="v24";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
