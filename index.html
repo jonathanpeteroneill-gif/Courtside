@@ -49,6 +49,11 @@ header .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-blo
 .brand .chip{font-family:var(--display);font-style:italic;font-weight:900;font-size:15px;letter-spacing:.04em;text-transform:uppercase;line-height:1;color:var(--white);background:var(--teal);padding:5px 10px 4px;transform:skewX(-12deg)}
 .brand .chip span{display:inline-block;transform:skewX(12deg)}
 @media (max-width:420px){.brand img{height:26px}.brand .chip{font-size:12px}}
+.prog{display:flex;gap:2px;background:rgba(255,255,255,.1);padding:3px;border-radius:10px}
+.prog button{border:0;background:transparent;color:rgba(255,255,255,.7);font-weight:700;font-size:13px;padding:6px 12px;border-radius:8px;letter-spacing:.02em}
+.prog button[aria-pressed="true"]{background:var(--white);color:var(--black)}
+.type-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+.type-tag.iq{border-color:var(--accent);color:var(--accent)}
 nav{display:flex;gap:4px;background:rgba(255,255,255,.1);padding:4px;border-radius:999px}
 nav a{color:inherit;text-decoration:none;font-weight:600;font-size:14px;padding:6px 14px;border-radius:999px;opacity:.75}
 nav a[aria-current="page"]{background:var(--accent);color:var(--accent-ink);opacity:1}
@@ -270,6 +275,10 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
       <img src="assets/wordmark-white.webp" alt="All The Way Academy" width="900" height="186">
       <div class="chip"><span>Courtside</span></div>
     </div>
+    <div class="prog" role="group" aria-label="Program">
+      <button type="button" data-prog="atw">All The Way</button>
+      <button type="button" data-prog="spectres">Spectres</button>
+    </div>
     <nav aria-label="Sections">
       <a href="#plan" data-view="plan">Plan session</a>
       <a href="#drills" data-view="drills">Drill library</a>
@@ -295,6 +304,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
         </div>
         <div class="field"><span class="lbl">Session length</span><div class="seg" id="dur"></div></div>
         <div class="field"><span class="lbl">Age group</span><div class="seg" id="lvl"></div></div>
+        <div class="field"><span class="lbl">Session type</span><div class="seg" id="type"></div></div>
         <div class="field"><span class="lbl">Focus</span><div class="seg" id="focus"></div></div>
         <div class="field">
           <span class="lbl">Hoops available</span>
@@ -330,7 +340,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 
       <div class="panel">
         <div class="row" style="justify-content:space-between">
-          <div><h2>Split into teams</h2><div class="muted" style="font-size:14px">Paste names, one per line or comma separated. Leave empty to use numbers.</div></div>
+          <div><h2>Split into teams</h2><div class="muted" style="font-size:14px">Roster for this program, one per line or comma separated. Saved on this phone. Leave empty to use numbers.</div></div>
           <div class="row">
             <div class="stepper" title="Teams">
               <button type="button" data-step="teams" data-d="-1" aria-label="Fewer teams">−</button>
@@ -360,6 +370,9 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
         <select id="fKids" aria-label="Works with">
           <option value="">Any group size</option><option value="1">Solo (1)</option><option value="2">Pairs (2)</option><option value="4">Small group (4)</option><option value="8">8 kids</option><option value="12">12 kids</option><option value="20">20+ kids</option>
         </select>
+        <select id="fType" aria-label="Session type">
+          <option value="">Skill, IQ and team</option><option value="skill">Skill building</option><option value="iq">IQ building</option><option value="team">Team practice</option>
+        </select>
         <select id="fHoop" aria-label="Hoop needed">
           <option value="">Hoop or no hoop</option><option value="0">No hoop needed</option>
         </select>
@@ -371,7 +384,7 @@ dialog::backdrop{background:rgba(5,8,12,.55)}
 
   <!-- SAVED -->
   <section id="view-saved" hidden style="display:grid;gap:28px">
-    <div><div class="eyebrow">Stored in this browser</div><h1>Saved</h1></div>
+    <div><div class="eyebrow" id="savedEyebrow">Stored on this phone</div><h1>Saved</h1></div>
     <div><h2 style="margin-bottom:12px">Sessions</h2><div id="savedSessions" style="display:grid;gap:10px"></div></div>
     <div><h2 style="margin-bottom:12px">Favorite drills</h2><div class="grid" id="favGrid"></div></div>
     <div class="panel row" style="justify-content:space-between"><div><b>App version <span id="appVersion"></span></b><div class="muted" style="font-size:13px">Updates load on their own when you have signal. If something looks out of date, tap the button. Your saved sessions and favorites are kept.</div></div><button class="btn" id="forceUpdate" type="button">Get latest version</button></div>
@@ -396,24 +409,57 @@ const C = window.CATS;
 const $ = s=>document.querySelector(s);
 const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const LV = {1:"Ages 5–8",2:"Ages 9–12",3:"Ages 13–15",4:"Rep / Elite"};
+const PROGRAMS={
+  atw:{name:"All The Way",defaults:{kids:12,dur:60,lvl:4,type:"skill",focus:"balanced",hoops:2,teams:2}},
+  spectres:{name:"Spectres",defaults:{kids:10,dur:90,lvl:4,type:"team",focus:"balanced",hoops:2,teams:2}}
+};
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let PROG=ls.get("cs_program"); if(!PROGRAMS[PROG]) PROG="atw";
+// one-time move of pre-program data into All The Way
+if(ls.get("cs_settings")!=null&&ls.get("cs_atw_settings")==null){["settings","plan","sessions","favs"].forEach(k=>{const v=ls.get("cs_"+k);if(v!=null)ls.set("cs_atw_"+k,v)})}
 const store = {
-  get(k,f){try{const v=localStorage.getItem("cs_"+k);return v?JSON.parse(v):f}catch(e){return f}},
-  set(k,v){try{localStorage.setItem("cs_"+k,JSON.stringify(v))}catch(e){}}
+  get(k,f){try{const v=localStorage.getItem("cs_"+PROG+"_"+k);return v?JSON.parse(v):f}catch(e){return f}},
+  set(k,v){try{localStorage.setItem("cs_"+PROG+"_"+k,JSON.stringify(v))}catch(e){}}
 };
 let favs = new Set(store.get("favs",[]));
-const st = Object.assign({kids:12,dur:90,lvl:4,focus:"balanced",hoops:2,teams:2}, store.get("settings",{}));
-if(!st.v2){st.lvl=4;st.dur=Math.max(st.dur,60);st.v2=1;store.set("plan",null)}
+const st = Object.assign({},PROGRAMS[PROG].defaults, store.get("settings",{}));
+if(!st.type) st.type=PROGRAMS[PROG].defaults.type;
 
-const FOCUS = {
-  balanced:{label:"Balanced",seq:["handle","shoot","pass","defense","finish","rebound","offense"]},
-  shooting:{label:"Shooting",seq:["shoot","finish","shoot","foot","shoot"]},
-  handling:{label:"Ball handling",seq:["handle","finish","handle","pass","handle"]},
-  defense:{label:"Defense",seq:["defense","rebound","defense","transition","defense"]},
-  team:{label:"Team play",seq:["pass","offense","transition","offense","defense"]},
-  compete:{label:"Competitive",seq:["games","shoot","defense","games","offense"]}
+const TYPES={
+  skill:{label:"Skill building",title:"skills",focus:{
+    balanced:{label:"All skills",seq:["handle","shoot","finish","foot","shoot","handle","post"]},
+    shooting:{label:"Shooting",seq:["shoot","finish","shoot","foot","shoot"]},
+    handling:{label:"Ball handling",seq:["handle","finish","handle","handle"]},
+    finishing:{label:"Finishing",seq:["finish","post","finish","foot","finish"]},
+    defense:{label:"Defensive skills",seq:["defense","rebound","foot","defense"]}},
+    games:["Beat the Pro","Hot Shot","Knockout","21","Spot-Up Team Battle","Make It Rain","P-I-G / H-O-R-S-E","1v1 Battle Ladder","King of the Court"]},
+  iq:{label:"IQ building",title:"IQ",focus:{
+    balanced:{label:"Offense + defense",seq:["offense","defense","transition","finish","pass","defense"]},
+    offense:{label:"Offense reads",seq:["offense","finish","pass","shoot","offense"]},
+    defense:{label:"Defense reads",seq:["defense","defense","rebound","transition"]},
+    transition:{label:"Transition",seq:["transition","transition","defense","pass"]}},
+    games:["3v3 Cutthroat","Advantage / Disadvantage","3 Stops Drill","Kill Scrimmage","Situational 5v5","Scrimmage with Rules","King of the Court","5-Pass Game"]},
+  team:{label:"Team practice",title:"practice",focus:{
+    balanced:{label:"Balanced",seq:["@skill","defense","offense","transition","@skill","offense"]},
+    offense:{label:"Offense",seq:["@skill","offense","pass","offense","transition"]},
+    defense:{label:"Defense",seq:["@skill","defense","rebound","defense","transition"]},
+    transition:{label:"Transition",seq:["@skill","transition","transition","defense"]},
+    compete:{label:"Competitive",seq:["games","@iq","defense","games","offense"]}},
+    games:["Kill Scrimmage","Situational 5v5","Scrimmage with Rules","3 Stops Drill","Advantage / Disadvantage","3v3 Cutthroat"]}
 };
+// In-play decision drills (IQ building)
+const IQ=new Set(["Monkey in the Middle","Bull in the Ring","5-Pass Game","1v1 From the Wing","Help & Recover 2v2","Deny the Wing","Pick & Roll Defense","Shell Drill","Rebound War","Give & Go","Backdoor Cuts","Pick & Roll Basics","Pass & Screen Away","Drive & Kick","5-Out Motion","Fill the Spot","3v3 Cutthroat","3-on-2, 2-on-1","11-Man Break","2v1 Full Court","Sprint Back Transition","Chase-Down Layups","Pressure Dribble","Retreat Dribble vs Trap","King of the Court","Scrimmage with Rules","1v1 Battle Ladder","Handle into Reads","1v2 Pressure Breaker","Movement Shooting Reads","Closeout Attack Reads","Inside / Outside Hand Reads","Rim Protector Reads","Advantage Finishing","Pocket & Lob Reads 2v1","Get Open vs Denial","Drive, Draw, Dish","Hit-Ahead Drill","Shell Rebounding","Offensive Rebound Pursuit","Shell Drill: Rotations","Ball Screen Coverages","Closeout 1v1: 3 Stops","X-Out Scramble","Defensive Transition: Tag-Up & Load","Post Defense","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Reads vs Coverage","Advantage 4v3","Horns Set & Counters","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations","Read & React 5v0","Make/Miss Transition 5v5","4v3 Continuous","Numbers Defense: Tandem","3 Stops Drill","Advantage / Disadvantage","Situational 5v5","Kill Scrimmage","2v1 Rapid","5-Man Weave into 3v2","High-Low Entry 2v2","Press Break","Inbounds Play: Box","Crash the Boards"]);
+const TEAMX=new Set(["Shell Drill","Shell Drill: Rotations","Ball Screen Coverages","X-Out Scramble","Defensive Transition: Tag-Up & Load","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Defense","Crash the Boards","Shell Rebounding","3 Stops Drill","Kill Scrimmage","Situational 5v5","Scrimmage with Rules","Advantage / Disadvantage","3v3 Cutthroat","Line Sprints","17s","Weave into Layup Race","Layup Race"]);
+const tagsOf=d=>{const t=new Set();const iq=IQ.has(d.n);if(iq)t.add("iq");
+  if(["offense","transition"].includes(d.c)||TEAMX.has(d.n))t.add("team");
+  if(!iq&&!["offense","transition","games","warm","cool"].includes(d.c))t.add("skill");
+  if(d.c==="games"&&TYPES.skill.games.includes(d.n))t.add("skill");
+  return t};
+D.forEach(d=>d.tags=tagsOf(d));
+const typeOK=(d,type)=>type==="skill"?d.tags.has("skill"):type==="iq"?d.tags.has("iq"):(d.tags.has("iq")||d.tags.has("team"));
+const FOCUS=TYPES[st.type].focus;
 const DUR=[30,45,60,75,90];
-if(!FOCUS[st.focus])st.focus="balanced";
+if(!TYPES[st.type].focus[st.focus])st.focus="balanced";
 
 function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
 const pick = a=>a[Math.floor(Math.random()*a.length)];
@@ -437,7 +483,8 @@ function groupText(d,kids,hoops){
 
 function build(){
   const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
-  const pool=c=>D.filter(d=>d.c===c&&fits(d,o));
+  const type=st.type;
+  const pool=c=>c==="@skill"?D.filter(d=>d.tags.has("skill")&&fits(d,o)):c==="@iq"?D.filter(d=>d.tags.has("iq")&&fits(d,o)):(c==="warm"||c==="cool")?D.filter(d=>d.c===c&&fits(d,o)):D.filter(d=>d.c===c&&typeOK(d,type)&&fits(d,o));
   const used=new Set(); const blocks=[];
   let reuse=false;
   const take=(c)=>{let p=pool(c).filter(d=>!used.has(d.id)); if(!p.length&&reuse) p=pool(c); if(!p.length) return null; const d=pick(p); used.add(d.id); return d};
@@ -447,7 +494,7 @@ function build(){
   const coolD = T>=40 ? take("cool") : null; const coolM = coolD?Math.min(coolD.t,5):0; left-=coolM;
   const breakM = T>=60?2:0; left-=breakM;
   const gameD = takeGame(); const gameM = Math.max(8,Math.round(T*0.2)); left-=gameM;
-  const seq=FOCUS[st.focus].seq; let i=0, mids=[];
+  const seq=TYPES[type].focus[st.focus].seq; let i=0, mids=[];
   const extra=["handle","shoot","finish","pass","defense","foot","rebound","condition","games","transition","offense","post"];
   let guard=0;
   while(left>=4 && guard++<60){
@@ -466,7 +513,8 @@ function build(){
   if(coolD) blocks.push({id:coolD.id,m:coolM});
   return blocks;
   function takeGame(){
-    let p=D.filter(d=>d.c==="games"&&fits(d,o)&&d.p[1]>=Math.min(st.kids,12)&&!(st.lvl===1&&d.n==="21")&&!(st.lvl>=3&&/Steal the Bacon|Relay|Treasure|Sharks|Dribble Knockout/.test(d.n)));
+    let p=D.filter(d=>TYPES[type].games.includes(d.n)&&fits(d,o)&&!used.has(d.id));
+    if(!p.length) p=D.filter(d=>d.c==="games"&&fits(d,o)&&d.p[1]>=Math.min(st.kids,12)&&!(st.lvl===1&&d.n==="21")&&!(st.lvl>=3&&/Steal the Bacon|Relay|Treasure|Sharks|Dribble Knockout/.test(d.n)));
     if(!p.length) p=D.filter(d=>d.c==="games"&&fits(d,o));
     if(!p.length) return null; const d=pick(p); used.add(d.id); return d;
   }
@@ -477,8 +525,8 @@ function regen(){plan=build();store.set("plan",plan);renderPlan()}
 
 function fmt(m){return `${Math.floor(m/60)?Math.floor(m/60)+":"+String(m%60).padStart(2,"0"):"0:"+String(m).padStart(2,"0")}`}
 function renderPlan(){
-  $("#planTitle").textContent = FOCUS[st.focus].label+" practice";
-  $("#planEyebrow").textContent = `${st.kids} kids · ${LV[st.lvl]} · ${st.hoops} hoop${st.hoops===1?"":"s"}`;
+  $("#planTitle").textContent = st.type==="team"?`${FOCUS[st.focus].label} practice`:FOCUS[st.focus].label;
+  $("#planEyebrow").textContent = `${PROGRAMS[PROG].name} · ${TYPES[st.type].label} · ${st.kids} kids · ${LV[st.lvl]} · ${st.hoops} hoop${st.hoops===1?"":"s"}`;
   const total=plan.reduce((a,b)=>a+b.m,0);
   const drills=plan.filter(b=>!b.brk).length;
   $("#stats").innerHTML=`<div class="stat"><b>${total}</b><span>Minutes</span></div><div class="stat"><b>${drills}</b><span>Drills</span></div><div class="stat"><b>${st.kids}</b><span>Kids</span></div>`;
@@ -501,7 +549,8 @@ function renderPlan(){
 function swap(idx){
   const cur=D[plan[idx].id]; const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
   const inPlan=new Set(plan.map(b=>b.id));
-  let p=D.filter(d=>d.c===cur.c&&fits(d,o)&&!inPlan.has(d.id));
+  let p=D.filter(d=>d.c===cur.c&&fits(d,o)&&!inPlan.has(d.id)&&(["warm","cool","games"].includes(d.c)||typeOK(d,st.type)));
+  if(!p.length) p=D.filter(d=>d.c===cur.c&&fits(d,o)&&!inPlan.has(d.id));
   if(!p.length) {toast("No other "+C[cur.c].label.toLowerCase()+" drills fit this group");return}
   plan[idx].id=pick(p).id; store.set("plan",plan); renderPlan();
 }
@@ -514,7 +563,9 @@ function seg(el,items,key,fn){
 function saveSet(){store.set("settings",st)}
 seg($("#dur"),DUR.map(m=>[m,m+" min"]),"dur",regen);
 seg($("#lvl"),[[4,"Rep / Elite"],[3,"13–15"],[2,"9–12"],[1,"5–8"]],"lvl",regen);
+seg($("#type"),Object.entries(TYPES).map(([k,v])=>[k,v.label]),"type",()=>{store.set("plan",null);location.reload()});
 seg($("#focus"),Object.entries(FOCUS).map(([k,v])=>[k,v.label]),"focus",regen);
+document.querySelectorAll("[data-prog]").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.prog===PROG);b.onclick=()=>{if(b.dataset.prog===PROG)return;ls.set("cs_program",b.dataset.prog);location.reload()}});
 ["kids","hoops","teams"].forEach(k=>{const i=$("#"+k);i.value=st[k];i.addEventListener("change",()=>{let v=Math.max(+i.min,Math.min(+i.max,parseInt(i.value)||+i.min));i.value=v;st[k]=v;saveSet();k==="teams"?renderTeams():regen();if(k==="kids")renderTeams()})});
 document.addEventListener("click",e=>{
   const s=e.target.closest("[data-step]"); if(s){const i=$("#"+s.dataset.step);i.value=(+i.value)+(+s.dataset.d);i.dispatchEvent(new Event("change"));return}
@@ -524,12 +575,12 @@ document.addEventListener("click",e=>{
   const tm=e.target.closest("[data-tm]"); if(tm){const b=plan[+tm.dataset.tm];b.m=Math.max(1,b.m+(+tm.dataset.d));store.set("plan",plan);renderPlan();return}
   const f=e.target.closest("[data-fav]"); if(f){const id=+f.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);store.set("favs",[...favs]);f.setAttribute("aria-pressed",favs.has(id));if(view==="saved")renderSaved();return}
   const add=e.target.closest("[data-add]"); if(add){const d=D[+add.dataset.add];const at=plan.length&&!plan[plan.length-1].brk&&D[plan[plan.length-1].id].c==="cool"?plan.length-1:plan.length;plan.splice(at,0,{id:d.id,m:d.t});store.set("plan",plan);renderPlan();$("#dlg").close();toast("Added to session");return}
-  const ld=e.target.closest("[data-load]"); if(ld){const s=store.get("sessions",[])[+ld.dataset.load];Object.assign(st,s.st);plan=s.plan;saveSet();store.set("plan",plan);syncControls();renderPlan();location.hash="plan";return}
+  const ld=e.target.closest("[data-load]"); if(ld){const s=store.get("sessions",[])[+ld.dataset.load];const prevType=st.type;Object.assign(st,s.st);if(!st.type)st.type=prevType;plan=s.plan;saveSet();store.set("plan",plan);if(st.type!==prevType){location.hash="plan";location.reload();return}syncControls();renderPlan();location.hash="plan";return}
   const dl=e.target.closest("[data-del]"); if(dl){const a=store.get("sessions",[]);a.splice(+dl.dataset.del,1);store.set("sessions",a);renderSaved();return}
 });
 $("#regen").onclick=regen;
-$("#save").onclick=()=>{const a=store.get("sessions",[]);const d=new Date();a.unshift({name:`${FOCUS[st.focus].label} · ${st.kids} kids · ${st.dur} min`,date:d.toLocaleDateString(undefined,{month:"short",day:"numeric"}),st:{...st},plan:JSON.parse(JSON.stringify(plan))});store.set("sessions",a.slice(0,30));toast("Session saved")};
-function syncControls(){["dur","lvl","focus"].forEach(k=>[...$("#"+k).children].forEach(b=>b.setAttribute("aria-pressed",String(st[k])===b.dataset.v)));["kids","hoops","teams"].forEach(k=>$("#"+k).value=st[k])}
+$("#save").onclick=()=>{const a=store.get("sessions",[]);const d=new Date();a.unshift({name:`${TYPES[st.type].label} · ${FOCUS[st.focus].label} · ${st.kids} kids · ${st.dur} min`,date:d.toLocaleDateString(undefined,{month:"short",day:"numeric"}),st:{...st},plan:JSON.parse(JSON.stringify(plan))});store.set("sessions",a.slice(0,30));toast("Session saved")};
+function syncControls(){["dur","lvl","focus","type"].forEach(k=>[...$("#"+k).children].forEach(b=>b.setAttribute("aria-pressed",String(st[k])===b.dataset.v)));["kids","hoops","teams"].forEach(k=>$("#"+k).value=st[k])}
 
 /* teams */
 const TEAMC=["var(--accent)","var(--teal)","var(--ink)","#7a5af5","#f9a825","#0277bd","#2e7d32","#ef6c00","#6d4c41","#455a64","#c2185b","#5e35b1"];
@@ -543,7 +594,8 @@ function renderTeams(shuffle){
   $("#teamOut").innerHTML=t.map((m,i)=>`<div class="team" style="--c:${TEAMC[i]}"><b>${TEAMN[i]}</b> <span class="muted" style="font-size:13px">${m.length}</span><ol>${m.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>`).join("");
 }
 $("#shuffleTeams").onclick=()=>renderTeams(true);
-$("#names").addEventListener("input",()=>renderTeams(false));
+$("#names").value=store.get("names","");
+$("#names").addEventListener("input",()=>{store.set("names",$("#names").value);renderTeams(false)});
 
 /* library */
 let fCat="";
@@ -552,18 +604,19 @@ function renderChips(){
   $("#catChips").innerHTML=`<button type="button" data-c="" aria-pressed="${fCat===""}">All<em>${D.length}</em></button>`+Object.entries(C).map(([k,v])=>`<button type="button" data-c="${k}" aria-pressed="${fCat===k}">${v.label}<em>${counts[k]||0}</em></button>`).join("");
 }
 $("#catChips").onclick=e=>{const b=e.target.closest("button");if(!b)return;fCat=b.dataset.c;renderChips();renderLib()};
-["q","fLvl","fKids","fHoop"].forEach(id=>$("#"+id).addEventListener("input",renderLib));
+["q","fLvl","fKids","fHoop","fType"].forEach(id=>$("#"+id).addEventListener("input",renderLib));
 function card(d){
   return `<article class="card"><button class="star" data-fav="${d.id}" aria-pressed="${favs.has(d.id)}" aria-label="Favorite">★</button>
   <div class="thumb" data-open="${d.id}">${drawDiagram(d)}</div>${(PLAYS[d.n]||[]).length>1?`<span class="steps-badge">${PLAYS[d.n].length} steps</span>`:""}
-  <span class="tag ${d.c==="games"?"game":""}" style="width:max-content">${C[d.c].label}</span>
+  <div class="row" style="gap:6px"><span class="tag ${d.c==="games"?"game":""}" style="width:max-content">${C[d.c].label}</span>${d.tags.has("iq")?`<span class="type-tag iq">IQ</span>`:""}${d.tags.has("skill")?`<span class="type-tag">Skill</span>`:""}</div>
   <h3><button type="button" data-open="${d.id}" style="all:unset;cursor:pointer">${esc(d.n)}</button></h3>
   <p>${esc(d.s)}</p>
   <div class="meta"><span>${d.t} min</span><span>${d.p[0]===d.p[1]?d.p[0]:d.p[0]+"+"} kids</span><span>${d.l.split("").map(x=>["","5–8","9–12","13–15","Rep"][x]).join(" · ")}</span>${d.h?"<span>Hoop</span>":"<span>No hoop</span>"}</div></article>`;
 }
 function renderLib(){
   const q=$("#q").value.trim().toLowerCase(), lv=$("#fLvl").value, k=+$("#fKids").value, h=$("#fHoop").value;
-  const r=D.filter(d=>(!fCat||d.c===fCat)&&(!lv||d.l.includes(lv))&&(!k||d.p[0]<=k)&&(h===""||d.h===0)&&(!q||(d.n+" "+d.s+" "+d.d+" "+d.k+" "+d.e+" "+C[d.c].label).toLowerCase().includes(q)));
+  const ty=$("#fType").value;
+  const r=D.filter(d=>(!ty||typeOK(d,ty))&&(!fCat||d.c===fCat)&&(!lv||d.l.includes(lv))&&(!k||d.p[0]<=k)&&(h===""||d.h===0)&&(!q||(d.n+" "+d.s+" "+d.d+" "+d.k+" "+d.e+" "+C[d.c].label).toLowerCase().includes(q)));
   const NEW=window.DRILLS.length-(window.DRILLS.length-129);r.sort((a,b)=>(b.id>=NEW)-(a.id>=NEW));
   $("#libCount").textContent=`${r.length} of ${D.length} drills`;
   $("#grid").innerHTML=r.length?r.map(card).join(""):`<div class="empty">No drills match. Clear a filter or try another word.</div>`;
@@ -603,6 +656,7 @@ $("#dlgClose").addEventListener("click",()=>$("#dlg").close());
 
 /* saved */
 function renderSaved(){
+  $("#savedEyebrow").textContent=`${PROGRAMS[PROG].name} · stored on this phone`;
   const s=store.get("sessions",[]);
   $("#savedSessions").innerHTML=s.length?s.map((x,i)=>`<div class="panel row" style="justify-content:space-between;padding:12px 16px"><div><b>${esc(x.name)}</b><div class="muted" style="font-size:13px">${esc(x.date)} · ${x.plan.filter(b=>!b.brk).map(b=>D[b.id]?.n).join(", ")}</div></div><div class="row"><button class="btn sm primary" data-load="${i}">Open</button><button class="btn sm" data-del="${i}">Delete</button></div></div>`).join(""):`<div class="empty">No saved sessions yet. Build one on the Plan tab and press Save.</div>`;
   const f=D.filter(d=>favs.has(d.id));
@@ -705,7 +759,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v17";
+const APP_VERSION="v18";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
