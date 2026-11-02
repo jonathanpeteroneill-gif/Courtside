@@ -308,7 +308,7 @@ html.modal-open,html.modal-open body{overflow:hidden}
       <div class="chip"><span>Courtside</span></div>
     </div>
     <nav aria-label="Sections">
-      <a href="#plan" data-view="plan">Plan session</a>
+      <a href="#plan" data-view="plan">Plan</a>
       <a href="#drills" data-view="drills">Drills</a>
       <a href="#plays" data-view="plays">Plays</a>
       <a href="#term" data-view="term">Term</a>
@@ -998,7 +998,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v35";
+const APP_VERSION="v36";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
