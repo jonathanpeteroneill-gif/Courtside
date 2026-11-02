@@ -50,13 +50,13 @@ add({n:"Dragon (Spectres press break)",sec:"spectres",type:"break",call:"DRAGON 
  counters:"They deny the stack: inbounder fakes, stack players go hard to the ball, never drift away|They trap the catch: pass back to the inbounder and reverse|They take away the sideline: hit the inbounder sprinting the middle",
  k:"Meet the pass, don't wait for it|Pass out of the trap, never dribble into the corner|Inbounder sprints the middle every time",
  links:["Pass & Follow Square","Get Open vs Denial","Give & Go"]},
- [F("Setup: 2 inbounds, 1 and 3 stack at the FT line, 4 and 5 just over halfway on each sideline",[...OB(95.5,25,"2"),O(75,23,"1"),O(75,27,"3"),O(44,4,"4"),O(44,46,"5"),L2(47,0,47,50),T(66,48,"DRAGON RIGHT · DRAGON LEFT")],1),
-  F("On the call the stack splits: 1 breaks one way, 3 breaks the other and meets the pass",[O(95.5,25,"2"),B(97.1,26.6),O(75,23,"1"),O(75,27,"3"),O(44,4,"4"),O(44,46,"5"),M(75,21,82,8),M(75,29,82,41),PS(94,26.5,81,40)],1),
-  F("Inbounder steps in and sprints up the middle as the safety valve",[O(95.5,25,"2"),O(82,42,"3"),B(83.6,43.6),O(82,8,"1"),O(44,4,"4"),O(44,46,"5"),M(94,25,80,25,64,25)],1),
-  F("Trapped? Pivot, protect it, pass back to the inbounder in the middle. Never dribble into the corner",[O(82,42,"3"),B(83.6,43.6),X(86,45),X(79,46.5),O(64,25,"2"),O(82,8,"1"),O(44,4,"4"),O(44,46,"5"),PS(81,40.5,65.5,26.5),T(84,36,"TRAP")],1),
-  F("No trap? Dribble hard up the sideline and hit the big at halfway",[...OB(82,42,"3"),O(64,25,"2"),O(82,8,"1"),O(44,4,"4"),O(44,46,"5"),D(80,42,58,43),PS(57,43,45.5,45.5)],1),
-  F("Give and go: cut straight to the rim, the big hands it back for the layup",[O(57,43,"3"),O(44,46,"5"),B(45.6,47.6),O(64,25,"2"),M(55,42,32,36,10,27),PS(43,45,12,28.5),SH(9,26)],1),
-  F("Big covered? Look to the inbounder in the middle",[...OB(57,43,"3"),O(44,46,"5"),X(43,43),O(62,25,"2"),PS(56,41.5,60.5,26.5),D(60,25,32,25)],1)]);
+ [F("Setup vs their 1-3-1: 2 inbounds, 1 and 3 stack at the FT line, 4 and 5 just over halfway on each sideline",[...OB(95.5,25,"2"),O(75,23,"1"),O(75,27,"3"),O(44,4,"4"),O(44,46,"5"),X(90,25),X(78,9),X(78,41),X(68,25),X(50,25),L2(47,0,47,50),T(66,48,"DRAGON RIGHT · DRAGON LEFT")],1),
+  F("On the call the stack splits: 1 breaks one way, 3 breaks the other and meets the pass · the press shifts to trap",[O(95.5,25,"2"),B(97.1,26.6),O(75,23,"1"),O(75,27,"3"),O(44,4,"4"),O(44,46,"5"),X(90,25),X(78,9),X(78,41),X(68,25),X(50,25),M(75,21,82,8),M(75,29,82,41),PS(94,26.5,81,40),M(90,27,86,38),M(78,43,80,45),M(68,27,72,35),M(78,11,70,22),M(50,27,50,38)],1),
+  F("Inbounder steps in and sprints up the middle as the safety valve",[O(95.5,25,"2"),O(82,42,"3"),B(83.6,43.6),O(82,8,"1"),O(44,4,"4"),O(44,46,"5"),X(86,38),X(80,45),X(72,35),X(70,22),X(50,38),M(94,25,80,25,64,25),M(70,24,68,25)],1),
+  F("Trapped? Pivot, protect it, pass back to the inbounder in the middle. Never dribble into the corner",[O(82,42,"3"),B(83.6,43.6),X(85,40),X(80,45),X(72,36),X(68,25),X(50,38),O(64,25,"2"),O(82,8,"1"),O(44,4,"4"),O(44,46,"5"),PS(81,40.5,65.5,26.5),M(68,27,66,26),M(72,36,68,30),T(84,33,"TRAP")],1),
+  F("No trap? Dribble hard up the sideline and hit the big at halfway",[...OB(82,42,"3"),X(86,38),X(79,39),X(72,35),X(70,22),X(50,38),O(64,25,"2"),O(82,8,"1"),O(44,4,"4"),O(44,46,"5"),D(80,42,58,43),M(79,41,62,40),PS(57,43,45.5,45.5),M(50,40,46,42)],1),
+  F("Give and go: cut straight to the rim, the big hands it back for the layup",[O(57,43,"3"),O(44,46,"5"),B(45.6,47.6),X(46,42),X(62,40),O(64,25,"2"),X(70,22),M(55,42,32,36,10,27),PS(43,45,12,28.5),SH(9,26),M(60,40,30,35)],1),
+  F("Big covered? Look to the inbounder in the middle",[...OB(57,43,"3"),O(44,46,"5"),X(45,43),X(60,40),O(62,25,"2"),X(68,30),PS(56,41.5,60.5,26.5),D(60,25,32,25),M(68,28,58,25,40,24)],1)]);
 
 add({n:"Ghost (Spectres SLOB)",sec:"spectres",type:"inbound",call:"GHOST",
  when:"Every sideline out of bounds in the frontcourt.",
