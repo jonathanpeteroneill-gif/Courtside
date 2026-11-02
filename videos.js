@@ -24,7 +24,7 @@ window.VIDEOS = {
 "3-on-2, 2-on-1":"qIq21bMuFmA",
 "2v1 Full Court":"M9Acu3IlURQ",
 "Euro Step Cones":"O1bHc39gY0k",
-"Bump Euro Finish":{ig:"DfNdUYciqsW",yt:"eHuggtdRLHU"},
+"Bump Euro Finish":{yt:"qehAn2C_rTc",ig:"DfNdUYciqsW",primary:"yt"},
 "Floater Series":"mU1Z3mZAbEU",
 "Drop Step Series":"wCVz66ML7bY",
 "Up & Under":"La2l7eCCG0A",

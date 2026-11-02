@@ -571,6 +571,7 @@ function renderLib(){
 function videoHTML(d){
   const v=VIDEOS[d.n], yt=typeof v==="string"?v:v&&v.yt, ig=v&&v.ig;
   const ytFrame=id=>`<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1" title="${esc(d.n)} video" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe></div>`;
+  if(v&&v.primary==="yt"&&yt) return `${ytFrame(yt)}<div class="row" style="font-size:13px"><a class="muted" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener">Open on YouTube ↗</a>${ig?`<a class="muted" href="https://www.instagram.com/reel/${ig}/" target="_blank" rel="noopener">Instagram version ↗</a>`:""}</div>`;
   if(ig) return `<div class="reel"><iframe src="https://www.instagram.com/reel/${ig}/embed/" title="${esc(d.n)} reel" loading="lazy" allowfullscreen scrolling="no"></iframe></div><div class="row" style="font-size:13px"><a class="muted" href="https://www.instagram.com/reel/${ig}/" target="_blank" rel="noopener">Open on Instagram ↗</a>${yt?`<a class="muted" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener">More on YouTube ↗</a>`:""}</div>`;
   if(yt) return `${ytFrame(yt)}<a class="muted" style="font-size:13px" href="https://www.youtube.com/watch?v=${yt}" target="_blank" rel="noopener">Open on YouTube ↗</a>`;
   return `<a class="btn" style="width:max-content" href="https://www.youtube.com/results?search_query=${encodeURIComponent("basketball "+d.n+" drill")}" target="_blank" rel="noopener">▶ Find videos on YouTube</a><div class="muted" style="font-size:13px">No verified video for this one yet. This searches YouTube.</div>`;
@@ -704,7 +705,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v16";
+const APP_VERSION="v17";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
