@@ -84,16 +84,15 @@ add({n:"Ghost (Spectres SLOB)",sec:"spectres",type:"inbound",call:"GHOST",
   F("Help comes from the block? Cutter dumps it to the weak-side block for the layup",[O(51.5,19,"I"),O(30,9,"2"),B(31.6,10.6),O(20,19,"4"),O(25,30,"1"),O(16,8,"5"),PS(28.5,9,17.5,8),SH(17,7),T(25,42,"Count to 5 · no lobs")])]);
 
 add({n:"Box (Spectres BLOB)",sec:"spectres",type:"inbound",call:"BOX",
- when:"Baseline out of bounds under our basket. Down screen, guard pops to the corner for a safe catch.",
- s:"Box around the key: big at the ball-side elbow · guard on the ball-side block · guard at the weak-side elbow · big on the weak-side block.",
- d:"On the slap: the big down screens for the guard on the block|The guard waits, then pops to the ball-side corner for a safe catch|The screener seals his man and steps to the rim. Wide open? Hit him for the layup|The weak-side elbow guard runs to the top as the safety. The weak-side big holds and seals|Inbounder reads: corner (safe), screener at the rim, safety at the top. Counts to 5. No lobs|After the catch: inbounder steps in, straight into 5-Out spots",
- counters:"They switch: the screener is open at the rim|They deny the corner: the safety at the top|Weak-side big sealed with his man behind him: quick bounce pass",
- k:"Wait for the screen|Screener: seal and step to the rim|No lobs, count to 5",
- links:["Inbounds Play: Box","Pass & Screen Away"]},
- [F("Setup: box around the key",[...OB(36,-2,"I"),O(33,19,"5"),O(33,8,"2"),O(17,19,"1"),O(17,8,"4"),T(25,40,"BOX")]),
-  F("On the slap: the big down screens · the guard pops to the ball-side corner",[O(36,-2,"I"),B(37.6,-0.4),O(33,19,"5"),O(33,8,"2"),O(17,19,"1"),O(17,8,"4"),S(33,17.5,33,10.5),M(34.5,8,40,5,46,4)]),
-  F("Screener seals and steps to the rim · weak elbow guard runs to the top as the safety",[O(36,-2,"I"),B(37.6,-0.4),O(33,11,"5"),O(46,4,"2"),O(17,19,"1"),O(17,8,"4"),M(32,9.5,28,5.5),M(18,20.5,25,29)]),
-  F("Inbounder reads: corner (safe), screener, safety · then everyone into 5-Out spots",[O(36,-2,"I"),B(37.6,-0.4),O(28,5.5,"5"),O(46,4,"2"),O(25,29,"1"),O(17,8,"4"),PS(37.5,-0.5,44.5,3.5),T(25,40,"Count to 5 · no lobs")])]);
+ when:"Baseline out of bounds under our basket. Up screens from the blocks free both elbows to cut to the rim. 5 rolls, 4 gets out to the point as the safety.",
+ s:"Box around the key: 5 on the ball-side block · 4 on the weak-side block · 2 at the ball-side elbow · 3 at the weak-side elbow. Inbounder on the baseline, right of the lane.",
+ d:"On the slap: 4 and 5 step up and set up screens for the elbows|2 comes off 5's up screen and 3 comes off 4's up screen: both cut hard to the basket for the pass|After the screen, 5 rolls back to the rim: another look|4 gets out to the point: reset and safety|Inbounder reads: cutters at the rim, rolling 5, then 4 at the point. Counts to 5. No lobs|Ball goes to the point: inbounder steps in, straight into 5-Out spots",
+ counters:"They switch the up screen: the screener is open rolling to the rim|They sag in the lane: safety at the point, reset|Cutter's man goes under the screen: cutter stops short for the shot",
+ k:"Screeners: set the up screen, then 5 rolls, 4 gets to the point|Cutters wait for the screen, then cut hard, hands up|4 gets to the point every time|No lobs, count to 5",
+ links:["Inbounds Play: Box","Pass & Screen Away","Screening Fundamentals"]},
+ [F("Setup: box around the key · 4 and 5 on the blocks, 2 and 3 at the elbows",[...OB(36,-2,"I"),O(33,8,"5"),O(17,8,"4"),O(33,19,"2"),O(17,19,"3"),T(25,40,"BOX")]),
+  F("On the slap: 4 and 5 up screen · 2 and 3 both cut off the screens to the basket",[...OB(36,-2,"I"),O(33,8,"5"),O(17,8,"4"),O(33,19,"2"),O(17,19,"3"),S(33,9.5,33,16.5),S(17,9.5,17,16.5),M(35,20,37,14,29,7),M(15,20,13,14,21,7)]),
+  F("5 rolls back to the rim · 4 gets out to the point · inbounder reads: cutters, roller, safety",[...OB(36,-2,"I"),O(33,16.5,"5"),O(17,16.5,"4"),O(29,7,"2"),O(21,7,"3"),M(34,15.5,35,10),M(18.5,18,22,26,25,29),PS(35.5,-0.5,30,5.5),T(25,40,"Cutters · roller · safety")])]);
 
 add({n:"Graveyard (Spectres BLOB)",sec:"spectres",type:"inbound",call:"GRAVEYARD",
  when:"Baseline out of bounds under our basket when we want a quick score at the rim.",
@@ -217,13 +216,13 @@ add({n:"Beat the Run and Jump",sec:"break",type:"break",call:"HEADS UP",
 add({n:"Flex Offense",sec:"halfcourt",type:"offense",call:"FLEX",
  when:"Half-court offense against man-to-man when you want patience, screens and layups off cuts. A continuity: the same two screens on every ball reversal.",
  s:"1 (ball) and 2 at the top · 4 on the right block · 3 low on the right side near the sideline · 5 low on the left side near the sideline.",
- d:"Three things happen at once on the first reversal: 1 passes to 2, 4 flex screens for 3, and 1 screens down for 4|3 flex cuts baseline, across the lane, to the left block. Hit him for the layup|4 comes off 1's down screen and pops to the top|3 is now on the left block and becomes the next flex screener|Other way, again all at once: 2 passes to 4, 3 flex screens for 5, 5 cuts to the right block|2 does an in-and-out (steps in, comes back out) while 3 pops off the block to the left wing|1 is low on the right: the next flex cutter. Keep reversing",
+ d:"Three things happen at once on the first reversal: 1 passes to 2, 4 flex screens for 3, and 1 screens down for 4|3 flex cuts baseline, across the lane, to the left block. Hit him for the layup|4 comes off 1's down screen and pops to the top|3 is now on the left block and becomes the next flex screener|Other way, again all at once: 2 passes to 4, 3 flex screens for 5, 5 cuts to the right block|2 (the passer) screens down for 3, who comes up off the screen to the top|1 is low on the right: the next flex cutter. Keep reversing",
  counters:"Defender cheats over the flex screen: cutter goes over the top of the screen instead|They switch the flex screen: screener seals and posts up|Top denied on reversal: back door to the rim, or dribble at the wing for a hand-off|Down screen defender sags: screener slips to the rim",
  k:"Patience: reverse the ball, make the defense move|Flex cutter waits for the screen, then cuts tight, hand up|Screeners: still, wide base, arms in|Every pass: two screens, two options",
  links:["Screening Fundamentals","Pass & Screen Away","5-Out Screen Away","Backdoor Cuts"]},
  [F("Flex set: 1 (ball) and 2 at the top, 4 on the right block, 3 low on the right, 5 low on the left",[...OB(34,29,"1"),O(16,29,"2"),O(34.5,8,"4"),O(46,8,"3"),O(4,8,"5"),T(25,40,"FLEX")]),
   F("All at once: 1 reverses to 2 · 4 flex screens for 3, 3 cuts baseline across the lane to the left block · 1 screens down for 4, 4 pops to the top",[...OB(34,29,"1"),O(16,29,"2"),O(34.5,8,"4"),O(46,8,"3"),O(4,8,"5"),PS(32.5,29,17.5,29),S(36,8,41,8),M(45,10,36,11,24,9,15,8),S(33.5,27.4,38.5,11.5),M(43,10,44,20,39,27.5)]),
-  F("Other way, all at once: 2 reverses to 4 · 3 flex screens for 5, 5 cuts to the right block · 2 does an in-and-out · 3 pops off the block to the left wing",[...OB(16,29,"2"),O(34,28,"4"),O(46,8,"1"),O(15.5,8,"3"),O(4,8,"5"),PS(17.5,29,32.5,28.5),S(13.5,8,8.5,8),M(5,10,14,11,26,9,34,8),M(18,27.5,23,20.5),M(21.5,20,15.5,27),M(7,10,6,18,8,24),T(25,40,"Reverse · flex cut · pop · repeat")])]);
+  F("Other way, all at once: 2 reverses to 4 · 3 flex screens for 5, 5 cuts to the right block · 2 screens down for 3, 3 comes up to the top",[...OB(16,29,"2"),O(34,28,"4"),O(46,8,"1"),O(15.5,8,"3"),O(4,8,"5"),PS(17.5,29,32.5,28.5),S(13.5,8,8.5,8),M(5,10,14,11,26,9,34,8),S(16.5,27.4,11.5,11.5),M(7.5,10,7,19,15,27.5),T(25,40,"Reverse · flex cut · pop · repeat")])]);
 
 // ============================== INBOUNDS (aliases) ==============================
 PB.push({n:"Ghost (Spectres SLOB)",sec:"inbound",alias:true},{n:"Box (Spectres BLOB)",sec:"inbound",alias:true},{n:"Graveyard (Spectres BLOB)",sec:"inbound",alias:true});
