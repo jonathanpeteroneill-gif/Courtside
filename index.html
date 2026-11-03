@@ -114,6 +114,11 @@ a.btn{color:var(--ink);text-decoration:none}
 .groups.warn{color:var(--warn)}
 .block p{margin:0;max-width:68ch}
 .block .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.addrow{padding:6px 0 10px 22px}.addrow .btn{border-style:dashed}
+.pick-ph,.pick-cats{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.pick-q{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);margin:6px 0}
+.chip{font:inherit;font-size:13px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.pick-list{display:grid;gap:6px;margin-top:6px}.pick-row{display:grid;gap:2px;text-align:left;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}.pick-row:hover{border-color:var(--accent)}.pick-n{font-weight:700}.pick-m{font-size:13px;color:var(--muted)}
+.addto{align-items:center;flex-wrap:wrap;gap:6px}
 
 .equip{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .equip span{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px}
@@ -658,19 +663,48 @@ function renderPlan(){
     const ph=b.brk?prevPh:(b.ph||(D[b.id].c==="warm"?"warm":D[b.id].c==="cool"?"cool":"skill"));
     const head=ph&&ph!==prevPh?`<div class="phase ph-${ph}">${["warm","skill","game"].indexOf(ph)>-1?(["warm","skill","game"].indexOf(ph)+1)+" · ":""}${PHASE[ph]}</div>`:"";
     prevPh=ph;
-    if(b.brk) return head+`<div class="block is-break"><span class="clock">${at}</span><div class="block-head"><h3>Water break</h3><span class="mins">${b.m} min</span></div></div>`;
+    const nx=plan[idx+1],nph=nx?(nx.brk?ph:(nx.ph||(D[nx.id].c==="warm"?"warm":D[nx.id].c==="cool"?"cool":"skill"))):null;
+    const tail=ph&&nph!==ph?`<div class="addrow"><button type="button" class="btn sm" data-pick="${ph}">+ Add a drill to ${PHASE[ph]}</button></div>`:"";
+    if(b.brk) return head+`<div class="block is-break"><span class="clock">${at}</span><div class="block-head"><h3>Water break</h3><span class="mins">${b.m} min</span></div></div>`+tail;
     const d=D[b.id]; const g=groupText(d,st.kids,st.hoops); const game=d.c==="games";
     return head+`<div class="block ${game||b.ph==="game"?"is-game":""}"><span class="clock">${at}</span>
       <div class="block-head"><span class="tag ${game?"game":""}">${C[d.c].label}</span><h3><button type="button" data-open="${d.id}">${esc(d.n)}</button></h3><span class="mins">${b.m} min</span></div>
       <div class="groups ${g.warn?"warn":""}">${esc(g.t)}</div>
       <p class="muted">${esc(d.s)}</p>
-      <div class="acts"><button class="btn sm" data-swap="${idx}">Swap</button><button class="btn sm" data-open="${d.id}">Steps</button><button class="btn sm" data-tm="${idx}" data-d="-1">−1 min</button><button class="btn sm" data-tm="${idx}" data-d="1">+1 min</button><button class="btn sm" data-rm="${idx}">Remove</button></div></div>`;
-  }).join("");
+      <div class="acts"><button class="btn sm" data-swap="${idx}">Swap</button><button class="btn sm" data-open="${d.id}">Steps</button><button class="btn sm" data-tm="${idx}" data-d="-1">−1 min</button><button class="btn sm" data-tm="${idx}" data-d="1">+1 min</button><button class="btn sm" data-rm="${idx}">Remove</button><button class="btn sm" data-mv="${idx}" data-d="-1" aria-label="Move up">↑</button><button class="btn sm" data-mv="${idx}" data-d="1" aria-label="Move down">↓</button></div></div>`+tail;
+  }).join("")+(plan.length?"":`<div class="addrow"><button type="button" class="btn sm" data-pick="skill">+ Add a drill</button></div>`);
   const eq=new Set(); plan.forEach(b=>{if(b.brk)return; D[b.id].e.split(",").map(s=>s.trim().replace(/^\d+\s*/,"")).filter(Boolean).forEach(x=>eq.add(x))});
   const balls = st.kids; eq.add(`about ${balls} balls`);
   $("#equip").innerHTML=[...eq].filter(x=>!/^balls?( each| per.*)?$/.test(x)&&x!=="ball").map(x=>`<span>${esc(x)}</span>`).join("")+`<span>water</span>`;
 }
 
+const PH_ORDER=["warm","skill","game","cool"];
+function phaseList(){let prev=null;return plan.map(b=>{const ph=b.brk?prev:(b.ph||(D[b.id].c==="warm"?"warm":D[b.id].c==="cool"?"cool":"skill"));prev=ph;return ph})}
+function insertDrill(id,ph){
+  const d=D[id],L=phaseList();let at=-1;
+  for(let i=L.length-1;i>=0;i--)if(L[i]===ph&&!plan[i].brk){at=i+1;break}
+  if(at<0){const o=PH_ORDER.indexOf(ph);at=L.findIndex((p,i)=>!plan[i].brk&&PH_ORDER.indexOf(p)>o);if(at<0)at=plan.length;else if(at>0&&plan[at-1].brk)at--}
+  plan.splice(at,0,{id:d.id,m:d.t,ph});store.set("plan",toSave(plan));renderPlan();
+  toast(`Added to ${PHASE[ph]}`);
+}
+let PICK={ph:"skill",q:"",c:""};
+function openPicker(ph){
+  PICK={ph:ph||"skill",q:"",c:""};
+  $("#dlgBody").innerHTML=`<h2>Add a drill</h2>
+  <div class="eyebrow">Add to</div><div class="pick-ph" role="group" aria-label="Add to">${PH_ORDER.map(p=>`<button type="button" class="chip" data-pickph="${p}" aria-pressed="${p===PICK.ph}">${PHASE[p]}</button>`).join("")}</div>
+  <input id="pickQ" class="pick-q" type="search" placeholder="Search drills" autocomplete="off">
+  <div class="eyebrow">Type</div><div class="pick-cats"><button type="button" class="chip" data-pickc="" aria-pressed="true">All</button>${Object.entries(C).map(([k,v])=>`<button type="button" class="chip" data-pickc="${k}" aria-pressed="false">${esc(v.label)}</button>`).join("")}</div>
+  <div id="pickList" class="pick-list"></div>`;
+  renderPick();
+  const dg=$("#dlg");$("#dlgPanel").style.transform="";$("#dlgPanel").style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;
+  $("#pickQ").addEventListener("input",e=>{PICK.q=e.target.value.trim().toLowerCase();renderPick()});
+}
+function renderPick(){
+  const inPlan=new Set(plan.filter(b=>!b.brk).map(b=>b.id)),o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
+  let L=D.filter(d=>(!PICK.c||d.c===PICK.c)&&(!PICK.q||(d.n+" "+d.s).toLowerCase().includes(PICK.q)));
+  L.sort((a,b)=>(fits(b,o)-fits(a,o))||a.n.localeCompare(b.n));
+  $("#pickList").innerHTML=L.length?L.map(d=>`<button type="button" class="pick-row" data-pickadd="${d.id}"><span class="pick-n">${esc(d.n)}${inPlan.has(d.id)?' <i class="muted">· in plan</i>':""}</span><span class="pick-m">${esc(C[d.c].label)} · ${d.t} min${fits(d,o)?"":" · not ideal for this group"}</span></button>`).join(""):`<p class="muted">No drills match.</p>`;
+}
 function swap(idx){
   const cur=D[plan[idx].id]; const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
   const inPlan=new Set(plan.map(b=>b.id));
@@ -697,6 +731,12 @@ document.addEventListener("click",e=>{
   const s=e.target.closest("[data-step]"); if(s){const i=$("#"+s.dataset.step);i.value=(+i.value)+(+s.dataset.d);i.dispatchEvent(new Event("change"));return}
   const o=e.target.closest("[data-open]"); if(o){openDrill(+o.dataset.open);return}
   const sw=e.target.closest("[data-swap]"); if(sw){swap(+sw.dataset.swap);return}
+  const pk=e.target.closest("[data-pick]"); if(pk){openPicker(pk.dataset.pick);return}
+  const pph=e.target.closest("[data-pickph]"); if(pph){PICK.ph=pph.dataset.pickph;document.querySelectorAll("[data-pickph]").forEach(x=>x.setAttribute("aria-pressed",x===pph));return}
+  const pc=e.target.closest("[data-pickc]"); if(pc){PICK.c=pc.dataset.pickc;document.querySelectorAll("[data-pickc]").forEach(x=>x.setAttribute("aria-pressed",x===pc));renderPick();return}
+  const pa=e.target.closest("[data-pickadd]"); if(pa){insertDrill(+pa.dataset.pickadd,PICK.ph);$("#dlg").close();return}
+  const ap=e.target.closest("[data-addph]"); if(ap){insertDrill(+ap.dataset.addph,ap.dataset.ph);$("#dlg").close();return}
+  const mv=e.target.closest("[data-mv]"); if(mv){const i=+mv.dataset.mv,j=i+(+mv.dataset.d);if(j<0||j>=plan.length)return;const L=phaseList();const b=plan[i];plan.splice(i,1);plan.splice(j,0,b);if(!b.brk&&L[j])b.ph=L[j];store.set("plan",toSave(plan));renderPlan();return}
   const rm=e.target.closest("[data-rm]"); if(rm){plan.splice(+rm.dataset.rm,1);store.set("plan",toSave(plan));renderPlan();return}
   const tm=e.target.closest("[data-tm]"); if(tm){const b=plan[+tm.dataset.tm];b.m=Math.max(1,b.m+(+tm.dataset.d));store.set("plan",toSave(plan));renderPlan();return}
   const f=e.target.closest("[data-fav]"); if(f){const id=+f.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);saveFavs();f.setAttribute("aria-pressed",favs.has(id));if(view==="saved")renderSaved();return}
@@ -768,7 +808,7 @@ function openDrill(id){
   <section><div class="eyebrow">Make it harder</div><div>${esc(d.v)}</div></section>
   <section><div class="eyebrow">Video</div>${videoHTML(d)}</section>
   <section><div class="eyebrow">For ${st.kids} kids</div><div>${esc(groupText(d,st.kids,st.hoops).t)}</div></section>
-  <div class="row"><button class="btn primary" data-add="${d.id}">Add to session</button><button class="btn" data-fav="${d.id}" aria-pressed="${favs.has(d.id)}">★ Favorite</button></div>`;
+  <div class="row addto"><span class="eyebrow">Add to session:</span>${PH_ORDER.map(p=>`<button class="btn ${p===(d.c==="warm"?"warm":d.c==="cool"?"cool":"skill")?"primary":""}" data-addph="${d.id}" data-ph="${p}">${PHASE[p]}</button>`).join("")}</div><div class="row"><button class="btn" data-fav="${d.id}" aria-pressed="${favs.has(d.id)}">★ Favorite</button></div>`;
   const dg=$("#dlg");$("#dlgPanel").style.transform="";$("#dlgPanel").style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
 }
 $("#dlg").addEventListener("click",e=>{if(e.target===$("#dlg"))$("#dlg").close()});
@@ -998,7 +1038,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v58";
+const APP_VERSION="v59";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
