@@ -218,10 +218,10 @@ def("Closeouts",
 def("Shell Drill",
  F("Ball at the top: on ball, deny one pass away, help two away",[O(8,22,"4"),...OB(18,29,"1"),O(32,29,"2"),O(42,22,"3"),X(18.5,25.5,"1"),X(29,25,"2"),X(37,19,"3"),X(14,17,"4")]),
  F("Pass to the wing: everyone jumps to the ball",[O(8,22,"4"),O(18,29,"1"),O(32,29,"2"),...OB(42,22,"3"),PS(33.5,28,40.5,23),X(21.5,24,"1"),X(31,24.5,"2"),X(39.5,19.5,"3"),X(19,12,"4"),M(29,25,30.5,24.5),M(14,17,18.5,12.5)]),
- F("Wing drives baseline: help stops it, everyone rotates",[O(8,22,"4"),O(18,29,"1"),O(32,29,"2"),O(42,22,"3"),B(43.6,23.6),D(42,20,38,8),X(39.5,19.5,"3"),M(19,12,33,9),M(21.5,24,16,18),T(25,38,"Help the helper")]));
+ F("Wing drives baseline: help stops it, everyone rotates",[O(8,22,"4"),O(18,29,"1"),O(32,29,"2"),O(42,22,"3"),B(43.6,23.6),D(42,20,38,8),X(39.5,19.5,"3"),X(19,12,"4"),X(21.5,24,"1"),X(31,24.5,"2"),M(19,12,33,9),M(21.5,24,16,18),T(25,38,"Help the helper")]));
 def("1v1 From the Wing",
  F("Pass to the wing and close out",[X(25,7),B(23,8.5),O(41,21),PS(26,8,39.5,19.5),M(26,8.5,37,17)]),
- F("Live 1v1 · 3 dribbles max",[O(41,21),B(42.6,22.6),X(38.5,18.5),D(40,19,34,9),M(37,17,32,10),T(25,32,"Chest in front · contest without fouling")]));
+ F("Live 1v1 · 3 dribbles max",[O(41,21),B(42.6,22.6),X(38.5,18.5),D(41,19.5,34,9),M(37,17,32,10),T(25,32,"Chest in front · contest without fouling")]));
 def("Help & Recover 2v2",
  F("Ball drives baseline · help defender stops the ball",[...OB(41,21,"1"),O(9,21,"2"),X(38.5,18.5,"1"),X(16,15,"2"),D(41,19,36,8),M(17,14,31,8)]),
  F("Kick out · help recovers with high hands",[O(35,7,"1"),O(9,21,"2"),X(36,9,"1"),X(31,8,"2"),PS(34,6,10.5,19.5),M(30,9.5,12,18.5)]));
@@ -290,7 +290,7 @@ def("Drive & Kick",
  F("Kick to the open corner · catch ready, shoot",[O(26,16,"1"),O(3,4,"2"),O(47,4,"3"),X(21,14),PS(27.5,15,45.5,5),SH(46,5)]));
 def("5-Out Motion",
  F("5-out spacing · 1 passes to the wing and basket cuts",[...OB(25,30,"1"),O(8,23,"2"),O(42,23,"3"),O(3,4,"4"),O(47,4,"5"),PS(26.5,29,40.5,24),M(24,28,23,18,26,8)]),
- F("No pass back: 1 exits to the weak-side corner · everyone fills toward the ball",[O(26,8,"1"),O(8,23,"2"),O(42,23,"3"),B(43.6,24.6),O(3,4,"4"),O(47,4,"5"),M(24,8,6,4),M(4.5,6,8,20),M(10,24.5,23,29)]),
+ F("No pass back: 1 exits to the weak-side corner · everyone fills toward the ball",[O(26,8,"1"),O(8,23,"2"),O(42,23,"3"),B(43.6,24.6),O(3,4,"4"),O(47,4,"5"),M(4.5,6,8,20),M(10,24.5,23,29),M(24,8,5,4)]),
  F("Spots refilled · 3 passes to the top and the pattern repeats",[O(5,4,"1"),O(8,21,"4"),O(25,30,"2"),O(42,23,"3"),B(43.6,24.6),O(47,4,"5"),PS(40.5,23,26.5,29)]),
  F("Denied on the wing, or dribbled at: go backdoor",[O(25,30,"2"),B(26.6,31.6),O(42,23,"3"),X(40,20.5),O(8,21,"4"),O(5,4,"1"),O(47,4,"5"),M(43,21,35,12,29,7),PS(25,28,30,9),T(25,40,"Denied = backdoor")]));
 def("Fill the Spot",F("A player cuts · next player fills the empty spot",[K(3,6),K(8,24),K(25,31),K(42,24),K(47,6),O(3,4),O(8,22),...OB(25,29),O(42,22),O(47,4),M(42,20,30,8),M(46,6,42,20)]));
@@ -314,7 +314,7 @@ def("11-Man Break",
 def("2v1 Full Court",F("Two attack one",[...OB(60,18,"1"),O(60,32,"2"),X(25,25),D(58,18,26,20),M(58,32,14,32)],1),F("Defender commits · pass for the layup",[O(24,20,"1"),O(14,30,"2"),X(21,22),PS(22,21,15,28.5),SH(8,26)],1));
 def("Sprint Back Transition",
  F("Coach passes to one team",[C(47,2),O(30,10),O(30,20),O(30,30),O(30,40),X(34,10),X(34,20),X(34,30),X(34,40),PS(45,3,32,9)],1),
- F("Other team sprints back to the paint first",[O(40,10),O(44,20),O(44,30),O(42,40),B(41.6,11.6),M(34,20,12,24),M(34,30,14,28),M(34,10,22,14),M(34,40,22,36)],1));
+ F("Other team sprints back to the paint first",[O(40,10),O(44,20),O(44,30),O(42,40),B(41.6,11.6),X(34,10),X(34,20),X(34,30),X(34,40),M(34,20,12,24),M(34,30,14,28),M(34,10,22,14),M(34,40,22,36)],1));
 def("3-Lane Fill",
  F("Outlet to the wing · all three sprint wide lanes",[O(3,25,"1"),B(4.6,26.6),O(8,8,"2"),O(8,42,"3"),PS(5,24,8,10),M(10,8,70,8),M(10,42,70,42),M(5,26,20,25)],1),
  F("Middle stops at the FT line, passes for the layup",[O(75,25,"1"),B(73.4,26.6),O(70,8,"2"),O(70,42,"3"),M(72,8,86,20),PS(77,24,85,21),SH(87,24)],1));
@@ -382,7 +382,7 @@ def("Make 100",
  F("Relocate after every shot · rotate on makes",[O(32,29,"S"),G(42,22),M(41,24,33.5,27.5),O(25,19,"P"),O(26,7,"R"),PS(27.5,8,25.5,17),PS(26,20.5,31,28)]));
 def("Movement Shooting Reads",
  F("Defender trails: curl to the rim",[...OB(25,32,"P"),O(33,19,"S"),K(33,15),X(36,12),M(33,17,29,11,27,8),G(36,10)]),
- F("Defender cheats under: flare or fade to the corner",[O(25,32,"P"),B(26.6,33.6),O(42,14,"S"),K(33,15),X(30,12),M(34,13,42,14),PS(26,30,41,15.5),SH(41,13.5)]),
+ F("Defender cheats under: flare or fade to the corner",[O(25,32,"P"),B(26.6,33.6),O(34,13,"S"),K(33,15),X(30,12),M(35.5,13,42,14),PS(26,30,41,15.5),SH(41,13.5)]),
  F("Defender goes over: pop for the catch-and-shoot",[O(25,32,"P"),B(26.6,33.6),O(33,22,"S"),K(33,15),X(34,17),M(33,17,33,21),PS(26,30.5,32,22.5),SH(32,20)]));
 def("Off-the-Dribble Series",
  F("One-dribble pull-up both ways",[...OB(41,22),D(39.5,21,35,19),SH(34,18)]),
@@ -398,7 +398,7 @@ def("Finishing Gauntlet",F("Drive into the lane",[...OB(25,32),X(19.5,14,"P"),X(
 def("Bump Euro Finish",
  F("Drive hard from the wing at the pad",[...OB(43,25),X(31,14,"P"),D(42,23,35,17.5)]),
  F("First euro step: plant into the pad and bump with your shoulder",[O(34,16.5),B(35.2,14.6),X(31.5,14,"P"),M(35.5,18.5,33,16),T(40,13,"BUMP")]),
- F("Step across away from the pad, finish with the outside hand",[G(34,16.5),O(37,10),X(31.5,14,"P"),M(35,15,38,11.5),SH(35,8.5),T(25,26,"Long step · quick step · finish high")]));
+ F("Step across away from the pad, finish with the outside hand",[G(34,16.5),O(35.5,15.5),X(31.5,14,"P"),M(36.5,14.5,38,11.5),SH(35,8.5),T(25,26,"Long step · quick step · finish high")]));
 def("Inside / Outside Hand Reads",
  F("Defender on your hip: inside hand off the glass",[O(32,14),B(33.6,15.6),X(35,15),D(32,12,29,8),SH(27,6)]),
  F("Defender ahead of you: outside hand, extend away",[O(34,14),X(30,10),D(35,12,32,6),SH(28,5.5)]),
@@ -416,7 +416,7 @@ def("Pocket & Lob Reads 2v1",
  F("Big stays in the middle: lob to the roller",[O(32,26,"1"),X(28,17,"5"),O(26,8,"5"),PS(31,24,29,14,26.5,9.5)]));
 def("Get Open vs Denial",
  F("V-cut: walk in, plant, come out hard",[...OB(25,30,"P"),O(39,14,"R"),X(38,18),M(39,12,34,10,42,21),PS(26.5,29,40.5,22)]),
- F("Denied 2 seconds: go backdoor",[O(25,30,"P"),B(26.6,31.6),O(41,22,"R"),X(40,19.5),M(42,20,32,7),PS(24,28,31,9)]));
+ F("Denied 2 seconds: go backdoor",[O(25,30,"P"),B(26.6,31.6),O(41,22,"R"),X(40,19.5),M(41.5,20.5,32,7),PS(24,28,31,9)]));
 def("Drive, Draw, Dish",
  F("Drive to draw a defender",[...OB(25,30,"1"),O(5,14,"2"),O(45,14,"3"),X(15,14),X(35,14),D(25,28,26,17),M(35,14,29,16)]),
  F("Kick to the open shooter or dump to the big",[O(26,17,"1"),O(5,14,"2"),O(45,14,"3"),X(15,14),X(29,16),PS(28,16.5,43.5,14.5),SH(44,13)]));
@@ -435,11 +435,11 @@ def("Shell Drill: Rotations",
  F("Drive: help stops it, helper's man is covered",[O(8,22,"4"),O(18,29,"1"),O(32,29,"2"),...OB(42,22,"3"),X(21.5,24,"1"),X(31,24.5,"2"),X(39.5,19.5,"3"),X(19,12,"4"),D(42,20,38,8),M(19,12,33,9),M(21.5,24,15,17)]),
  F("Skip pass: sprint to close out",[...OB(8,22,"4"),O(18,29,"1"),O(32,29,"2"),O(42,22,"3"),PS(40.5,21,25,15,9.5,21),X(15,17,"1"),M(15,17,10,20)]));
 def("Ball Screen Coverages",
- F("ICE: force the handler away from the screen, big drops to the baseline",[...OB(41,24,"1"),X(40,27,"1"),O(37,27,"5"),X(36,15,"5"),S(36,20,37,25.5),D(42,22,44,12),T(25,38,"Guard jumps to the screen side")]),
+ F("ICE: force the handler away from the screen, big drops to the baseline",[...OB(41,24,"1"),X(40,27,"1"),O(36,19,"5"),X(36,15,"5"),S(36,20.5,37,25.5),D(42,22,44,12),T(25,38,"Guard jumps to the screen side")]),
  F("DROP: guard fights over, big sits in the paint",[...OB(25,30,"1"),X(25,27,"1"),O(30,27,"5"),X(30,14,"5"),D(26,29,33,27,33,21),M(25,27,30,26),T(25,40,"Give up the pull-up, take away the rim")]),
  F("HEDGE: big jumps out high, then recovers to the roller",[O(32,28,"1"),B(33.6,29.6),X(34,29.5,"5"),O(28,13,"5"),X(29,27,"1"),M(34,28,30,16),M(28,13,27,9)]),
  F("SWITCH: defenders swap assignments",[O(32,28,"1"),B(33.6,29.6),O(28,22,"5"),X(30.5,26,"5"),X(27,24,"1"),M(31,24,32,26),M(25,25,27,22.5),T(25,40,"Call it loud, switch early")]));
-def("Closeout 1v1: 3 Stops",F("Pass, closeout, play live · 3-dribble limit",[X(25,7),B(23,8.5),O(41,21),PS(26,8,39.5,19.5),M(26,8.5,37,17)]),F("3 straight stops to rotate · a score resets",[O(41,21),B(42.6,22.6),X(38.5,18.5),D(40,19,34,9),M(37,17,32,10)]));
+def("Closeout 1v1: 3 Stops",F("Pass, closeout, play live · 3-dribble limit",[X(25,7),B(23,8.5),O(41,21),PS(26,8,39.5,19.5),M(26,8.5,37,17)]),F("3 straight stops to rotate · a score resets",[O(41,21),B(42.6,22.6),X(38.5,18.5),D(41,19.5,34,9),M(37,17,32,10)]));
 def("X-Out Scramble",
  F("Coach skips the ball to the far wing",[C(25,30),O(8,22,"1"),O(42,22,"2"),O(47,4,"3"),X(20,20,"1"),X(34,19,"2"),X(40,7,"3"),PS(23.5,29,9.5,23)]),
  F("Farthest defender sprints to the ball · others rotate to open players",[C(25,30),O(8,22,"1"),B(9.6,23.6),O(42,22,"2"),O(47,4,"3"),M(34,19,11,21),M(20,20,40,21),M(40,7,45,5),T(25,40,"Talk: I've got ball!")]));
@@ -456,7 +456,7 @@ def("Zone Slides: 2-3",
  F("Ball in the corner: forward closes out, center fronts the block",[O(25,30),O(42,22),O(8,22),O(3,4),...OB(47,4),X(39,15),X(25,15),X(44,6),X(34,8),X(20,8),PS(42,20,46,6)]));
 def("2-2-1 Press Trap Reads",
  F("2-2-1 alignment against the inbound",[...OB(95,30,"1"),O(84,18),O(84,34),O(60,25),O(45,12),X(78,18),X(78,34),X(60,13),X(60,37),X(32,25)],1),
- F("Trap the sideline after the first pass · others rotate",[O(84,9),B(85.6,10.6),O(84,34),O(60,25),O(45,12),X(81,12),X(78,7),X(68,25),X(56,22),X(40,15),M(78,18,81,13),M(60,13,77,8),M(78,34,68,26),M(60,37,56,24),M(32,25,40,16)],1));
+ F("Trap the sideline after the first pass · others rotate",[O(84,9),B(85.6,10.6),O(84,34),O(60,25),O(45,12),X(78,18),X(60,13),X(78,34),X(60,37),X(32,25),M(78,18,81,13),M(60,13,77,8),M(78,34,68,26),M(60,37,56,24),M(32,25,40,16)],1));
 def("Shot Prep Footwork",F("Catch, pivot, rip · square up",[...OB(41,22),T(25,30,"Turn and face")]),F("Jab series: jab-shot, jab-drive",[O(41,22),M(39.5,21,37,20),SH(40,21),D(40,20,32,10)]));
 def("Plyometric Circuit",F("40s work · 20s rest · rotate stations",[["R",3,14,20,13,"Tuck jumps"],["R",27,14,20,13,"Lateral bounds"],["R",3,31,20,13,"Vertical jumps"],["R",27,31,20,13,"Broad jumps"],M(23,20,27,20),M(37,27,37,31),M(27,37,23,37),M(13,31,13,27)]));
 def("Post Seal & Duck-in",F("Seal on the block",[O(33,9,"5"),X(35,11),...OB(44,20,"2"),O(25,30,"1")]),F("Ball reverses · duck into the lane, catch, finish",[O(28,10,"5"),X(32,10),O(44,20,"2"),...OB(25,30,"1"),PS(42.5,20,26.5,28.5),M(33,9,28,10),PS(24,28,27.5,12),SH(26,7)]));

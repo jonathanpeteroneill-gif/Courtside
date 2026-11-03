@@ -53,7 +53,7 @@ add({n:"Dragon (Spectres press break)",sec:"spectres",type:"break",call:"DRAGON 
  [F("Setup vs their 2-2-1: 2 inbounds left of the lane, 1 and 3 stacked in the lane, 4 and 5 wide on each sideline",[...OB(95.5,33,"2"),O(73,25,"1"),O(83,25,"3"),O(52,46,"4"),O(52,4,"5"),X(78,35),X(78,15),X(55,39),X(55,11),X(30,25,"S"),L2(47,0,47,50),T(66,49,"DRAGON")],1),
   F("Stack splits: 3 breaks to the ball-side corner, 1 to the other block · 2 inbounds to 3",[O(95.5,33,"2"),B(97.1,34.6),O(73,25,"1"),O(83,25,"3"),O(52,46,"4"),O(52,4,"5"),X(78,35),X(78,15),X(55,39),X(55,11),X(30,25,"S"),M(84,27,88,32,89,38),M(74,23,84,16,89,13),PS(94,34.5,88,37.5),M(78,37,84,38)],1),
   F("2 runs up the middle of the lane · 3 passes back to 2 at the top of the key before the trap",[O(95.5,33,"2"),O(89,38,"3"),B(90.6,39.6),O(89,13,"1"),O(52,46,"4"),O(52,4,"5"),X(84,38),X(78,15),X(55,39),X(55,11),X(30,25,"S"),M(94,31,86,27,73,25),PS(88,36.5,74.5,26.5),M(84,40,88,41),M(78,17,76,22),T(86,48,"Pass back BEFORE the trap")],1),
-  F("2 hits 4 on the sideline and keeps running the middle",[O(73,25,"2"),B(74.6,26.6),O(89,38,"3"),O(89,13,"1"),O(52,46,"4"),O(52,4,"5"),X(88,41),X(76,22),X(55,39),X(55,11),X(30,25,"S"),PS(71.5,26.5,53.5,44.5),M(71,25,55,25,42,25),M(55,37,51,42),M(55,13,48,19),M(89,40,70,44),M(89,15,70,10)],1),
+  F("2 hits 4 on the sideline and keeps running the middle",[O(73,25,"2"),B(74.6,26.6),O(89,38,"3"),O(89,13,"1"),O(52,46,"4"),O(52,4,"5"),X(88,41),X(76,22),X(55,39),X(55,11),X(30,25,"S"),PS(71.5,26.5,53.5,44.5),M(71,25,55,25,42,25),M(55,37,51,42),M(55,13,48,19),M(90,36.5,70,44),M(89,15,70,10)],1),
   F("4 takes a couple of dribbles up the sideline and hits 2 in the middle · 5 sprints the far side to the rim",[O(52,46,"4"),B(53.6,47.6),O(42,25,"2"),O(70,44,"3"),O(70,10,"1"),O(52,4,"5"),X(51,42),X(48,19),X(30,25,"S"),D(50,46,42,46),PS(42,44.5,40,26.5),M(52,6,24,6,12,17),M(70,42,50,40,30,40),M(70,12,50,12,32,12),M(48,21,44,24)],1),
   F("Safety steps up to 2: hit 5 at the rim for the layup",[O(38,25,"2"),B(39.6,26.6),X(33,25,"S"),O(12,17,"5"),O(30,40,"3"),O(32,12,"1"),M(31,25,34,25),PS(36.5,24,13.5,18),SH(11,19),T(30,47,"5 sprints the lane every time")],1)]);
 
@@ -114,7 +114,7 @@ add({n:"Shell vs 5-Out (Spectres rules)",sec:"spectres",type:"defense",call:"BAL
  k:"Move while the ball is in the air|Talk tax: BALL, HELP, SCREEN or it costs a point|Freeze and check spots",
  links:["Shell Drill","Shell Drill: Rotations","Help & Recover 2v2","Closeouts"]},
  [F("Ball at the top: wings deny, corners sink to help",[...OB(25,30,"1"),O(8,22,"2"),O(42,22,"3"),O(3,4,"4"),O(47,4,"5"),X(25,26.5),X(11,20),X(39,20),X(10,9),X(40,9),L2(25,0,25,47)]),
-  F("Ball on the wing: top and ball-side corner deny, weak wing on the split line, weak corner is the low man",[O(25,30,"1"),...OB(42,22,"3"),O(8,22,"2"),O(3,4,"4"),O(47,4,"5"),PS(26.5,29,40.5,23),X(39.5,19.5),X(30,27),X(44,7),X(24,16),X(21,7),M(25,26.5,30,27),M(11,20,24,16),M(10,9,21,7),M(40,9,44,7),L2(25,0,25,47)])]);
+  F("Ball on the wing: top and ball-side corner deny, weak wing on the split line, weak corner is the low man",[O(25,30,"1"),...OB(42,22,"3"),O(8,22,"2"),O(3,4,"4"),O(47,4,"5"),PS(26.5,29,40.5,23),X(39.5,19.5),X(25,26.5),X(40,9),X(11,20),X(10,9),M(25,26.5,30,27),M(11,20,24,16),M(10,9,21,7),M(40,9,44,7),L2(25,0,25,47)])]);
 
 // ============================== FULL-COURT PRESSES ==============================
 add({n:"2-2-1 Zone Press",sec:"press",type:"press",call:"2-2-1",
@@ -125,7 +125,7 @@ add({n:"2-2-1 Zone Press",sec:"press",type:"press",call:"2-2-1",
  k:"No layups: the safety never leaves the paint area|Trap with chest and feet, hands high|Rotate on the pass, not the catch",
  links:["2-2-1 Press Trap Reads","Defensive Transition: Tag-Up & Load"]},
  [F("Setup: two at the FT line extended, two at halfway, one deep",[...OB(95.5,25,"I"),O(82,10),O(82,40),O(64,25),O(30,25),X(78,17),X(78,33),X(58,12),X(58,38),X(26,25,"S")],1),
-  F("First pass to the side: front defender and wing trap, everyone shifts",[O(95.5,25,"I"),...OB(84,7),O(82,40),O(64,25),O(30,25),PS(94,24,85,8.5),M(78,15,83,10.5),M(58,10,78,5),M(78,31,70,21),M(58,36,57,24),M(26,23,34,15),T(70,46,"Safety stays deep")],1)]);
+  F("First pass to the side: front defender and wing trap, everyone shifts",[O(95.5,25,"I"),...OB(84,7),O(82,40),O(64,25),O(30,25),X(78,15),X(58,10),X(78,31),X(58,36),X(26,23),PS(94,24,85,8.5),M(78,15,83,10.5),M(58,10,78,5),M(78,31,70,21),M(58,36,57,24),M(26,23,34,15),T(70,46,"Safety stays deep")],1)]);
 
 add({n:"1-2-1-1 Diamond Press",sec:"press",type:"press",call:"DIAMOND",
  when:"When you're behind and need turnovers fast, or the other team has one weak ball handler. Aggressive: traps the first catch but can give up layups.",
@@ -135,7 +135,7 @@ add({n:"1-2-1-1 Diamond Press",sec:"press",type:"press",call:"DIAMOND",
  k:"Trap the first catch, every time|Turn the trapped player toward the sideline|Sprint back the moment it's broken",
  links:["2-2-1 Press Trap Reads","Defensive Transition: Tag-Up & Load"]},
  [F("Setup: point on the inbounder, wings at the FT line extended, middle, safety deep",[...OB(95.5,25,"I"),O(84,8),O(84,42),O(64,25),O(30,25),X(91,25,"P"),X(80,10),X(80,40),X(62,30),X(28,25,"S")],1),
-  F("First catch near the corner: TRAP · middle denies the sideline · weak wing takes the middle",[O(95.5,25,"I"),...OB(88,6),O(84,42),O(64,25),O(30,25),PS(94,24,89,8),M(91,23,90,11),M(80,8,85,4.5),M(62,28,72,9),M(80,38,71,24),M(28,23,32,16),T(84,16,"TRAP!")],1)]);
+  F("First catch near the corner: TRAP · middle denies the sideline · weak wing takes the middle",[O(95.5,25,"I"),...OB(88,6),O(84,42),O(64,25),O(30,25),X(91,23),X(80,8),X(62,28),X(80,38),X(28,23),PS(94,24,89,8),M(91,23,90,11),M(80,8,85,4.5),M(62,28,72,9),M(80,38,71,24),M(28,23,32,16),T(84,16,"TRAP!")],1)]);
 
 add({n:"Man-to-Man Full-Court Denial",sec:"press",type:"press",call:"FIST (man up)",
  when:"End of a game when you must get the ball back, after a timeout, or when you're quicker than them. Takes away the inbound pass instead of trapping.",
@@ -178,8 +178,8 @@ add({n:"1-4 Flat vs Man Press",sec:"break",type:"break",call:"FLAT",
  k:"Sprint to meet the pass|Clear out for the ball handler|Inbounder steps in as the safety",
  links:["Get Open vs Denial","Pass & Screen Away","Gauntlet"]},
  [F("Setup: four across the FT line extended",[...OB(95.5,25,"I"),O(75,5,"2"),O(75,18,"1"),O(75,32,"4"),O(75,45,"3"),X(77,6.5),X(77,19.5),X(77,33.5),X(77,43.5)],1),
-  F("Inside two screen out for the wings · wings curl to the ball · screeners sprint long",[O(95.5,25,"I"),B(97.1,26.6),O(75,5,"2"),O(75,18,"1"),O(75,32,"4"),O(75,45,"3"),X(77,6.5),X(77,19.5),X(77,33.5),X(77,43.5),S(76,16.5,77,8.5),S(76,33.5,77,41.5),M(73,5,80,11,86,16),M(73,45,80,39,86,34),M(74,19.5,40,16),M(74,30.5,40,34),PS(94,24,87,17)],1),
-  F("Catch, face up, attack 1v1 · everyone clears ahead",[...OB(86,16,"2"),X(84,18),O(40,16,"1"),O(40,34,"4"),O(86,34,"3"),O(92,25,"I"),D(84,17,56,22,40,24),M(86,32,60,40)],1)]);
+  F("Inside two screen out for the wings · wings curl to the ball · screeners sprint long",[O(95.5,25,"I"),B(97.1,26.6),O(75,5,"2"),O(75,18,"1"),O(75,32,"4"),O(75,45,"3"),X(77,6.5),X(77,19.5),X(77,33.5),X(77,43.5),S(76,16.5,77,8.5),S(75,33,77,41.5),M(73,5,80,11,86,16),M(73,45,80,39,86,34),M(76,10,58,14,40,16),M(76,40,58,36,40,34),PS(94,24,87,17)],1),
+  F("Catch, face up, attack 1v1 · everyone clears ahead",[...OB(86,16,"2"),X(84,18),O(40,16,"1"),O(40,34,"4"),O(86,34,"3"),O(92,25,"I"),D(86,14.5,56,22,40,24),M(86,32,60,40)],1)]);
 
 add({n:"Middle Flash vs 2-2-1",sec:"break",type:"break",call:"FLASH",
  when:"Against 2-2-1 and other zone presses that let you inbound and trap the sideline.",
