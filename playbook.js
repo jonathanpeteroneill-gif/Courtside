@@ -23,8 +23,8 @@ window.SPECTRES_SHEET={
   motto:"We see everything, we strike hard & fast. Together, we're unstoppable.",
   chant:"What do we see? EVERYONE! · How do we move? AS ONE! · How do we play? TOGETHER!",
   rules:["Feet, not hands. Beat your player to the spot. Don't reach or swipe. Reaching gives them free throws.","Shot goes up, one goes back. Someone sprints back on defence straight away. No easy layups.","Everyone talks: BALL, HELP, SCREEN. Quiet on defence costs your team a point (talk tax).","Box out every shot. Find a body, hit it, then go get the ball."],
-  situations:[["Made basket","Inbound vs their press: run DRAGON or V"],["Sideline out","Run GHOST"],["Baseline out","Run BOX or GRAVEYARD"],["Half court","5-Out motion vs man-to-man"],["Our defence","1-3-1 in the backcourt, MATCH at halfway, then man-to-man"]],
-  calls:["DRAGON RIGHT","DRAGON LEFT","V","GHOST (SLOB)","BOX (BLOB)","GRAVEYARD (BLOB)","TRAP","BALL","MATCH"],
+  situations:[["Made basket","Inbound vs their press: run DRAGON or V"],["Sideline out","Run GHOST"],["Baseline out","Run GRAVEYARD"],["Half court","5-Out motion vs man-to-man"],["Our defence","1-3-1 in the backcourt, MATCH at halfway, then man-to-man"]],
+  calls:["DRAGON RIGHT","DRAGON LEFT","V","GHOST (SLOB)","GRAVEYARD (BLOB)","TRAP","BALL","MATCH"],
   note:"League rule: press in the backcourt only. Once the ball crosses halfway it's strict man-to-man."
 };
 
@@ -82,17 +82,6 @@ add({n:"Ghost (Spectres SLOB)",sec:"spectres",type:"inbound",call:"GHOST",
   F("On the slap: the ball-side elbow screens across for the weak-side elbow",[O(51.5,19,"I"),B(53.1,20.6),O(33,19,"4"),O(17,19,"2"),O(25,30,"1"),O(16,8,"5"),S(31.5,19,20,19)]),
   F("The cutter curls over the top and down the ball-side lane line to the rim · inbounder hits him",[O(51.5,19,"I"),B(53.1,20.6),O(20,19,"4"),O(17,19,"2"),O(25,30,"1"),O(16,8,"5"),M(17,21,22,25,30,24,34,17,30,9),PS(50,18.5,31.5,10)]),
   F("Help comes from the block? Cutter dumps it to the weak-side block for the layup",[O(51.5,19,"I"),O(30,9,"2"),B(31.6,10.6),O(20,19,"4"),O(25,30,"1"),O(16,8,"5"),PS(28.5,9,17.5,8),SH(17,7),T(25,42,"Count to 5 · no lobs")])]);
-
-add({n:"Box (Spectres BLOB)",sec:"spectres",type:"inbound",call:"BOX",
- when:"Baseline out of bounds under our basket. Up screens from the blocks free both elbows to cut to the rim. 5 rolls, 4 gets out to the point as the safety.",
- s:"Box around the key: 5 on the ball-side block · 4 on the weak-side block · 2 at the ball-side elbow · 3 at the weak-side elbow. Inbounder on the baseline, right of the lane.",
- d:"On the slap: 4 and 5 step up and set up screens for the elbows|2 comes off 5's up screen and 3 comes off 4's up screen: both cut hard to the basket for the pass|After the screen, 5 rolls back to the rim: another look|4 gets out to the point: reset and safety|Inbounder reads: cutters at the rim, rolling 5, then 4 at the point. Counts to 5. No lobs|Ball goes to the point: inbounder steps in, straight into 5-Out spots",
- counters:"They switch the up screen: the screener is open rolling to the rim|They sag in the lane: safety at the point, reset|Cutter's man goes under the screen: cutter stops short for the shot",
- k:"Screeners: set the up screen, then 5 rolls, 4 gets to the point|Cutters wait for the screen, then cut hard, hands up|4 gets to the point every time|No lobs, count to 5",
- links:["Inbounds Play: Box","Pass & Screen Away","Screening Fundamentals"]},
- [F("Setup: box around the key · 4 and 5 on the blocks, 2 and 3 at the elbows",[...OB(36,-2,"I"),O(33,8,"5"),O(17,8,"4"),O(33,19,"2"),O(17,19,"3"),T(25,40,"BOX")]),
-  F("On the slap: 4 and 5 up screen · 2 and 3 both cut off the screens to the basket",[...OB(36,-2,"I"),O(33,8,"5"),O(17,8,"4"),O(33,19,"2"),O(17,19,"3"),S(33,9.5,33,16.5),S(17,9.5,17,16.5),M(35,20,37,14,29,7),M(15,20,13,14,21,7)]),
-  F("5 rolls back to the rim · 4 gets out to the point · inbounder reads: cutters, roller, safety",[...OB(36,-2,"I"),O(33,16.5,"5"),O(17,16.5,"4"),O(29,7,"2"),O(21,7,"3"),M(34,15.5,35,10),M(18.5,18,22,26,25,29),PS(35.5,-0.5,30,5.5),T(25,40,"Cutters · roller · safety")])]);
 
 add({n:"Graveyard (Spectres BLOB)",sec:"spectres",type:"inbound",call:"GRAVEYARD",
  when:"Baseline out of bounds under our basket when we want a quick score at the rim.",
@@ -225,12 +214,12 @@ add({n:"Flex Offense",sec:"halfcourt",type:"offense",call:"FLEX",
   F("Other way, all at once: 2 reverses to 4 · 3 flex screens for 5, 5 cuts to the right block · 2 screens down for 3, 3 comes up to the top",[...OB(16,29,"2"),O(34,28,"4"),O(46,8,"1"),O(15.5,8,"3"),O(4,8,"5"),PS(17.5,29,32.5,28.5),S(13.5,8,8.5,8),M(5,10,14,11,26,9,34,8),S(16.5,27.4,11.5,11.5),M(7.5,10,7,19,15,27.5),T(25,40,"Reverse · flex cut · pop · repeat")])]);
 
 // ============================== INBOUNDS (aliases) ==============================
-PB.push({n:"Ghost (Spectres SLOB)",sec:"inbound",alias:true},{n:"Box (Spectres BLOB)",sec:"inbound",alias:true},{n:"Graveyard (Spectres BLOB)",sec:"inbound",alias:true});
+PB.push({n:"Ghost (Spectres SLOB)",sec:"inbound",alias:true},{n:"Graveyard (Spectres BLOB)",sec:"inbound",alias:true});
 
 // links to drills for half-court sets etc.
 window.PLAYBOOK_LINKS={
   halfcourt:["5-Out Motion","5-Out Screen Away","5-Out Hand-Off","Horns Set & Counters","Pick & Roll Reads vs Coverage","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations"],
-  inbound:["Inbounds Play: Box"],
+  inbound:[],
   break:["Press Break"],
   press:["2-2-1 Press Trap Reads"]
 };

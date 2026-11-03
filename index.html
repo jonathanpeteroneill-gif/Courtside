@@ -513,7 +513,7 @@ const TYPES={
     games:["Kill Scrimmage","Situational 5v5","Scrimmage with Rules","3 Stops Drill","Advantage / Disadvantage","3v3 Cutthroat"]}
 };
 // In-play decision drills (IQ building)
-const IQ=new Set(["Screening Fundamentals","5-Out Screen Away","5-Out Hand-Off","Monkey in the Middle","Bull in the Ring","5-Pass Game","1v1 From the Wing","Help & Recover 2v2","Deny the Wing","Pick & Roll Defense","Shell Drill","Rebound War","Give & Go","Backdoor Cuts","Pick & Roll Basics","Pass & Screen Away","Drive & Kick","5-Out Motion","Fill the Spot","3v3 Cutthroat","3-on-2, 2-on-1","11-Man Break","2v1 Full Court","Sprint Back Transition","Chase-Down Layups","Pressure Dribble","Retreat Dribble vs Trap","King of the Court","Scrimmage with Rules","1v1 Battle Ladder","Handle into Reads","1v2 Pressure Breaker","Movement Shooting Reads","Closeout Attack Reads","Inside / Outside Hand Reads","Rim Protector Reads","Advantage Finishing","Pocket & Lob Reads 2v1","Get Open vs Denial","Drive, Draw, Dish","Hit-Ahead Drill","Shell Rebounding","Offensive Rebound Pursuit","Shell Drill: Rotations","Ball Screen Coverages","Closeout 1v1: 3 Stops","X-Out Scramble","Defensive Transition: Tag-Up & Load","Post Defense","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Reads vs Coverage","Advantage 4v3","Horns Set & Counters","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations","Read & React 5v0","Make/Miss Transition 5v5","4v3 Continuous","Numbers Defense: Tandem","3 Stops Drill","Advantage / Disadvantage","Situational 5v5","Kill Scrimmage","2v1 Rapid","5-Man Weave into 3v2","High-Low Entry 2v2","Press Break","Inbounds Play: Box","Crash the Boards"]);
+const IQ=new Set(["Screening Fundamentals","5-Out Screen Away","5-Out Hand-Off","Monkey in the Middle","Bull in the Ring","5-Pass Game","1v1 From the Wing","Help & Recover 2v2","Deny the Wing","Pick & Roll Defense","Shell Drill","Rebound War","Give & Go","Backdoor Cuts","Pick & Roll Basics","Pass & Screen Away","Drive & Kick","5-Out Motion","Fill the Spot","3v3 Cutthroat","3-on-2, 2-on-1","11-Man Break","2v1 Full Court","Sprint Back Transition","Chase-Down Layups","Pressure Dribble","Retreat Dribble vs Trap","King of the Court","Scrimmage with Rules","1v1 Battle Ladder","Handle into Reads","1v2 Pressure Breaker","Movement Shooting Reads","Closeout Attack Reads","Inside / Outside Hand Reads","Rim Protector Reads","Advantage Finishing","Pocket & Lob Reads 2v1","Get Open vs Denial","Drive, Draw, Dish","Hit-Ahead Drill","Shell Rebounding","Offensive Rebound Pursuit","Shell Drill: Rotations","Ball Screen Coverages","Closeout 1v1: 3 Stops","X-Out Scramble","Defensive Transition: Tag-Up & Load","Post Defense","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Reads vs Coverage","Advantage 4v3","Horns Set & Counters","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations","Read & React 5v0","Make/Miss Transition 5v5","4v3 Continuous","Numbers Defense: Tandem","3 Stops Drill","Advantage / Disadvantage","Situational 5v5","Kill Scrimmage","2v1 Rapid","5-Man Weave into 3v2","High-Low Entry 2v2","Press Break","Crash the Boards"]);
 const TEAMX=new Set(["Shell Drill","Shell Drill: Rotations","Ball Screen Coverages","X-Out Scramble","Defensive Transition: Tag-Up & Load","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Defense","Crash the Boards","Shell Rebounding","3 Stops Drill","Kill Scrimmage","Situational 5v5","Scrimmage with Rules","Advantage / Disadvantage","3v3 Cutthroat","Line Sprints","17s","Weave into Layup Race","Layup Race"]);
 const tagsOf=d=>{const t=new Set();const iq=IQ.has(d.n);if(iq)t.add("iq");
   if(["offense","transition"].includes(d.c)||TEAMX.has(d.n))t.add("team");
@@ -841,12 +841,12 @@ const TERM_TPL={
   spectres:{label:"Spectres (team)",per:2,weeks:[
     {theme:"Our shapes: 5-Out, shell, 1-3-1",focus:"offense",type:"team",must:["5-Out Motion","Shell Drill"],plays:["1-3-1 Press (Spectres)","Shell vs 5-Out (Spectres rules)"]},
     {theme:"Beat the press: Dragon and V · our 1-3-1",focus:"transition",type:"team",must:["2-2-1 Press Trap Reads"],plays:["Dragon (Spectres press break)","V (Spectres press break)","1-3-1 Press (Spectres)"]},
-    {theme:"Inbounds: Ghost, Box, Graveyard",focus:"offense",type:"team",must:["Screening Fundamentals","Pass & Screen Away"],plays:["Ghost (Spectres SLOB)","Box (Spectres BLOB)","Graveyard (Spectres BLOB)"]},
+    {theme:"Inbounds: Ghost and Graveyard",focus:"offense",type:"team",must:["Screening Fundamentals","Pass & Screen Away"],plays:["Ghost (Spectres SLOB)","Graveyard (Spectres BLOB)"]},
     {theme:"Defense and rebounding: talk tax",focus:"defense",type:"team",must:["Shell Drill: Rotations","Rebound War"],plays:["Shell vs 5-Out (Spectres rules)"]},
     {theme:"Transition: run your lanes",focus:"transition",type:"team",must:["2v1 Rapid","5-Man Weave into 3v2"]},
     {theme:"5-Out: screen away and hand-off",focus:"offense",type:"iq",must:["5-Out Screen Away","5-Out Hand-Off"]},
     {theme:"Shooting and free throws under fatigue",focus:"shooting",type:"team",must:["Pressure Free Throws"]},
-    {theme:"Game sim: all our calls",focus:"compete",type:"team",must:["Situational 5v5"],plays:["Dragon (Spectres press break)","Ghost (Spectres SLOB)","Box (Spectres BLOB)","Graveyard (Spectres BLOB)"]},
+    {theme:"Game sim: all our calls",focus:"compete",type:"team",must:["Situational 5v5"],plays:["Dragon (Spectres press break)","Ghost (Spectres SLOB)","Graveyard (Spectres BLOB)"]},
     {theme:"Fix what the games showed us",focus:"balanced",type:"team"},
     {theme:"Finals prep: late game",focus:"compete",type:"team",must:["Late-Game Situations"],plays:["Dragon (Spectres press break)"]},
     {theme:"Bonus: press and break refresh",focus:"transition",type:"team",plays:["Dragon (Spectres press break)","V (Spectres press break)","1-3-1 Press (Spectres)"]},
@@ -998,7 +998,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v54";
+const APP_VERSION="v55";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});

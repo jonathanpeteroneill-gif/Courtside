@@ -74,7 +74,7 @@ const BY_NAME = {
 "Defensive Slides":"slides","Zig-Zag Defense":"zigFull","Closeouts":"closeout","Shell Drill":"shell","1v1 From the Wing":"closeout","Help & Recover 2v2":"help","Taking a Charge":"charge","Deny the Wing":"deny","Mass Defensive Stance":"spread","Contest the Shot":"closeout","Pick & Roll Defense":"pnr","Defensive Wave":"spread",
 "Jump Stop & Pivot":"lines","Triple Threat Series":"spread","Agility Ladder":"ladder","Sprint & Stop":"lines","Inside Pivot Catch":"curl","Drop Step Series":"post",
 "Up & Under":"post","Post Entry Passing":"post","Sealing Drill":"post","Hook Shot Series":"post","Face-up Series":"post",
-"Give & Go":"deny","Backdoor Cuts":"deny","Pick & Roll Basics":"pnr","Pass & Screen Away":"screenAway","Drive & Kick":"help","5-Out Motion":"perim","Fill the Spot":"perim","Inbounds Play: Box":"blob","Press Break":"press","3v3 Cutthroat":"cut",
+"Give & Go":"deny","Backdoor Cuts":"deny","Pick & Roll Basics":"pnr","Pass & Screen Away":"screenAway","Drive & Kick":"help","5-Out Motion":"perim","Fill the Spot":"perim","Press Break":"press","3v3 Cutthroat":"cut",
 "3-on-2, 2-on-1":"trans","11-Man Break":"trans","2v1 Full Court":"trans","Sprint Back Transition":"trans","3-Lane Fill":"weave3",
 "Line Sprints":"lines","17s":"lines","Layup Race":"fullLayup","Minute Drills":"slides","Partner Chase":"lines",
 "Sharks & Minnows":"zigFull","Steal the Bacon":"bacon","Treasure Hunt":"box","King of the Court":"cut","Scrimmage with Rules":"scrim","1v1 Battle Ladder":"cut","Relay Races":"weave","Spot-Up Team Battle":"spots",

@@ -295,10 +295,6 @@ def("5-Out Motion",
  F("Spots refilled · 3 passes to the top and the pattern repeats",[O(5,4,"1"),O(8,21,"4"),O(25,30,"2"),O(42,23,"3"),B(43.6,24.6),O(47,4,"5"),PS(40.5,23,26.5,29)]),
  F("Denied on the wing, or dribbled at: go backdoor",[O(25,30,"2"),B(26.6,31.6),O(42,23,"3"),X(40,20.5),O(8,21,"4"),O(5,4,"1"),O(47,4,"5"),M(43,21,35,12,29,7),PS(25,28,30,9),T(25,40,"Denied = backdoor")]));
 def("Fill the Spot",F("A player cuts · next player fills the empty spot",[K(3,6),K(8,24),K(25,31),K(42,24),K(47,6),O(3,4),O(8,22),...OB(25,29),O(42,22),O(47,4),M(42,20,30,8),M(46,6,42,20)]));
-def("Inbounds Play: Box",
- F("Box set: four players around the lane",[...OB(31,-2,"1"),O(19,8,"4"),O(31,8,"5"),O(19,18,"2"),O(31,18,"3")]),
- F("Top players screen down",[O(31,-2,"1"),O(19,8,"4"),O(31,8,"5"),O(19,18,"2"),O(31,18,"3"),S(19,16.5,19,10.5),S(31,16.5,31,10.5)]),
- F("Bottom players pop to the corner and wing · inbound to the open shooter",[O(31,-2,"1"),B(33,-2.5),O(19,10.5,"2"),O(31,10.5,"3"),O(4,5,"4"),O(44,20,"5"),M(18,8,12,6,6,5),M(32,8,40,14,43,18.5),PS(32,0,42.5,18.5),SH(43,19)]));
 def("Press Break",
  F("Inbound to a guard · middle player flashes",[...OB(95,30,"1"),O(84,18,"2"),O(84,34,"3"),O(60,25,"4"),O(45,12,"5"),X(78,18),X(78,34),X(60,15),X(60,35),X(32,25),PS(94,29,85.5,19.5),M(60,25,72,25)],1),
  F("Hit the middle · attack up the floor",[O(84,18,"2"),O(72,25,"4"),O(45,12,"5"),O(84,34,"3"),PS(82.5,19,73.5,24),PS(70.5,24,47,13.5),M(84,36,60,44,30,40)],1));

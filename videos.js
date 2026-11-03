@@ -53,7 +53,6 @@ window.VIDEOS = {
 "2-2-1 Press Trap Reads":"nlDwYjMMeoU",
 "Zone Slides: 2-3":"fQJBgJVhzp8",
 "Zone Offense vs 2-3":"Qf1GsFtaz5M",
-"Inbounds Play: Box":"73yz4j37FiE",
 "Horns Set & Counters":"LtG5N0ODNbc",
 "Dribble Hand-off Series":"iXGkEslniyQ",
 "Ball Screen Coverages":"QdV1R5OyrxY",
