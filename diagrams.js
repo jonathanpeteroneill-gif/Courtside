@@ -124,6 +124,8 @@ function el(e,full,i){
   if(k==="q"){let s="";for(let i=0;i<e[5];i++)s+=`<circle class="dg-qd" cx="${f(e[1]+e[3]*i)}" cy="${f(e[2]+e[4]*i)}" r="1.1"/>`;return s}
   if(k==="m") return `<path class="dg-m" d="${poly(e[1])}" marker-end="url(#dgA)"/>`;
   if(k==="p") return `<path class="dg-p" d="${poly(e[1])}" marker-end="url(#dgA)"/>`;
+  if(k==="op") return `<path class="dg-p dg-opt" d="${poly(e[1])}" marker-end="url(#dgA)"/>`; // option pass: shown, not played
+  if(k==="osh"){const r=full?(e[1][0]>47?RR:RL):R;return `<path class="dg-sh dg-opt" d="M${f(e[1][0])},${f(e[1][1])} L${r[0]},${r[1]}" marker-end="url(#dgA)"/>`}
   if(k==="d") return `<path class="dg-m" d="${zig(e[1])}" marker-end="url(#dgA)"/>`;
   if(k==="s"){const p=e[1],n=p.length,x1=p[n-4],y1=p[n-3],x2=p[n-2],y2=p[n-1],L=Math.hypot(x2-x1,y2-y1),nx=-(y2-y1)/L*1.5,ny=(x2-x1)/L*1.5;
     return `<path class="dg-m" d="${poly(p)} M${f(x2+nx)},${f(y2+ny)} L${f(x2-nx)},${f(y2-ny)}"/>`}
@@ -176,38 +178,56 @@ function planFrame(els,full){
   const near=(map,pt,max)=>{let best=null,bd=max;for(const k in map){const d=dist(map[k],pt);if(d<bd){bd=d;best=k}}return best};
   const ev=[];let t=0,vn=0;
   const lastEnd=f=>ev.length?ev[ev.length-1].start+ev[ev.length-1].dur*f:0;
-  const ballAt=(pt,max)=>{let b=near(bp,pt,max);if(b!=null)return b;
+  const used=new Set(),moved=new Set(),free={},carrier={};
+  const ballAt=(pt,max,end)=>{let b=near(bp,pt,max);if(b!=null)return b;
+    // the ball is drawn where the pass lands (the receiver already has it): start it with the passer instead
+    if(end){const r=near(bp,end,3.6);if(r!=null&&!used.has(r)&&!String(r).startsWith("v")){const a=near(pos,pt,6);bp[r]=a!=null?[pos[a][0]+1.2,pos[a][1]+1.2]:[...pt];B0[r]=[...bp[r]];return r}}
     // no ball drawn here: create one at the player making the play (or at the arrow start)
-    const a=near(pos,pt,6);const at=a!=null?[pos[a][0]+1.2,pos[a][1]+1.2]:[...pt];const key="v"+(vn++);bp[key]=at;B0[key]=at;virt[key]=t;return key};
+    const a=near(pos,pt,6);const at=a!=null?[pos[a][0]+1.2,pos[a][1]+1.2]:[...pt];const key="v"+(vn++);bp[key]=at;B0[key]=at;virt[key]=t;
+    if(a!=null){const m=ev.filter(x=>x.k==="move"&&String(x.a)===String(a)).pop();if(m)free[key]=m.start+m.dur} // wait until that player gets there
+    return key};
   els.forEach(e=>{
     const k=e[0];
-    if(k==="m"||k==="d"||k==="s"){
+    if(k==="m"||k==="d"||k==="s"||k==="f"){
+      // f = follow: a hidden move (not drawn) that runs alongside the move before it, e.g. a defender shadowing a cutter
       const pts=pairs(e[1]);let a=near(pos,pts[0],7);
-      if(a==null){ // arrow drawn from an old spot to where the player now stands
+      { // arrow drawn from an old spot to where the player now stands (player sits on the arrowhead, nobody at the tail)
+        const end=pts[pts.length-1],b=near(pos,end,2);
+        if(b!=null&&!moved.has(b)&&(a==null||dist(pos[a],pts[0])>2.5)&&dist(pos[b],pts[0])>2.5){A0[b]=[...pts[0]];pos[b]=[...pts[0]];a=b}}
+      if(a==null){ // nobody near either end
         const end=pts[pts.length-1];const b=near(pos,end,3.5);if(b==null)return;
         const moved=ev.some(x=>x.a===b);if(moved)return;A0[b]=[...pts[0]];pos[b]=[...pts[0]];a=b;}
-      const path=[pos[a],...pts];const b=near(bp,pos[a],3.6);const off=b!=null?[bp[b][0]-pos[a][0],bp[b][1]-pos[a][1]]:null;
+      const path=[pos[a],...pts];let b=near(bp,pos[a],k==="d"?6:3.6);
+      if(b==null&&k==="d"){const key="v"+(vn++);bp[key]=[pos[a][0]+1.2,pos[a][1]+1.2];B0[key]=[...bp[key]];virt[key]=-1;b=key} // a dribble always has a ball (shown from the start)
+      const off=b!=null?[bp[b][0]-pos[a][0],bp[b][1]-pos[a][1]]:null;
       const dur=Math.max(.6,Math.min(1.9,plen(path)/(k==="d"?16:20)));
-      ev.push({k:"move",a,b,off,path,start:t,dur});
+      const prev=ev.filter(x=>x.k==="move").pop();let st=k==="f"&&prev?prev.start:t;
+      if(b!=null)st=Math.max(st,free[b]||0); // catch it before you move with it
+      const D=k==="f"&&prev?Math.max(dur,prev.dur):dur;
+      ev.push({k:"move",a,b,off,path,start:st,dur:D});moved.add(a);if(b!=null){used.add(b);free[b]=st+D;carrier[b]=a}
+      if(st>t)t=st;
       pos[a]=[...pts[pts.length-1]];if(b!=null)bp[b]=[pos[a][0]+off[0],pos[a][1]+off[1]];
-      t+=.4;
+      if(k!=="f")t+=.4;
     }else if(k==="p"){
-      const pts=pairs(e[1]);t=Math.max(t,lastEnd(.7));const b=ballAt(pts[0],7);
+      const pts=pairs(e[1]),end=pts[pts.length-1];const b=ballAt(pts[0],7,end);used.add(b);
       const path=[bp[b],...pts.slice(1)];const dur=Math.max(.35,Math.min(1,plen(path)/38));
-      ev.push({k:"pass",b,path,start:t,dur});bp[b]=[...path[path.length-1]];t+=dur;
+      // lead pass: if someone is running to where the ball lands, time it to arrive with them
+      const recv=ev.filter(x=>x.k==="move"&&String(x.a)!==String(carrier[b])&&dist(x.path[x.path.length-1],end)<3.6).pop();
+      const st=recv?Math.max(free[b]||0,recv.start+recv.dur-dur):Math.max(t,lastEnd(.7),free[b]||0);
+      ev.push({k:"pass",b,path,start:st,dur});bp[b]=[...end];free[b]=st+dur;carrier[b]=null;t=Math.max(t,st+dur);
     }else if(k==="sh"){
-      const from=e[1];t=Math.max(t,lastEnd(.8));const b=ballAt(from,7.5);
+      const from=e[1];const b=ballAt(from,7.5);t=Math.max(t,lastEnd(.8),free[b]||0);
       const rim=full?(from[0]>47?[88.75,25]:[5.25,25]):[25,5.25];
-      ev.push({k:"shot",b,path:[bp[b],rim],start:t,dur:.8});bp[b]=rim;t+=.8;
+      ev.push({k:"shot",b,path:[bp[b],rim],start:t,dur:.8});delete bp[b];used.add(b);t+=.8; // a shot ball is finished with
     }
   });
   const total=ev.reduce((m,x)=>Math.max(m,x.start+x.dur),0);
-  return {R0,A0,B0,virt,ev,total};
+  return {R0,A0,B0,BR:balls,virt,ev,total};
 }
 function poseFrame(pl,tau){
   const pos={},bp={},hide={};
   for(const k in pl.A0)pos[k]=pl.A0[k];for(const k in pl.B0)bp[k]=pl.B0[k];
-  for(const k in pl.virt)hide[k]=1;
+  for(const k in pl.virt)if(pl.virt[k]>=0)hide[k]=1;
   pl.ev.forEach(x=>{if(tau<x.start)return;if(pl.virt[x.b]!=null&&x.k!=="move")delete hide[x.b];const u=ez(Math.min(1,(tau-x.start)/x.dur));
     if(x.k==="move"){const p=along(x.path,u);pos[x.a]=p;if(x.b!=null)bp[x.b]=[p[0]+x.off[0],p[1]+x.off[1]+(u<1?Math.abs(Math.sin(u*Math.PI*10))*-.5:0)]}
     else if(x.k==="pass"){bp[x.b]=along(x.path,u)}
@@ -224,7 +244,7 @@ function applyPose(svgEl,pl,tau){
 function resetSvg(svgEl,pl){ // back to the drawn diagram
   svgEl.querySelectorAll("[data-virt]").forEach(n=>n.remove());
   svgEl.querySelectorAll("[data-a]").forEach(n=>{const i=n.getAttribute("data-a");n.removeAttribute("transform");n.style.opacity="";
-    if(pl&&pl.B0[i]&&!String(i).startsWith("v")){n.setAttribute("cx",pl.B0[i][0].toFixed(2));n.setAttribute("cy",pl.B0[i][1].toFixed(2))}});
+    const o=pl&&(pl.BR||pl.B0)[i];if(o&&!String(i).startsWith("v")){n.setAttribute("cx",o[0].toFixed(2));n.setAttribute("cy",o[1].toFixed(2))}});
 }
 const PLAN_CACHE={};
 function plansFor(name){if(PLAN_CACHE[name])return PLAN_CACHE[name];const d=(window.DRILLS||[]).find(x=>x.n===name)||(window.PLAYBOOK||[]).find(x=>x.n===name&&!x.alias);if(!d)return[];return PLAN_CACHE[name]=window.drillFrames(d).map(fr=>fr.els?planFrame(fr.els,fr.full):{A0:{},B0:{},ev:[],total:0})}
@@ -250,4 +270,5 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-dgplay]");
   const tr=root.querySelector(".dgc-track");const i=tr&&tr.clientWidth?Math.round(tr.scrollLeft/tr.clientWidth):0;
   const last=root.querySelectorAll("svg.dg").length-1;playFrom(root,i>=last&&last>0?0:i)});
 window.stopDiagramPlay=()=>stopPlay();
+window._dg={planFrame,poseFrame,plansFor,applyPose};
 })();

@@ -5,6 +5,7 @@
 const O=(x,y,l="")=>["o",x,y,l], X=(x,y,l="")=>["x",x,y,l], B=(x,y)=>["b",x,y], OB=(x,y,l="")=>[O(x,y,l),B(x+1.6,y+1.6)];
 const M=(...p)=>["m",p], D=(...p)=>["d",p], PS=(...p)=>["p",p], S=(...p)=>["s",p], SH=(x,y)=>["sh",[x,y]], T=(x,y,t)=>["t",x,y,t], L2=(a,b,c,d)=>["L2",a,b,c,d];
 const F=(c,e,full)=>({c,e,full:!!full});
+const OP=(...p)=>["op",p], OSH=(x,y)=>["osh",[x,y]], FL=(...p)=>["f",p];
 window.PLAYS=window.PLAYS||{};
 const P=window.PLAYS;
 
@@ -41,7 +42,7 @@ add({n:"1-3-1 Press (Spectres)",sec:"spectres",type:"press",call:"TRAP · BALL �
  [F("Setup: point on the inbounder, wings at FT line extended, middle at the top of the key, safety at halfway",[...OB(95.5,25,"I"),O(82,10),O(82,40),O(62,25),X(89,25,"P"),X(75,8,"W"),X(75,42,"W"),X(68,25,"M"),X(49,25,"S"),L2(47,0,47,50),T(70,48,"Backcourt only · MATCH at halfway")],1),
   F("Ball to the sideline: TRAP with point and wing · middle shifts · weak wing drops · safety slides ball side",[O(95.5,25,"I"),...OB(84,8),O(82,40),O(62,25),PS(94,24,85,9),X(89,25,"P"),X(75,8,"W"),X(75,42,"W"),X(68,25,"M"),X(49,25,"S"),M(89,23,86,12),M(76,7,81,6),M(68,23,71,15),M(75,40,70,28),M(49,23,52,12),T(84,18,"TRAP!")],1),
   F("Ball reversed: everyone slides back and traps the other side",[O(90,25,"I"),O(84,8),B(85.6,9.6),O(84,42),X(86,12,"P"),X(81,6,"W"),X(71,15,"M"),X(70,28,"W"),X(52,12,"S"),PS(85,10,89,23),PS(91,26,85,40),M(86,14,86,38),M(70,30,79,45),M(71,17,71,35),M(81,8,72,23),M(52,14,52,38)],1),
-  F("Ball crosses halfway: call MATCH, pick up the nearest, then find your own",[...OB(42,40),O(40,10),O(30,25),O(20,12),O(20,38),X(44,37),X(42,12),X(32,23),X(22,14),X(22,36),L2(47,0,47,50),T(70,25,"MATCH!")],1)]);
+  F("Ball crosses halfway: call MATCH, pick up the nearest, then find your own",[...OB(42,40),O(40,10),O(30,25),O(20,12),O(20,38),X(39,38.5),X(37.5,11),X(27.5,24.5),X(17.5,13),X(17.5,36.5),L2(47,0,47,50),T(70,25,"MATCH!"),T(70,30,"Ball side and basket side of your player")],1)]);
 
 add({n:"Dragon (Spectres press break)",sec:"spectres",type:"break",call:"DRAGON RIGHT · DRAGON LEFT",
  when:"Every made basket when they press. Our break against the 2-2-1: get it in, beat the sideline trap, use the middle.",
@@ -58,18 +59,17 @@ add({n:"Dragon (Spectres press break)",sec:"spectres",type:"break",call:"DRAGON 
   F("Safety steps up to 2: hit 5 at the rim for the layup",[O(38,25,"2"),B(39.6,26.6),X(33,25,"S"),O(12,17,"5"),O(30,40,"3"),O(32,12,"1"),M(31,25,34,25),PS(36.5,24,13.5,18),SH(11,19),T(30,47,"5 sprints the lane every time")],1)]);
 
 add({n:"V (Spectres press break)",sec:"spectres",type:"break",call:"V",
- when:"Our press break against the 1-3-1 or the 2-2-1. Get it in, reverse it, hit the middle, then throw ahead in a V to either sideline.",
- s:"2 inbounds left of the lane · 1 in the lane · 4 in the middle at the center circle · 5 deep over halfway on the ball side · 3 on the far sideline at the free-throw line extended.",
- d:"2 inbounds to 1 in the lane and steps in to the elbow|2 screens for 1 and stays there for the reversal|1 dribbles off the screen into the trap and draws both defenders, but reverses it back to 2 before the trap closes|2 swings it to 3 on the far side|3 hits 4 in the middle, then everyone runs: 3 up the sideline, 1 ahead on the diagonal, 2 up the middle|The V: 4 catches, turns and throws ahead to either side, 5 deep or 3 on the other sideline|Defence drawn to 5's side? Throw it the other way to 3|3 dribble drives to the rim: finish, or pass back to 5 cutting in. Everyone fills the lanes",
- counters:"Middle denied: 2 running the middle is the outlet|1 draws the trap on purpose: pass back to 2 before it closes, never dribble into the corner|Safety takes 5: hit 3 on the other side of the V",
- k:"Catch facing up the floor|Reverse it before the trap closes|The middle is the hub: catch, turn, throw ahead|Everyone runs after the pass, no watching",
- links:["Hit-Ahead Drill","Outlet Passing","3-Lane Fill"]},
- [F("Setup vs their press: 2 inbounds left of the lane, 1 in the lane, 4 in the middle, 5 deep, 3 on the far sideline",[...OB(95.5,15,"2"),O(81,23,"1"),O(52,26,"4"),O(36,6,"5"),O(63,45,"3"),X(78,14),X(78,34),X(56,11),X(56,39),X(28,25,"S"),L2(47,0,47,50),T(66,49,"V")],1),
-  F("2 inbounds to 1 in the lane and steps in to the elbow",[O(95.5,15,"2"),B(97.1,16.6),O(81,23,"1"),O(52,26,"4"),O(36,6,"5"),O(63,45,"3"),X(78,14),X(78,34),X(56,11),X(56,39),X(28,25,"S"),PS(94,16.5,82.5,21.5),M(94,14,86,15,80,17),M(78,16,77,21.5)],1),
-  F("2 screens for 1 and stays for the reversal · 1 dribbles off it into the trap and draws both defenders",[O(80,17,"2"),O(81,23,"1"),B(82.6,24.6),O(52,26,"4"),O(36,6,"5"),O(63,45,"3"),X(77,21.5),X(78,34),X(56,11),X(56,39),X(28,25,"S"),S(80,18.5,78.5,20),D(82.5,22,83.5,16,76,11,67,9),M(76,20,72,13,70,11),M(56,9,63.5,6.5)],1),
-  F("Before the trap closes: 1 reverses it back to 2, who stayed after the screen · 2 swings it to 3 on the far side",[O(78,20.5,"2"),O(67,9,"1"),B(68.6,10.6),O(52,26,"4"),O(36,6,"5"),O(63,45,"3"),X(70,11),X(63.5,6.5),X(78,34),X(56,39),X(28,25,"S"),PS(68.5,10,76.5,19.5),PS(78,22,64.5,43.5),M(78,36,69,41),M(56,41,59,43),T(70,22,"Before the trap!")],1),
-  F("3 hits 4 in the middle · everyone runs: 3 up the sideline, 1 ahead, 2 up the middle",[O(63,45,"3"),B(64.6,46.6),O(52,26,"4"),O(78,20.5,"2"),O(67,9,"1"),O(36,6,"5"),X(69,41),X(59,43),X(70,11),X(63.5,6.5),X(28,25,"S"),PS(62,43.5,53.5,27.5),M(61,45,26,44),M(65,9,33,18),M(77,22,65,29,33,30),M(70,13,50,18),M(63,8.5,45,12),M(28,23,32,16)],1),
-  F("Their defence is drawn to 5's side · 4 throws the V the other way to 3 · 3 dribble drives to the rim: finish, or pass back to 5 cutting in",[...OB(52,26,"4"),O(36,6,"5"),O(26,44,"3"),O(33,18,"1"),O(33,30,"2"),X(28,11,"S"),X(37,10),X(45,13),X(50,19),X(40,24),PS(50.5,27.5,27.5,42.5),D(24.5,43,15,36,9,29),M(34.5,7.5,22,12,11,19),SH(8,28),T(30,48.5,"or pass back to 5 cutting in")],1)]);
+ when:"Our press break against the 1-3-1 or the 2-2-1. Dribble to the side to draw the trap, reverse it just before the trap closes, then hot-potato passes to the open player and attack 3v1 at the other end.",
+ s:"1-3-1 shape: 2 inbounds right of the basket · 1 in the lane · 3 on the left wing · 4 in the middle at the centre circle · 5 deep at the top of the key in the frontcourt.",
+ d:"2 inbounds to 1 in the lane, then steps in and stays for the reversal|1 dribbles out to the right side and draws the trap|Just before the trap closes, 1 reverses it back to 2|Hot potato, quick passes and no dribbles: hit the open player. Usually 2 to 3 on the left wing, 3 to 4 in the middle, 4 to 5 at the top of the key|Their press is stuck on the other side: attack 3v1 at the other end. 5 drives the middle, 3 and 4 fill the wide lanes|Their safety has to pick one: pass to the open player for the layup. 1 and 2 trail",
+ counters:"Trap comes early: reverse it straight away, don't wait for the dribble|Middle denied: 3 skips it long to 5|Top denied: 4 turns and attacks, 5 cuts to the rim|Never dribble into the corner",
+ k:"Draw the trap, then reverse it just before it closes|Hot potato: catch and pass, no dribbles|Catch facing up the floor|Pass, then sprint: fill the wide lanes and make it 3v1",
+ links:["3-on-2, 2-on-1","Hit-Ahead Drill","1-3-1 Press (Spectres)"]},
+ [F("Setup vs their 1-3-1: 2 inbounds, 1 in the lane, 3 on the left wing, 4 in the middle, 5 deep at the top of the key",[...OB(95.5,17,"2"),O(86,21,"1"),O(63,38,"3"),O(48,25,"4"),O(30,25,"5"),X(90,18,"P"),X(75,8,"W"),X(75,42,"W"),X(68,25,"M"),X(43,27,"S"),L2(47,0,47,50),T(70,49,"V · works vs 1-3-1 and 2-2-1")],1),
+  F("2 inbounds to 1, steps in and stays · 1 dribbles to the side and draws the trap",[...OB(95.5,17,"2"),O(86,21,"1"),O(63,38,"3"),O(48,25,"4"),O(30,25,"5"),X(90,18,"P"),X(75,8,"W"),X(75,42,"W"),X(68,25,"M"),X(43,27,"S"),PS(94,17.5,87.5,19.5),M(94,19.5,89,23,85.5,25),D(85,19.5,79,11,72,4),M(90,16.5,81,9,76,6.5),M(74,9,70,7),M(68,23,70,15),M(75,40,68,30),M(43,25.5,50,13),T(80,17,"TRAP")],1),
+  F("Just before the trap closes: 1 reverses to 2 · hot potato up the floor: 2 to 3, 3 to 4, 4 to 5",[O(72,4,"1"),B(73.6,5.6),O(85.5,25,"2"),O(63,38,"3"),O(48,25,"4"),O(30,25,"5"),X(76,6.5,"P"),X(70,7,"W"),X(70,15,"M"),X(68,30,"W"),X(50,13,"S"),PS(73,5.5,84,23.5),PS(84.5,26.5,64.5,36.5),PS(61.5,37,49.5,26.5),PS(46.5,25,31.5,25),T(66,49,"Hot potato: quick, no dribbles")],1),
+  F("3v1 at the other end: 5 drives the middle, 3 and 4 fill the wide lanes · their safety sprints back",[O(85.5,25,"2"),O(72,4,"1"),O(63,38,"3"),O(48,25,"4"),...OB(30,25,"5"),X(76,6.5,"P"),X(70,7,"W"),X(70,15,"M"),X(68,30,"W"),X(50,13,"S"),M(48,14,30,15,12,24),D(28,25,18,25),M(61,39,34,40,14,37),M(46,23,32,13,14,13),M(72.5,5.5,60,7,48,8),M(84,27,62,30)],1),
+  F("Safety has to pick one: pass to the open player for the layup",[...OB(18,25,"5"),O(14,37,"3"),O(14,13,"4"),X(12,24,"S"),O(48,8,"1"),O(62,30,"2"),M(12.5,25.5,15.5,25.5),PS(16.5,26.5,13,35.5),M(13,37,9,31),SH(9,30),T(60,46,"3v1 · make the extra pass if he commits")],1)]);
 
 add({n:"Ghost (Spectres SLOB)",sec:"spectres",type:"inbound",call:"GHOST",
  when:"Every sideline out of bounds in the frontcourt.",
@@ -200,7 +200,7 @@ add({n:"Catch High vs 1-2-1-1",sec:"break",type:"break",call:"HIGH",
  k:"Catch high, stay away from the corner|Pass before the trap closes|Attack 4 on 3 once it's broken",
  links:["Hit-Ahead Drill","4v3 Continuous"]},
  [F("Catch high at the FT line extended, not in the corner",[...OB(95.5,25,"I"),O(80,10,"1"),O(80,40,"2"),O(64,25,"4"),O(40,8,"5"),X(91,25),X(84,8),X(84,42),X(62,30),X(28,25),PS(94,24,81.5,11.5)],1),
-  F("First look the middle flash, second look the long sideline",[...OB(80,10,"1"),O(95.5,25,"I"),O(80,40,"2"),O(64,25,"4"),O(40,8,"5"),X(84,12),X(82,6),M(64,27,70,24),PS(81,11.5,69,23),PS(80,8,42,6.5),T(70,46,"middle first · then long")],1)]);
+  F("First look the middle flash, second look the long sideline",[...OB(80,10,"1"),O(95.5,25,"I"),O(80,40,"2"),O(64,25,"4"),O(40,8,"5"),X(84,12),X(82,6),M(64,27,70,24),PS(81,11.5,69,23),OP(80,8,42,6.5),T(70,46,"middle first · then long")],1)]);
 
 add({n:"Beat the Run and Jump",sec:"break",type:"break",call:"HEADS UP",
  when:"Against run and jump or any switching man press.",

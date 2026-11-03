@@ -200,7 +200,7 @@ html.modal-open,html.modal-open body{overflow:hidden}
 .dg-b{fill:var(--accent);stroke:var(--ink);stroke-width:.2}
 .dg-qd{fill:var(--surface);stroke:var(--court);stroke-width:.3;opacity:.7}
 .dg-m{fill:none;stroke:var(--ink);stroke-width:.35;stroke-linejoin:round}
-.dg-p{fill:none;stroke:var(--ink);stroke-width:.35;stroke-dasharray:1 .7}
+.dg-p{fill:none;stroke:var(--ink);stroke-width:.35;stroke-dasharray:1 .7}.dg-opt{opacity:.45}
 .dg-sh{fill:none;stroke:var(--muted);stroke-width:.3;stroke-dasharray:.3 .6}
 .dg-ah{fill:var(--ink)}
 .dg-t{font:600 1.9px var(--body);fill:var(--muted);text-anchor:middle;dominant-baseline:central}
@@ -998,7 +998,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v43";
+const APP_VERSION="v44";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});

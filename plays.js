@@ -7,6 +7,7 @@ const O=(x,y,l="")=>["o",x,y,l], X=(x,y,l="")=>["x",x,y,l], C=(x,y)=>["c",x,y], 
 const OB=(x,y,l="")=>[O(x,y,l),B(x+1.6,y+1.6)], G=(x,y)=>["g",x,y];
 const Q=(x,y,dx,dy,n)=>["q",x,y,dx,dy,n], M=(...p)=>["m",p], D=(...p)=>["d",p], PS=(...p)=>["p",p], S=(...p)=>["s",p], SH=(x,y)=>["sh",[x,y]], T=(x,y,t)=>["t",x,y,t];
 const F=(c,e,full)=>({c,e,full:!!full});
+const OP=(...p)=>["op",p], OSH=(x,y)=>["osh",[x,y]], FL=(...p)=>["f",p]; // option pass/shot: drawn, not played · FL: hidden follow move
 const def=(n,...fr)=>{P[n]=fr};
 // ---------- reusable layouts ----------
 const spread=(balls=1,coach=true,extra=[])=>{const a=[];[[12,27],[25,27],[38,27],[12,35],[25,35],[38,35],[12,43],[25,43],[38,43]].forEach(([x,y])=>{a.push(O(x,y));if(balls>0)a.push(B(x+1.6,y+1.6));if(balls>1)a.push(B(x-1.6,y+1.6))});if(coach)a.push(C(25,18));return a.concat(extra)};
@@ -92,8 +93,8 @@ def("Close-Range Form Ladder",
 const atw=[[15,6],[12,14],[17,19.5],[25,20],[33,19.5],[38,14],[35,6]];
 def("Around the World",
  F("Seven spots around the key · start on the left block",[...atw.map(([x,y])=>K(x,y+2.2)),...OB(15,6,"1"),SH(16,6)]),
- F("Make it: move to the next spot",[...atw.map(([x,y])=>K(x,y+2.2)),O(12,14,"1"),M(14.5,7.5,12.5,12),SH(13,13)]),
- F("First around and back wins",[...atw.map(([x,y])=>K(x,y+2.2)),M(15,6,12,14,17,19.5,25,20,33,19.5,38,14,35,6)]));
+ F("Make it: move to the next spot",[...atw.map(([x,y])=>K(x,y+2.2)),O(12,14,"1"),M(14.5,7.5,12.2,12.8),SH(13,13)]),
+ F("First around and back wins",[...atw.map(([x,y])=>K(x,y+2.2)),O(15,6,"1"),M(15,7.5,12,14,17,19.5,25,20,33,19.5,38,14,35,6)]));
 def("5-Spot Shooting",
  F("5 shots at each spot · rebounder passes",[...spotsMarks(),O(3,4,"S"),O(25,8,"R"),B(26.6,9.6),PS(24,9,4.5,5),SH(4.5,4.5)]),
  F("Move to the next spot · switch after all 5",[...spotsMarks(),O(9,21,"S"),G(3,4),M(4,6,8,19),O(25,8,"R"),PS(24,10,10.5,20),SH(10,20)]));
@@ -136,13 +137,13 @@ def("Reverse Mikan",
  F("Catch and step left · reverse on the left",[O(22,4),G(28,4),M(27,2.5,25,1.5,23,2.5),SH(23,5)]));
 def("Two-Line Layups",
  F("Right wing dribbles in · left wing crashes to rebound",[...OB(42,22,"S"),Q(44,25,1.8,1.8,3),D(41,20,35,13,29,8),SH(28,7.5),O(8,22,"R"),Q(6,25,-1.8,1.8,3),M(9,20,21,9)]),
- F("Rebounder passes to the next shooter · switch lines",[O(21,8,"R"),B(22.6,9.6),O(42,22),PS(23,9.5,40,21),M(28,9,8,24),M(21,10,44,28)]));
+ F("Rebounder passes to the next shooter · switch lines",[O(21,8,"R"),B(22.6,9.6),O(29,7.5,"S"),O(42,22),PS(23,9.5,40,21),M(28,9,8,24),M(21,10,44,28)]));
 def("Step, Step, Up",
  F("No ball: big step, little step, up",[O(40,16),K(35,13),K(31,10),M(40,14.5,35.5,12.5,31.5,9.5),T(36,20,"right foot · left foot · jump")]),
  F("Add the ball, then one dribble before the steps",[...OB(42,20),D(41,19,38,15),M(38,15,34,12,31,9.5),SH(30,8)]));
 def("Power Layups",
  F("Dribble from the wing to the block",[...OB(42,22),D(41,20,34,10)]),
- F("Two-foot jump stop, ball chinned, power up",[O(33,9),SH(27,6),T(38,16,"Shoulders square to the baseline")]));
+ F("Two-foot jump stop, ball chinned, power up",[O(33,9),B(34.6,10.6),SH(32,8),T(38,16,"Shoulders square to the baseline")]));
 def("Full-Court Speed Layups",
  F("Speed dribble the sideline · 4–5 dribbles",[...OB(2,3),Q(-1,3,0,0,1),D(4,3,50,4,80,14,85,21),SH(87,24)],1),
  F("Rebound, join the line at that end · next player goes",[O(87,23),M(88,21,92,47),...OB(2,47),D(4,47,50,46,80,36,85,29)],1));
@@ -168,9 +169,9 @@ def("Monkey in the Middle",
  F("Two passers, one defender in the middle",[...OB(12,30,"1"),O(38,30,"2"),X(25,30),PS(13.5,32,25,35,36.5,32)]),
  F("Pivot and fake to create the passing lane",[O(12,30,"1"),O(38,30,"2"),B(39.6,31.6),X(25,30),PS(36.5,28,25,24,13.5,28),T(25,40,"Deflection → defender swaps with passer")]));
 def("3-Man Weave",
- F("Middle (2) passes to a wing (3) and runs behind that player",[O(3,12,"1"),...OB(3,25,"2"),O(3,38,"3"),PS(5,24.5,18,35.5),M(5,26.5,22,45),M(5,38,17,37),M(5,13,24,22)],1),
+ F("Middle (2) passes to a wing (3) and runs behind that player",[O(3,12,"1"),...OB(3,25,"2"),O(3,38,"3"),M(5,38,17,37),PS(5,24.5,18,35.5),M(5,26.5,22,45),M(5,13,24,22)],1),
  F("3 passes to 1 cutting to the middle, then runs behind 1",[O(19,37,"3"),B(20.6,38.6),O(24,22,"1"),O(22,45,"2"),PS(21,36,24,24),M(21,39,44,8),M(26,22,40,28),M(24,45,44,36)],1),
- F("Keep weaving · finish with a layup, no dribbles",[O(42,28,"1"),B(43.6,29.6),O(44,8,"3"),O(46,36,"2"),PS(44,28,60,34),M(46,8,70,14,84,22),PS(62,33,82,23),SH(86,24)],1));
+ F("Keep weaving · finish with a layup, no dribbles",[O(42,28,"1"),B(43.6,29.6),O(44,8,"3"),O(46,36,"2"),M(47.5,35.5,59,35),PS(44,28,60,34),M(46,8,70,14,84,22),PS(62,33,82,23),SH(86,24)],1));
 const star=[0,1,2,3,4].map(i=>{const t=i/5*Math.PI*2-Math.PI/2;return[25+13*Math.cos(t),30+13*Math.sin(t)]});
 def("Star Passing",
  F("Pass across the star, two spots away · follow your pass",[...star.flatMap(([x,y])=>[K(x,y+2.4),O(x,y)]),B(star[0][0]+1.6,star[0][1]+1.6),PS(star[0][0]+1,star[0][1]+1.5,star[2][0]-1,star[2][1]-1.5),M(star[0][0]-1.5,star[0][1]+1,star[2][0]-2.5,star[2][1]-2)]),
@@ -178,8 +179,8 @@ def("Star Passing",
 def("Pepper Drill",F("Front player passes down the line · second ball comes back at the same time",[...OB(25,18,"1"),O(12,32,"2"),O(20.5,32,"3"),O(29.5,32,"4"),O(38,32,"5"),B(22.1,33.6),PS(24,19.5,13,30),PS(21.5,30.5,24.5,20)]));
 def("Two-Ball Partner Passing",F("One chest, one bounce, at the same time",[O(8,25,"1"),O(21,25,"2"),B(9.6,26.6),B(19.4,26.6),PS(10,24.5,19,24.5),PS(19,26,14.5,29,10,26),O(29,25,"1"),O(42,25,"2"),PS(31,24.5,40,24.5),PS(40,26,35.5,29,31,26)]));
 def("Pass & Follow Square",
- F("Pass to the next corner and follow your pass",[K(12,21),K(38,21),K(38,43),K(12,43),...OB(12,18.5),O(38,18.5),O(38,40.5),O(12,40.5),PS(14,18.5,36,18.5),M(14,21,35,21.5)]),
- F("Switch direction after 1 minute",[K(12,21),K(38,21),K(38,43),K(12,43),...OB(38,18.5),O(12,18.5),O(38,40.5),O(12,40.5),PS(36,18.5,14,18.5),M(36,21,15,21.5)]));
+ F("Pass to the next corner and follow your pass",[K(12,21),K(38,21),K(38,43),K(12,43),...OB(12,18.5),O(38,18.5),O(38,40.5),O(12,40.5),PS(14,18.5,36,18.5),M(13,20,35,21.5)]),
+ F("Switch direction after 1 minute",[K(12,21),K(38,21),K(38,43),K(12,43),...OB(38,18.5),O(12,18.5),O(38,40.5),O(12,40.5),PS(36,18.5,14,18.5),M(37,20,15,21.5)]));
 def("Outlet Passing",
  F("Coach shoots · rebounder grabs it high",[C(25,26),SH(25,24),O(22,8,"R"),O(46,18,"O")]),
  F("Pivot to the outside and throw the outlet",[O(24,8,"R"),B(25.6,6.4),O(46,18,"O"),PS(26,8,44.5,17),T(16,26,"Outlet calls ball, back to the sideline")]));
@@ -202,7 +203,7 @@ def("Superman Drill",
 def("Rebound War",
  F("Coach shoots · defense boxes out",[C(25,27),SH(25,25),O(12,13,"1"),O(38,13,"2"),O(25,19,"3"),X(15,10),X(35,10),X(25,15)]),
  F("Battle for it · defense 1 point, offense 2",[O(14,12,"1"),O(36,12,"2"),O(25,17,"3"),X(16,9.5),X(34,9.5),X(25,13.5),T(25,30,"First to 5, rotate")]));
-def("Tip Drill",F("Tip it off the glass, next player tips, last one tips it in",[O(32,6,"1"),Q(35,8,2,1.8,4),M(32,8,35,14,38,12),PS(31,5,26,4)]));
+def("Tip Drill",F("Tip it off the glass, next player tips, last one tips it in",[O(32,6,"1"),Q(35,8,2,1.8,4),PS(31,5,26,4),M(32,8,35,14,38,12)]));
 def("Crash the Boards",
  F("Coach shoots from the top",[C(25,32),SH(25,30),O(8,22),O(18,29),O(32,29),O(42,22),X(10,19),X(19,25),X(31,25),X(40,19)]),
  F("Defenders hit and box out · offense crashes",[O(11,16),O(21,21),O(29,21),O(39,16),X(13,13),X(22,16),X(28,16),X(37,13),T(25,36,"1 point per defensive rebound")]));
@@ -269,8 +270,8 @@ def("Give & Go",
  F("Pass to the wing, step away",[...OB(25,29,"1"),O(42,22,"2"),PS(26.5,28,40.5,23),M(24,29,20,27)]),
  F("Cut hard to the rim · return pass for the layup",[O(20,27,"1"),O(42,22,"2"),B(43.6,23.6),M(21,26,27,9),PS(40.5,21,28,10),SH(26,7)]));
 def("Backdoor Cuts",
- F("Walk the defender up toward the arc",[...OB(25,30,"P"),O(42,20,"C"),X(39,20),M(42,22,42,26)]),
- F("Overplayed: plant and cut backdoor · bounce pass",[O(25,30,"P"),O(42,26,"C"),X(39.5,23.5),M(43,25,35,12,30,7),PS(24,28,26,20,30,9)]));
+ F("Walk the defender up toward the arc",[...OB(25,30,"P"),O(42,20,"C"),X(39,20),M(42,22,42,26),FL(39,20,39.5,23.5)]),
+ F("Overplayed: plant and cut backdoor · bounce pass",[...OB(25,30,"P"),O(42,26,"C"),X(39.5,23.5),M(43,25,35,12,30,7),FL(39.5,23.5,37,17,34,13),PS(24,28,26,20,30,9)]));
 def("Pick & Roll Basics",
  F("Screener sets the pick",[...OB(23,31,"1"),O(31,21,"5"),S(31,22.5,26,29)]),
  F("Use it tight · screener rolls",[O(26,29,"5"),O(23,31,"1"),B(24.6,32.6),D(24.5,31,32,30,35,22),M(26,27,26,9)]),
@@ -303,7 +304,7 @@ def("Press Break",
  F("Hit the middle · attack up the floor",[O(84,18,"2"),O(72,25,"4"),O(45,12,"5"),O(84,34,"3"),PS(82.5,19,73.5,24),PS(70.5,24,47,13.5),M(84,36,60,44,30,40)],1));
 def("3v3 Cutthroat",
  F("Team A (O) vs team B (X) · team C waits",[O(10,18,"A"),...OB(25,28,"A"),O(40,18,"A"),X(13,16),X(25,25),X(37,16),Q(4,47,2.5,0,3),T(12,44,"Team C")]),
- F("Score: A stays on · B off · C comes in on defense",[O(10,18,"A"),O(25,28,"A"),O(40,18,"A"),Q(4,47,2.5,0,3),M(4,45,12,20),M(9,45,22,28),M(14,45,34,20),T(36,44,"Play to 7")]));
+ F("Score: A stays on · B off · C comes in on defense",[O(10,18,"A"),O(25,28,"A"),O(40,18,"A"),X(4,45,"C"),X(9,45,"C"),X(14,45,"C"),M(4,43.5,12,20),M(9,43.5,22,26),M(14,43.5,34,20),T(36,44,"Play to 7")]));
 // ======================================================= TRANSITION
 def("3-on-2, 2-on-1",
  F("Three attack two",[...OB(62,25,"1"),O(66,10,"2"),O(66,40,"3"),X(22,25),X(9,20),D(60,25,24,25),M(64,10,12,11),M(64,40,12,39)],1),
@@ -325,21 +326,21 @@ def("2v1 Rapid",
  F("Make it harder: at least 1 pass before a shot",[...OB(32,26,"O"),O(11,23,"O"),X(27,21,"D"),PS(30.5,25,12.5,22.5),D(12,21,18,9),SH(20,7)]),
  F("Race: one team at each end · first to 10 makes wins · run your lanes",[["L2",0,16.7,94,16.7],["L2",0,33.3,94,33.3],O(1,8,"A"),X(1,25,"A"),O(1,42,"A"),Q(-2.5,8,0,0,1),Q(-2.5,25,0,0,1),Q(-2.5,42,0,0,1),M(3,8,46,8),M(3,25,40,25),M(3,42,46,42),O(93,8,"B"),X(93,25,"B"),O(93,42,"B"),Q(96.5,8,0,0,1),Q(96.5,25,0,0,1),Q(96.5,42,0,0,1),M(91,8,48,8),M(91,25,54,25),M(91,42,48,42),T(23,48,"Team A: 0–10"),T(71,48,"Team B: 0–10")],1));
 def("5-Man Weave into 3v2",
- F("Five lines on the baseline · middle (3) passes to 2 and goes behind 2 and 1",[O(2,5,"1"),O(2,15,"2"),...OB(2,25,"3"),O(2,35,"4"),O(2,45,"5"),Q(-1.5,5,0,0,1),Q(-1.5,15,0,0,1),Q(-1.5,25,0,0,1),Q(-1.5,35,0,0,1),Q(-1.5,45,0,0,1),PS(4,24,12.5,16),M(4,26.5,10,22,14,10,20,2.5),M(4,5,16,5),M(4,15,12,15),M(4,35,16,35),M(4,45,16,45)],1),
+ F("Five lines on the baseline · middle (3) passes to 2 and goes behind 2 and 1",[O(2,5,"1"),O(2,15,"2"),...OB(2,25,"3"),O(2,35,"4"),O(2,45,"5"),Q(-1.5,5,0,0,1),Q(-1.5,15,0,0,1),Q(-1.5,25,0,0,1),Q(-1.5,35,0,0,1),Q(-1.5,45,0,0,1),M(4,15,12,15),PS(4,24,12.5,16),M(4,26.5,10,22,14,10,20,2.5),M(4,5,16,5),M(4,35,16,35),M(4,45,16,45)],1),
  F("2 passes to 4 and goes behind 4 and 5 · keep weaving to the far end",[O(20,2,"3"),O(17,6,"1"),O(14,15,"2"),B(15.6,16.6),O(18,35,"4"),O(17,45,"5"),M(20,35,26,33),PS(16,16.5,25,32),M(15,17,22,30,30,44,36,48),M(19,6,30,7),M(22,2,34,3),M(19,45,30,42)],1),
  F("Finish with a layup at the far end, no dribbles",[O(78,36,"A"),B(79.6,37.6),O(82,26,"S"),O(70,10),O(68,42),O(66,25),PS(79,34.5,83.5,27),SH(87,25),T(74,46,"S = shooter · A = assister")],1),
  F("Shooter and assister sprint back on D · the other three attack 3-on-2",[X(86,26,"S"),X(80,36,"A"),O(70,10),...OB(66,25),O(68,42),M(84,27,22,25),M(78,37,10,28),D(64,25,30,25),M(68,10,14,10),M(66,42,14,40)],1),
  F("Talk tax: Ball · Basket · Help · Gap · Split",[X(22,25,"S"),X(9,26,"A"),...OB(28,25),O(15,8),O(15,42),T(22,20.5,"BALL!"),T(9,21.5,"BASKET!"),T(17,15,"HELP / GAP"),T(32,31.5,"SPLIT?"),T(70,25,"Go quiet = you pay")],1));
 // ======================================================= CONDITIONING
-def("Line Sprints",F("FT line and back, half and back, far FT and back, full and back",[...lanes([25],2,null),M(4,9,19,9),M(19,11,4,11),M(4,19,47,19),M(47,21,4,21),M(4,29,75,29),M(75,31,4,31),M(4,39,92,39),M(92,41,4,41)],1));
+def("Line Sprints",F("FT line and back, half and back, far FT and back, full and back",[O(2,10),O(2,20),O(2,30),O(2,40),M(4,9,19,9),M(19,11,4,11),M(4,19,47,19),M(47,21,4,21),M(4,29,75,29),M(75,31,4,31),M(4,39,92,39),M(92,41,4,41)],1));
 def("17s",F("Sideline to sideline 17 times in a minute",[O(25,1),O(30,1),O(35,1),M(25,3,25,48),M(27,48,27,3),T(47,25,"17 touches · 1 minute")],1));
-def("Layup Race",F("Team goal: makes in 2 minutes at both ends",[...OB(20,10),...OB(74,40),D(22,10,82,22),D(72,40,12,28),SH(87,24),SH(7,26)],1));
+def("Layup Race",F("Team goal: makes in 2 minutes at both ends",[...OB(20,10),...OB(74,40),D(22,10,82,22),D(72,40,12,28),SH(87,24),SH(10,27)],1));
 def("Minute Drills",F("30s slides lane line to lane line",[X(17,8),X(17,13),M(19,8,31,8),M(31,10,19,10)]),F("30s sprints, 30s rest",lanes([10,20,30],2,92),1));
 def("Partner Chase",F("Front player sprints · partner chases to tag",[O(10,12,"1"),O(4,12,"2"),M(12,12,88,12),M(6,14,85,14),O(10,32,"1"),O(4,32,"2"),M(12,32,88,32),M(6,34,85,34)],1));
 // ======================================================= GAMES
 def("Sharks & Minnows",
  F("Minnows dribble from the baseline · sharks wait at half court",[...lanes([8,18,28,38,46],2,null,{ball:1}),X(47,15,"S"),X(47,35,"S")],1),
- F("Dribble to the far end · caught minnows become sharks",[...[8,18,28,38].map(y=>D(4,y,90,y)),X(47,15,"S"),X(47,35,"S"),M(47,17,58,24),M(47,33,60,30)],1));
+ F("Dribble to the far end · caught minnows become sharks",[...[8,18,28,38].map(y=>O(2.5,y)),...[8,18,28,38].map(y=>D(4,y,90,y)),X(47,15,"S"),X(47,35,"S"),M(47,17,58,24),M(47,33,60,30)],1));
 def("Steal the Bacon",
  F("Coach rolls the ball out and calls a number",[O(1,12,"1"),O(1,20,"2"),O(1,28,"3"),O(1,36,"4"),X(49,12,"1"),X(49,20,"2"),X(49,28,"3"),X(49,36,"4"),B(25,30),C(25,44)]),
  F("Both #3s race for it · play 1v1 to score",[O(1,12,"1"),O(1,20,"2"),O(22,29,"3"),O(1,36,"4"),X(49,12,"1"),X(49,20,"2"),X(28,29,"3"),X(49,36,"4"),B(23.6,30.6),D(22,27,24,9)]));
@@ -366,17 +367,17 @@ def("Shooting Ramp",
 def("Two-Ball Full-Court Finishing",F("Speed dribble the sideline · called finish",[...OB(2,3),...OB(92,47),D(4,3,60,5,85,20),D(90,47,34,45,9,30),SH(87,24),SH(7,26)],1),F("Rebound and join the line at that end",[O(86,22),O(8,28),M(88,22,92,46),M(6,28,2,4)],1));
 def("Gauntlet",
  F("Defender 1 plays live in the first third",[X(18,25,"1"),X(47,25,"2"),X(76,25,"3"),...OB(2,25),D(4,25,14,16,24,30),["L2",31,0,31,50],["L2",63,0,63,50]],1),
- F("Beat each defender in their third",[X(18,25,"1"),X(47,25,"2"),X(76,25,"3"),O(28,28),D(30,28,42,18,54,32),D(66,30,74,16,90,25),["L2",31,0,31,50],["L2",63,0,63,50]],1));
+ F("Beat each defender in their third",[X(18,25,"1"),X(47,25,"2"),X(76,25,"3"),O(28,28),D(30,28,42,18,54,32,66,30,74,16,90,25),["L2",31,0,31,50],["L2",63,0,63,50]],1));
 def("Elite Combo Series",F("Cone as the defender · snatchback, hesi, shift combos",spread(1,true,[K(12,24.5),K(25,24.5),K(38,24.5)])));
 def("Handle into Reads",
  F("Attack the coach with a live dribble",[Q(25,49,0,1.8,2),...OB(25,45),C(30,20),D(25,43,25,26)]),
- F("Read the cue: drive, pull-up, or kick",[O(25,26),C(30,20),M(25,24,28,10),SH(25,24),PS(24,25,4,6),O(3,4),T(40,28,"hands up · down · point")]));
+ F("Read the cue: drive, pull-up, or kick",[O(25,26),C(30,20),D(25,24,28,10),OSH(25,24),OP(24,25,4,6),O(3,4),T(40,28,"hands up · down · point")]));
 def("1v2 Pressure Breaker",
  F("Two defenders try to trap in the backcourt",[...OB(4,25),X(12,18),X(12,32),D(6,25,12,24)],1),
  F("Retreat dribble, then split or attack the high side",[O(12,24),X(15,20),X(15,29),D(10,25,6,28),D(6,28,20,26,46,24),T(47,46,"8 seconds to cross half court")],1));
 def("Transition Threes",
  F("Outlet, sprint the lane to the far corner",[O(3,6,"S"),Q(0,6,0,0,1),...OB(18,14,"P"),M(5,6,45,4,78,4,90,3),PS(19.5,15,88,4.5)],1),
- F("Catch and shoot the corner three · rebound, outlet, sprint back",[O(90,3,"S"),SH(89,4),M(88,5,86,22),PS(86,24,75,40),M(84,25,20,45)],1));
+ F("Catch and shoot the corner three · rebound, outlet, sprint back",[O(90,3,"S"),SH(89,4),M(88,5,86,22),O(74,41,"P"),PS(86,24,75.5,39.5),M(85,23,20,45)],1));
 def("Make 100",
  F("Shooter (S), rebounder (R), passer (P) · two balls",[O(42,22,"S"),SH(41,21),...OB(25,19,"P"),O(26,7,"R"),B(27.6,8.6),PS(26.5,19,40.5,21.5)]),
  F("Relocate after every shot · rotate on makes",[O(32,29,"S"),G(42,22),M(41,24,33.5,27.5),O(25,19,"P"),O(26,7,"R"),PS(27.5,8,25.5,17),PS(26,20.5,31,28)]));
@@ -407,7 +408,7 @@ def("Two-Foot Gather Series",F("Drive and jump stop in the lane",[...OB(33,19),D
 def("Rim Protector Reads",
  F("Big stays home: floater",[...OB(25,28,"1"),X(25,9,"5"),O(36,3,"5"),D(25,26,25,16),SH(25,14)]),
  F("Big steps up: drop-off or lob to the dunker spot",[O(25,16,"1"),B(26.6,17.6),X(26,12,"5"),O(36,3,"5"),PS(27,15,35,4.5)]),
- F("Help from the corner: kick out for three",[O(25,16,"1"),X(26,12,"5"),X(40,8),O(47,4,"3"),M(46,6,42,9),PS(27,16,45.5,5),SH(46,5)]));
+ F("Help from the corner: kick out for three",[O(25,16,"1"),B(26.6,17.6),X(26,12,"5"),X(45,7),O(47,4,"3"),M(44,8,40,10),PS(27,16,45.5,5),SH(46,5)]));
 def("Advantage Finishing",F("Attacker at full speed · defender trails",[...OB(23,44,"O"),X(29,47.5,"D"),D(23,42,25,12),M(29,46,27,15)]),F("Wall off the trailing defender · finish early",[O(25,11),X(27,13.5),SH(25,9)]));
 def("Spin & Counter Finish",F("Drive at the cone",[...OB(25,30),K(26,16),D(25,28,25.5,18)]),F("Spin away at the cone · reverse or counter floater",[K(26,16),O(25.5,18),M(24,17,21,14,23,10),SH(24,8)]));
 def("Pocket & Lob Reads 2v1",
@@ -422,11 +423,11 @@ def("Drive, Draw, Dish",
  F("Kick to the open shooter or dump to the big",[O(26,17,"1"),O(5,14,"2"),O(45,14,"3"),X(15,14),X(29,16),PS(28,16.5,43.5,14.5),SH(44,13)]));
 def("Hit-Ahead Drill",
  F("Rebound and outlet",[O(8,25,"R"),B(9.6,26.6),O(18,6,"O"),O(14,44,"W"),O(30,25,"T"),PS(10,24,17,8)],1),
- F("Hit ahead to the wing",[O(18,6,"O"),B(19.6,7.6),O(60,44,"W"),O(50,25,"T"),PS(20,7,58,42),M(16,44,58,44),M(32,25,48,25)],1),
- F("Wing hits the rim runner · no dribbles",[O(60,44,"W"),O(80,25,"T"),PS(61,42,80,27),M(52,25,78,25),SH(87,25)],1));
+ F("Hit ahead to the wing",[O(18,6,"O"),B(19.6,7.6),O(60,44,"W"),O(50,25,"T"),M(16,44,59,44),M(32,25,49,25),PS(20,7,58,42)],1),
+ F("Wing hits the rim runner · no dribbles",[O(60,44,"W"),B(61.6,45.6),O(80,25,"T"),M(52,25,79,25),PS(61,42,80,27),SH(82,26)],1));
 def("4-Corner Full-Court Passing",
- F("Pass ahead and sprint after it",[O(2,2),O(92,2),O(92,48),O(2,48),B(3.6,3.6),PS(4,3,40,8),M(4,1.5,45,4)],1),
- F("Return pass at half court · pass to the next line",[O(45,5),O(40,8),B(41.6,9.6),PS(42,8,46.5,5),PS(47,4,90,2.5)],1));
+ F("Pass ahead and sprint after it",[O(2,2),O(92,2),O(92,48),O(2,48),B(3.6,3.6),O(40,8),PS(4,3,40,8),M(4,1.5,45,4)],1),
+ F("Return pass at half court · pass to the next line",[O(45,5),O(40,8),B(41.6,9.6),O(92,2),PS(42,8,46.5,5),PS(47,4,90,2.5)],1));
 def("One-Touch Passing Circle",F("Catch and pass without holding · defender tries to deflect",[...circle(7,25,29,11,1),X(25,29),B(26.6,19.6),PS(25,19.5,34.5,34),PS(34,36,15,34.5)]));
 def("Shell Rebounding",F("Coach shoots",[C(25,32),SH(25,30),O(8,22),O(18,29),O(32,29),O(42,22),X(10,19),X(19,25),X(31,25),X(40,19)]),F("Box out · 3 straight rebounds to rotate off",[O(11,16),O(21,21),O(29,21),O(39,16),X(13,13),X(22,16),X(28,16),X(37,13)]));
 def("Offensive Rebound Pursuit",F("Coach shoots · defender boxes out",[C(25,30),SH(25,28),O(40,16),X(37,13)]),F("Swim, spin or tap-out to get around · put it back",[O(40,16),X(37,13),M(41,14,40,9,33,7),SH(28,6)]));
@@ -444,7 +445,7 @@ def("X-Out Scramble",
  F("Coach skips the ball to the far wing",[C(25,30),O(8,22,"1"),O(42,22,"2"),O(47,4,"3"),X(20,20,"1"),X(34,19,"2"),X(40,7,"3"),PS(23.5,29,9.5,23)]),
  F("Farthest defender sprints to the ball · others rotate to open players",[C(25,30),O(8,22,"1"),B(9.6,23.6),O(42,22,"2"),O(47,4,"3"),M(34,19,11,21),M(20,20,40,21),M(40,7,45,5),T(25,40,"Talk: I've got ball!")]));
 def("Defensive Transition: Tag-Up & Load",
- F("Shot goes up at the far end",[O(80,15),O(78,35),O(70,25),X(84,18),X(82,32),X(66,25),SH(86,24)],1),
+ F("Shot goes up at the far end",[O(80,15),O(78,35),O(70,25),X(84,18),X(82,32),X(66,25),SH(81,16)],1),
  F("Sprint back · first defender to the rim, others load to the ball",[X(10,25),X(18,18),X(18,32),O(40,20),B(41.6,21.6),M(66,25,12,25),M(84,18,20,18),M(82,32,20,32),T(47,46,"Sprint to the paint first")],1));
 def("Post Defense",
  F("Front the post",[O(33,9,"5"),X(34,12),...OB(44,20,"2"),X(41,18)]),
@@ -465,7 +466,7 @@ def("Pick & Roll Reads vs Coverage",
  F("Drop: pull-up jumper",[...OB(25,30,"1"),X(25,28,"1"),O(30,27,"5"),X(30,14,"5"),D(26,29,33,23),SH(33,21)]),
  F("Hedge: split, or pocket pass to the roller",[O(32,28,"1"),B(33.6,29.6),X(34,29.5,"5"),O(28,15,"5"),PS(31,26.5,28.5,17)]),
  F("Switch: attack the big",[O(32,28,"1"),B(33.6,29.6),X(30,25.5,"5"),D(33,26,38,14,31,8),SH(29,7)]));
-def("Advantage 4v3",F("Drive draws a defender",[...OB(25,30,"1"),O(5,14,"2"),O(45,14,"3"),O(36,4,"4"),X(15,14),X(35,14),X(28,8),D(25,28,25,17),M(35,14,28,16)]),F("Kick · make the extra pass",[O(25,17,"1"),O(5,14,"2"),O(45,14,"3"),X(28,16),M(15,14,40,15),PS(27,17,43.5,14.5),PS(44,12,37,5.5),SH(36,5)]));
+def("Advantage 4v3",F("Drive draws a defender",[...OB(25,30,"1"),O(5,14,"2"),O(45,14,"3"),O(36,4,"4"),X(15,14),X(35,14),X(28,8),D(25,28,25,17),M(35,14,28,16)]),F("Kick · make the extra pass",[O(25,17,"1"),B(26.6,18.6),O(5,14,"2"),O(45,14,"3"),O(36,4,"4"),X(28,16),X(28,8),X(15,14),M(16.5,14,40,15),PS(27,17,43.5,14.5),PS(44,12,37,5.5),SH(36,5)]));
 def("Horns Set & Counters",
  F("Horns: bigs at the elbows, shooters in the corners",[...OB(25,32,"1"),O(17,19,"4"),O(33,19,"5"),O(3,4,"2"),O(47,4,"3")]),
  F("Ball screen: 5 rolls, 4 pops",[O(25,32,"1"),B(26.6,33.6),O(17,19,"4"),O(33,19,"5"),O(3,4,"2"),O(47,4,"3"),S(33,20.5,28,29),D(26.5,31,35,28,38,20),M(28,28,27,9),M(17,20.5,15,27)]),
@@ -474,7 +475,7 @@ def("Dribble Hand-off Series",
  F("KEEP: defender jumps the hand-off, keep it and attack",[...OB(34,27,"5"),O(42,20,"2"),X(38,22),D(33,25,30,10)]),
  F("REJECT: defender cheats over the top, go backdoor",[...OB(34,27,"5"),O(42,20,"2"),X(38,24),M(41,18,31,7),PS(33,25,31,9)]),
  F("TURN-DOWN: screener keeps it and goes to the rim",[...OB(34,27,"5"),O(42,22,"2"),X(36,25),D(32,26,27,10),SH(26,8)]));
-def("Zone Offense vs 2-3",F("Attack the gaps between defenders",[...OB(25,30),O(8,22),O(42,22),O(3,4),O(47,4),X(19,22),X(31,22),X(12,10),X(25,8),X(38,10),D(25,28,25,23)]),F("Short corner and high post options",[O(25,23),B(26.6,24.6),O(8,22),O(42,22),O(13,4),O(25,17),X(19,20),X(31,20),X(12,10),X(25,8),X(38,10),PS(24,21.5,14,6),PS(26,22,25.5,18.5)]));
+def("Zone Offense vs 2-3",F("Attack the gaps between defenders",[...OB(25,30),O(8,22),O(42,22),O(3,4),O(47,4),X(19,22),X(31,22),X(12,10),X(25,8),X(38,10),D(25,28,25,23)]),F("Short corner and high post options",[O(25,23),B(26.6,24.6),O(8,22),O(42,22),O(13,4),O(25,17),X(19,20),X(31,20),X(12,10),X(25,8),X(38,10),OP(24,21.5,14,6),PS(26,22,25.5,18.5)]));
 def("Late-Game Situations",F("6 seconds, down 2 · side out of bounds",[...OB(51,24,"1"),O(33,19,"5"),O(25,29,"2"),O(8,22,"3"),O(41,4,"4"),X(31,21),X(25,26),X(10,20),X(40,7),S(33,21,30,27),M(25,27,34,27,43,26),PS(49,24,42,26)]),F("Catch and score · or foul up 3",[O(42,26,"2"),SH(41,24),T(25,40,"Know the clock, the score and the fouls")]));
 def("Read & React 5v0",F("Pass and cut · fill open spots · no dribbles",[O(3,4,"5"),O(8,22,"4"),...OB(25,29,"1"),O(42,22,"2"),O(47,4,"3"),PS(26.5,28,40.5,23),M(25,27,26,8),M(9,24,23,29)]));
 def("Make/Miss Transition 5v5",F("Make: inbound and push",[O(93,25),B(94.6,26.6),O(82,15),O(80,35),O(70,10),O(70,40),PS(92,24,83,16),M(70,10,30,8),M(70,40,30,42)],1),F("Miss: rebound, outlet, run",[O(86,24),B(87.6,25.6),O(78,8),O(75,42),O(70,25),O(60,10),PS(85,23,79,9.5),M(60,10,20,10),M(70,25,30,25)],1));
@@ -482,7 +483,7 @@ def("4v3 Continuous",F("Four attack three",[...OB(62,25),O(66,8),O(66,42),O(72,3
 def("Numbers Defense: Tandem",F("Top defender stops the ball",[...OB(60,25,"1"),O(62,8,"2"),O(62,42,"3"),X(22,25,"T"),X(10,25,"B"),D(58,25,26,25),M(22,25,24,25)],1),F("First pass: bottom takes it, top drops to the rim",[O(24,25,"1"),O(16,8,"2"),O(62,42,"3"),PS(22,24,17,10),X(14,12,"B"),X(10,24,"T"),M(10,22,14,14),M(22,25,10,24)],1));
 def("Defensive Slide Ladder",F("Lane line to lane line · 5 × 30s",[X(17,8),X(17,13),X(17,18),M(19,8,31,8),M(31,10,19,10),M(19,13,31,13),M(19,18,31,18)]));
 def("Sideline Sprints + Free Throws",F("Sideline to sideline 4 times",[O(25,1),O(30,1),M(25,3,25,48),M(27,48,27,3)],1),F("Then 2 free throws · repeat 5 times",ftLine()));
-def("Weave into Layup Race",F("3-man weave: pass and go behind",[O(3,12,"1"),...OB(3,25,"2"),O(3,38,"3"),PS(5,24.5,18,35.5),M(5,26.5,22,45),M(5,38,17,37),M(5,13,24,22)],1),F("Finish, then 2-on-1 back · team target in 2 minutes",[O(84,25),O(80,15),X(78,35),SH(87,25),M(80,15,20,18),M(84,27,22,30)],1));
+def("Weave into Layup Race",F("3-man weave: pass and go behind",[O(3,12,"1"),...OB(3,25,"2"),O(3,38,"3"),M(5,38,17,37),PS(5,24.5,18,35.5),M(5,26.5,22,45),M(5,13,24,22)],1),F("Finish, then 2-on-1 back · team target in 2 minutes",[O(84,25),O(80,15),X(78,35),SH(87,25),M(80,15,20,18),M(84,27,22,30)],1));
 def("3 Stops Drill",F("Defense needs 3 straight stops to rotate to offense",[O(8,22),...OB(18,29),O(32,29),O(42,22),X(18.5,25.5),X(29,25),X(37,19),X(14,17),T(25,40,"A score resets the count")]));
 def("Advantage / Disadvantage",F("Start 2v2 · coach adds a player to one team",[...OB(18,28),O(32,28),X(19,24.5),X(31,24.5),C(48,30),O(48,40),M(46,40,38,22)]));
 def("Situational 5v5",F("Coach sets the score and clock",[O(30,10),O(30,40),...OB(20,25),O(12,13),O(10,36),X(26,12),X(26,38),X(16,25),X(9,16),X(8,33),T(65,25,"Up 1 · 30 seconds · our ball")],1));
