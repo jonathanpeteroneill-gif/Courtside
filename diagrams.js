@@ -122,7 +122,7 @@ function el(e,full,i){
   if(k==="k") return `<path class="dg-k" d="M${f(e[1])},${f(e[2]-1.1)} L${f(e[1]+1)},${f(e[2]+0.8)} L${f(e[1]-1)},${f(e[2]+0.8)}Z"/>`;
   if(k==="b") return `<circle class="dg-b" data-a="${i}" cx="${f(e[1])}" cy="${f(e[2])}" r=".8"/>`;
   if(k==="q"){let s="";for(let i=0;i<e[5];i++)s+=`<circle class="dg-qd" cx="${f(e[1]+e[3]*i)}" cy="${f(e[2]+e[4]*i)}" r="1.1"/>`;return s}
-  if(k==="m") return `<path class="dg-m" d="${poly(e[1])}" marker-end="url(#dgA)"/>`;
+  if(k==="m"||k==="mr") return `<path class="dg-m" d="${poly(e[1])}" marker-end="url(#dgA)"/>`; // mr = a run the passing carries on around
   if(k==="p") return `<path class="dg-p" d="${poly(e[1])}" marker-end="url(#dgA)"/>`;
   if(k==="op") return `<path class="dg-p dg-opt" d="${poly(e[1])}" marker-end="url(#dgA)"/>`; // option pass: shown, not played
   if(k==="osh"){const r=full?(e[1][0]>47?RR:RL):R;return `<path class="dg-sh dg-opt" d="M${f(e[1][0])},${f(e[1][1])} L${r[0]},${r[1]}" marker-end="url(#dgA)"/>`}
@@ -177,7 +177,7 @@ function planFrame(els,full){
   const bp={};for(const k in B0)bp[k]=[...B0[k]];
   const near=(map,pt,max)=>{let best=null,bd=max;for(const k in map){const d=dist(map[k],pt);if(d<bd){bd=d;best=k}}return best};
   const ev=[];let t=0,vn=0;
-  const lastEnd=f=>ev.length?ev[ev.length-1].start+ev[ev.length-1].dur*f:0;
+  const lastEnd=f=>{const L=ev.filter(x=>!x.nb).pop();return L?L.start+L.dur*f:0}; // nb = a run that play carries on around
   const used=new Set(),moved=new Set(),free={},carrier={};
   const ballAt=(pt,max,end)=>{let b=near(bp,pt,max);if(b!=null)return b;
     // the ball is drawn where the pass lands (the receiver already has it): start it with the passer instead
@@ -188,7 +188,7 @@ function planFrame(els,full){
     return key};
   els.forEach(e=>{
     const k=e[0];
-    if(k==="m"||k==="d"||k==="s"||k==="f"){
+    if(k==="m"||k==="d"||k==="s"||k==="f"||k==="mr"){
       // f = follow: a hidden move (not drawn) that runs alongside the move before it, e.g. a defender shadowing a cutter
       const pts=pairs(e[1]);let a=near(pos,pts[0],7);
       { // arrow drawn from an old spot to where the player now stands (player sits on the arrowhead, nobody at the tail)
@@ -204,10 +204,10 @@ function planFrame(els,full){
       const prev=ev.filter(x=>x.k==="move").pop();let st=k==="f"&&prev?prev.start:t;
       if(b!=null)st=Math.max(st,free[b]||0); // catch it before you move with it
       const D=k==="f"&&prev?Math.max(dur,prev.dur):dur;
-      ev.push({k:"move",a,b,off,path,start:st,dur:D});moved.add(a);if(b!=null){used.add(b);free[b]=st+D;carrier[b]=a}
+      ev.push({k:"move",a,b,off,path,start:st,dur:D,nb:k==="mr"});moved.add(a);if(b!=null){used.add(b);free[b]=st+D;carrier[b]=a}
       if(st>t)t=st;
       pos[a]=[...pts[pts.length-1]];if(b!=null)bp[b]=[pos[a][0]+off[0],pos[a][1]+off[1]];
-      if(k!=="f")t+=.4;
+      if(k!=="f"&&k!=="mr")t+=.4;
     }else if(k==="p"){
       const pts=pairs(e[1]),end=pts[pts.length-1];const b=ballAt(pts[0],7,end);used.add(b);
       const path=[bp[b],...pts.slice(1)];const dur=Math.max(.35,Math.min(1,plen(path)/38));
