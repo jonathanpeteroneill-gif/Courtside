@@ -509,6 +509,15 @@ def("Screening Fundamentals",
  F("Screener sprints in and stops: wide base, arms in",[...OB(25,30,"P"),O(33,20,"S"),O(37,9,"C"),K(37,12),S(33,21.5,36,13.5),T(25,40,"Feet still, wide base")]),
  F("Cutter waits, comes off shoulder to shoulder · curl or pop",[O(25,30,"P"),B(26.6,31.6),O(36,13.5,"S"),O(37,9,"C"),K(37,12),M(38.5,9,41,14,38,19,30,21),PS(24,28.5,29,22)]),
  F("Screener's second move: roll to the rim",[O(30,21,"C"),B(31.6,22.6),O(36,13.5,"S"),M(35,12,29,8),PS(30,19.5,29.5,9.5),SH(28,7)]));
+def("Cutting Series: 6 Cuts",
+ F("Setup: passer (P) at the top, cutter (C) on the wing, rebounder (R) under the basket · cones on the block (defender) and the elbow (screen)",[...OB(28,30,"P"),O(42,22,"C"),O(19,5,"R"),K(34.5,10.5),K(33,19.5),T(25,41,"6 cuts, then rotate")]),
+ F("1. V-cut: walk the defender in, plant, pop out hard to the wing · catch and shoot",[...OB(28,30,"P"),O(42,22,"C"),O(19,5,"R"),K(34.5,10.5),K(33,19.5),M(41,20.5,37,14,42.5,21.5),PS(29.5,29,41,22.5),SH(41,21)]),
+ F("2. L-cut: up the lane line from the block to the elbow, then out sharp to the wing",[...OB(28,30,"P"),O(37.5,10,"C"),O(19,5,"R"),K(34.5,10.5),K(33,19.5),M(37.5,11.5,37,20,44,20.5),PS(29.5,29,42.5,21),SH(43,19.5)]),
+ F("3. Curl: up to the elbow cone, curl tight around it to the rim · catch and lay it in",[...OB(28,30,"P"),O(37.5,10,"C"),O(19,5,"R"),K(34.5,10.5),K(33,19.5),M(37.5,11.5,36.5,19,33,22.5,29.5,18,27.5,11),PS(27.5,28.5,28,12.5),SH(27.5,10)]),
+ F("4. Flare: up to the elbow cone, then fade away from the ball to the wing · catch and shoot",[...OB(28,30,"P"),O(37.5,10,"C"),O(19,5,"R"),K(34.5,10.5),K(33,19.5),M(37.5,11.5,35.5,17,38.5,21,45,18),PS(29.5,29,44,19),SH(44.5,17.5)]),
+ F("5. Baseline: from the wing, cut behind the block cone along the baseline to the rim · bounce pass",[...OB(28,30,"P"),O(42,22,"C"),O(19,5,"R"),K(34.5,10.5),K(33,19.5),M(42.5,20.5,41,12,37,6,30,4.5,27.5,6),PS(28,28.5,32,15,28.5,7.5),SH(27.5,6.5)]),
+ F("6. UCLA: cutter passes to the wing, brushes off the elbow cone straight to the rim · catch and lay it in",[...OB(25,31,"C"),O(42,22,"P"),O(19,5,"R"),K(34.5,10.5),K(33,19.5),PS(26.5,30,40.5,23),M(25,29.5,30.5,23,31.5,18,29.5,11,27,7.5),PS(40.5,21,28,9),SH(27,7)]),
+ F("After all 6 cuts, rotate: cutter to rebounder, rebounder to passer, passer to cutter",[O(42,22,"C"),O(19,5,"R"),O(28,30,"P"),K(34.5,10.5),K(33,19.5),M(40.5,21,30,12,20.5,6),M(18.5,6.5,18,18,26.5,28.5),M(29.5,29.5,36,27,40.5,23),T(25,41,"C → R → P → C")]));
 def("Pre-Game Warm-Up Routine",F("Jog and dynamic movement",lanes([12,25,38],2,45),1),F("Layups, partner shooting, closeouts, free throws, huddle",[...OB(42,22,"S"),D(41,20,30,9),SH(29,8),O(9,22,"R"),M(10,20,21,9),C(25,35),T(25,43,"Same routine every game")]));
 def("Skills Testing (PBs)",F("Stations: 17s, 24 in 2, 5-spot shooting, free throws, lane slides",[["R",3,14,20,13,"17s"],["R",27,14,20,13,"24 in 2"],["R",3,31,20,13,"5-spot"],["R",27,31,20,13,"FTs + slides"],T(25,49,"Record scores in the Term tab")]));
 })();
