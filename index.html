@@ -513,7 +513,7 @@ const TYPES={
     games:["Kill Scrimmage","Situational 5v5","Scrimmage with Rules","3 Stops Drill","Advantage / Disadvantage","3v3 Cutthroat"]}
 };
 // In-play decision drills (IQ building)
-const IQ=new Set(["Screening Fundamentals","5-Out Screen Away","5-Out Hand-Off","Monkey in the Middle","Bull in the Ring","5-Pass Game","1v1 From the Wing","Help & Recover 2v2","Deny the Wing","Pick & Roll Defense","Shell Drill","Rebound War","Give & Go","Backdoor Cuts","Pick & Roll Basics","Pass & Screen Away","Drive & Kick","5-Out Motion","Fill the Spot","3v3 Cutthroat","3-on-2, 2-on-1","11-Man Break","2v1 Full Court","Sprint Back Transition","Chase-Down Layups","Pressure Dribble","Retreat Dribble vs Trap","King of the Court","Scrimmage with Rules","1v1 Battle Ladder","Handle into Reads","1v2 Pressure Breaker","Movement Shooting Reads","Closeout Attack Reads","Inside / Outside Hand Reads","Rim Protector Reads","Advantage Finishing","Pocket & Lob Reads 2v1","Get Open vs Denial","Drive, Draw, Dish","Hit-Ahead Drill","Shell Rebounding","Offensive Rebound Pursuit","Shell Drill: Rotations","Ball Screen Coverages","Closeout 1v1: 3 Stops","X-Out Scramble","Defensive Transition: Tag-Up & Load","Post Defense","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Reads vs Coverage","Advantage 4v3","Horns Set & Counters","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations","Read & React 5v0","Make/Miss Transition 5v5","4v3 Continuous","Numbers Defense: Tandem","3 Stops Drill","Advantage / Disadvantage","Situational 5v5","Kill Scrimmage","2v1 Rapid","5-Man Weave into 3v2","High-Low Entry 2v2","Press Break","Crash the Boards"]);
+const IQ=new Set(["Cutting Series: 6 Cuts","Cut Reads vs a Defender","Elbow Screen Reads 2v2","3v3 No-Dribble Cutting","Screening Fundamentals","5-Out Screen Away","5-Out Hand-Off","Monkey in the Middle","Bull in the Ring","5-Pass Game","1v1 From the Wing","Help & Recover 2v2","Deny the Wing","Pick & Roll Defense","Shell Drill","Rebound War","Give & Go","Backdoor Cuts","Pick & Roll Basics","Pass & Screen Away","Drive & Kick","5-Out Motion","Fill the Spot","3v3 Cutthroat","3-on-2, 2-on-1","11-Man Break","2v1 Full Court","Sprint Back Transition","Chase-Down Layups","Pressure Dribble","Retreat Dribble vs Trap","King of the Court","Scrimmage with Rules","1v1 Battle Ladder","Handle into Reads","1v2 Pressure Breaker","Movement Shooting Reads","Closeout Attack Reads","Inside / Outside Hand Reads","Rim Protector Reads","Advantage Finishing","Pocket & Lob Reads 2v1","Get Open vs Denial","Drive, Draw, Dish","Hit-Ahead Drill","Shell Rebounding","Offensive Rebound Pursuit","Shell Drill: Rotations","Ball Screen Coverages","Closeout 1v1: 3 Stops","X-Out Scramble","Defensive Transition: Tag-Up & Load","Post Defense","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Reads vs Coverage","Advantage 4v3","Horns Set & Counters","Dribble Hand-off Series","Zone Offense vs 2-3","Late-Game Situations","Read & React 5v0","Make/Miss Transition 5v5","4v3 Continuous","Numbers Defense: Tandem","3 Stops Drill","Advantage / Disadvantage","Situational 5v5","Kill Scrimmage","2v1 Rapid","5-Man Weave into 3v2","High-Low Entry 2v2","Press Break","Crash the Boards"]);
 const TEAMX=new Set(["Shell Drill","Shell Drill: Rotations","Ball Screen Coverages","X-Out Scramble","Defensive Transition: Tag-Up & Load","Zone Slides: 2-3","2-2-1 Press Trap Reads","Pick & Roll Defense","Crash the Boards","Shell Rebounding","3 Stops Drill","Kill Scrimmage","Situational 5v5","Scrimmage with Rules","Advantage / Disadvantage","3v3 Cutthroat","Line Sprints","17s","Weave into Layup Race","Layup Race"]);
 const tagsOf=d=>{const t=new Set();const iq=IQ.has(d.n);if(iq)t.add("iq");
   if(["offense","transition"].includes(d.c)||TEAMX.has(d.n))t.add("team");
@@ -570,7 +570,7 @@ const IMPL={
   handling:["Dribble Knockout","1v1 Battle Ladder","King of the Court","Handle into Reads","1v2 Pressure Breaker","Pressure Dribble","Gauntlet"],
   finishing:["Advantage Finishing","2v1 Rapid","2v1 Full Court","Rim Protector Reads","King of the Court","Chase-Down Layups"],
   defense:["Closeout 1v1: 3 Stops","3 Stops Drill","1v1 From the Wing","Rebound War","Shell Drill: Rotations","Kill Scrimmage"],
-  offense:["Advantage 4v3","3v3 Cutthroat","5-Out Motion","Advantage / Disadvantage","Scrimmage with Rules","Situational 5v5"],
+  offense:["Advantage 4v3","3v3 No-Dribble Cutting","Cut Reads vs a Defender","Elbow Screen Reads 2v2","3v3 Cutthroat","5-Out Motion","Advantage / Disadvantage","Scrimmage with Rules","Situational 5v5"],
   team:["Advantage 4v3","3v3 Cutthroat","Make/Miss Transition 5v5","Scrimmage with Rules","Situational 5v5","Kill Scrimmage"],
   transition:["2v1 Rapid","3-on-2, 2-on-1","4v3 Continuous","5-Man Weave into 3v2","Make/Miss Transition 5v5","11-Man Break"],
   compete:["Kill Scrimmage","Situational 5v5","3v3 Cutthroat","King of the Court","Advantage / Disadvantage","Scrimmage with Rules"]
@@ -998,7 +998,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v56";
+const APP_VERSION="v57";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});

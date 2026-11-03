@@ -518,6 +518,21 @@ def("Cutting Series: 6 Cuts",
  F("5. Baseline: from the wing, cut behind the block cone along the baseline to the rim · bounce pass",[...OB(28,30,"P"),O(42,22,"C"),O(19,5,"R"),K(34.5,10.5),K(33,19.5),M(42.5,20.5,41,12,37,6,30,4.5,27.5,6),PS(28,28.5,32,15,28.5,7.5),SH(27.5,6.5)]),
  F("6. UCLA: cutter passes to the wing, brushes off the elbow cone straight to the rim · catch and lay it in",[...OB(25,31,"C"),O(42,22,"P"),O(19,5,"R"),K(34.5,10.5),K(33,19.5),PS(26.5,30,40.5,23),M(25,29.5,30.5,23,31.5,18,29.5,11,27,7.5),PS(40.5,21,28,9),SH(27,7)]),
  F("After all 6 cuts, rotate: cutter to rebounder, rebounder to passer, passer to cutter",[O(42,22,"C"),O(19,5,"R"),O(28,30,"P"),K(34.5,10.5),K(33,19.5),M(40.5,21,30,12,20.5,6),M(18.5,6.5,18,18,26.5,28.5),M(29.5,29.5,36,27,40.5,23),T(25,41,"C → R → P → C")]));
+def("Cut Reads vs a Defender",
+ F("Setup: passer at the top, cutter on the wing with a live defender · cone or D-man at the elbow is the screen",[...OB(28,30,"P"),O(42,22,"C"),X(39.5,20),K(33,19.5),T(25,41,"Read the defender, pick the cut")]),
+ F("Defender denies (overplays): plant and go backdoor to the rim",[...OB(28,30,"P"),O(42,22,"C"),X(40,24.5),K(33,19.5),M(43,20.5,37,12,29,7),FL(40,24.5,36,16,32,11),PS(27.5,28.5,31,16,29,8.5),SH(28.5,7)]),
+ F("Defender sags off: V-cut out to the wing, catch facing up",[...OB(28,30,"P"),O(42,22,"C"),X(37,16),K(33,19.5),M(41,20.5,37.5,15.5,43,22.5),FL(37,16,40,20),PS(29.5,29,41.5,23),SH(42,21.5)]),
+ F("Defender trails over the elbow screen: curl tight to the rim",[...OB(28,30,"P"),O(37.5,10,"C"),X(38.5,13),K(33,19.5),M(37.5,11.5,36.5,19,33,22.5,29.5,18,27.5,11),FL(38.5,13,37.5,20,34,24,31,20),PS(27.5,28.5,28,12.5),SH(27.5,10)]),
+ F("Defender goes under the screen: flare out for the shot",[...OB(28,30,"P"),O(37.5,10,"C"),X(36,12),K(33,19.5),M(37.5,11.5,35.5,17,38.5,21,45,18),FL(36,12,32,16,38,17),PS(29.5,29,44,19),SH(44.5,17.5)]));
+def("Elbow Screen Reads 2v2",
+ F("Setup: coach at the top, screener (5) at the elbow, cutter (1) on the block, a defender on each",[C(25,31),B(27,31),O(33,19,"5"),X(31,17.5),O(37.5,9,"1"),X(36,11),T(25,41,"Two options on every screen")]),
+ F("Defender trails: curl tight to the rim · screener pops out for the shot",[C(25,31),B(27,31),O(33,19,"5"),X(31,17.5),O(37.5,9,"1"),X(36,11),M(37.5,10.5,36.5,18,34,22.5,30,18,27.5,10.5),FL(36,11,36,19,33,23,30,19),M(34,20.5,38,27),PS(26.5,29.5,28.5,12),SH(27.5,9.5)]),
+ F("Defender goes under: flare to the wing · screener dives to the rim",[C(25,31),B(27,31),O(33,19,"5"),X(31,17.5),O(37.5,9,"1"),X(35,11.5),M(37.5,10.5,36,17,39,21,45,18),FL(35,11.5,32,16,40,16),M(32,17.5,28,9),PS(27,30,44,19),SH(44.5,17.5)]),
+ F("Defenders switch: screener slips to the rim",[C(25,31),B(27,31),O(33,19,"5"),X(34,21),O(37,20,"1"),X(34,17),M(32,17.5,28.5,9.5),PS(26,29.5,28.5,11.5),SH(28,8.5),T(25,41,"Switch = slip")]));
+def("3v3 No-Dribble Cutting",
+ F("3v3, no dribbles · the only way to get open is to cut",[...OB(25,30,"1"),O(42,22,"2"),O(8,22,"3"),X(25,26),X(39.5,19.5),X(10.5,19.5),T(25,41,"2 pts for a layup off a cut")]),
+ F("Pass and cut: 1 hits 2 and cuts to the rim · 3 fills the top",[...OB(25,30,"1"),O(42,22,"2"),O(8,22,"3"),X(25,26),X(39.5,19.5),X(10.5,19.5),PS(26.5,29,40.5,23),M(24,28.5,26,18,28,9),FL(25,26,27,17,30,11),M(9.5,23.5,17,29,24,30),PS(40.5,21,29,10),SH(28,8)]),
+ F("Denied on the wing: plant and go backdoor · fill the spot behind the cutter",[...OB(25,30,"1"),O(42,22,"2"),O(8,22,"3"),X(25,26),X(40.5,24),X(10.5,19.5),M(43,20.5,37,12,30,7),FL(40.5,24,36,16,33,11),PS(27,28.5,31,16,30,8.5),SH(29,7),M(9.5,23.5,18,25,30,27)]));
 def("Pre-Game Warm-Up Routine",F("Jog and dynamic movement",lanes([12,25,38],2,45),1),F("Layups, partner shooting, closeouts, free throws, huddle",[...OB(42,22,"S"),D(41,20,30,9),SH(29,8),O(9,22,"R"),M(10,20,21,9),C(25,35),T(25,43,"Same routine every game")]));
 def("Skills Testing (PBs)",F("Stations: 17s, 24 in 2, 5-spot shooting, free throws, lane slides",[["R",3,14,20,13,"17s"],["R",27,14,20,13,"24 in 2"],["R",3,31,20,13,"5-spot"],["R",27,31,20,13,"FTs + slides"],T(25,49,"Record scores in the Term tab")]));
 })();
