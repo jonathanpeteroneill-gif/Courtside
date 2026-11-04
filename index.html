@@ -916,7 +916,7 @@ document.addEventListener("click",e=>{
 });
 $("#termBuild").onclick=buildTerm;
 /* player PBs */
-const PB_TESTS=[["s17","17s (touches in 1 min)"],["l24","24 in 2 (layups made)"],["s5","5-spot shooting (/25)"],["ft","Free throws (/10)"],["sl","Lane slides (30s)"]];
+const PB_TESTS=[["s17","17s (touches in 1 min)"],["s51","51s (touches in 2 min)"],["l24","24 in 2 (layups made)"],["s5","5-spot shooting (/25)"],["ft","Free throws (/10)"],["sl","Lane slides (30s)"]];
 let pbT="s17";let pbs=store.get("pbs",{});
 function roster(){let n=($("#names").value||"").split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);return n.length?n:Array.from({length:st.kids},(_,i)=>"Player "+(i+1))}
 function renderPB(){
@@ -1038,7 +1038,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v65";
+const APP_VERSION="v66";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
