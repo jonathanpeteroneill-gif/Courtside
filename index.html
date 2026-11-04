@@ -571,11 +571,11 @@ function groupText(d,kids,hoops){
 // Game implementation: live drills and games that use the skills of each focus
 const IMPL={
   balanced:["Advantage / Disadvantage","3v3 Cutthroat","2v1 Rapid","Closeout 1v1: 3 Stops","Scrimmage with Rules","King of the Court","2v1 Full Court"],
-  shooting:["Spot-Up Team Battle","Closeout Attack Reads","Beat the Pro","Knockout","Make It Rain","Hot Shot","21","Kill Scrimmage"],
+  shooting:["3v3 No Key","Spot-Up Team Battle","Closeout Attack Reads","Beat the Pro","Knockout","Make It Rain","Hot Shot","21","Kill Scrimmage"],
   handling:["Dribble Knockout","1v1 Battle Ladder","King of the Court","Handle into Reads","1v2 Pressure Breaker","Pressure Dribble","Gauntlet"],
-  finishing:["Advantage Finishing","2v1 Rapid","2v1 Full Court","Rim Protector Reads","King of the Court","Chase-Down Layups"],
+  finishing:["Layup Loops (with Chaser)","Advantage Finishing","2v1 Rapid","2v1 Full Court","Rim Protector Reads","King of the Court","Chase-Down Layups"],
   defense:["Closeout 1v1: 3 Stops","3 Stops Drill","1v1 From the Wing","Rebound War","Shell Drill: Rotations","Kill Scrimmage"],
-  offense:["Advantage 4v3","3v3 No-Dribble Cutting","Cut Reads vs a Defender","Elbow Screen Reads 2v2","3v3 Cutthroat","5-Out Motion","Advantage / Disadvantage","Scrimmage with Rules","Situational 5v5"],
+  offense:["Advantage 4v3","3v3 No Key","3v3 No-Dribble Cutting","Cut Reads vs a Defender","Elbow Screen Reads 2v2","3v3 Cutthroat","5-Out Motion","Advantage / Disadvantage","Scrimmage with Rules","Situational 5v5"],
   team:["Advantage 4v3","3v3 Cutthroat","Make/Miss Transition 5v5","Scrimmage with Rules","Situational 5v5","Kill Scrimmage"],
   transition:["5-Man Italian","3-Man Italian","2v1 Rapid","3-on-2, 2-on-1","4v3 Continuous","5-Man Weave into 3v2","Make/Miss Transition 5v5","11-Man Break"],
   compete:["Kill Scrimmage","Situational 5v5","3v3 Cutthroat","King of the Court","Advantage / Disadvantage","Scrimmage with Rules"]
@@ -1038,7 +1038,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v63";
+const APP_VERSION="v64";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
