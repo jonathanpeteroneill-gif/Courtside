@@ -568,6 +568,8 @@ def("Teaching the 1-3-1 Press",
  F("5. Live: trap in the backcourt, call MATCH at halfway, pick up the nearest, then find your own",[...OB(42,40),O(40,10),O(30,25),O(20,12),O(20,38),X(39,38.5),X(37.5,11),X(27.5,24.5),X(17.5,13),X(17.5,36.5),T(70,25,"MATCH!"),T(70,30,"Ball side and basket side")],1));
 def("51s (Block to Block)",
  F("Defensive slide lane line to lane line · touch the line each time · 51 touches in 2:00",[X(18,9),X(18,14),X(18,19),M(19.5,8,31.5,8),M(31.5,10,19.5,10),T(25,30,"51 touches in 2 minutes"),T(25,35,"Stay low · never cross your feet")]));
+def("15s (Block to Block)",
+ F("Defensive slide lane line to lane line · touch the line each time · 15 touches in 30 seconds, 3 rounds",[X(18,9),X(18,14),X(18,19),M(19.5,8,31.5,8),M(31.5,10,19.5,10),T(25,30,"15 touches in 30 seconds · 3 rounds"),T(25,35,"Stay low · never cross your feet")]));
 def("Pre-Game Warm-Up Routine",F("Jog and dynamic movement",lanes([12,25,38],2,45),1),F("Layups, partner shooting, closeouts, free throws, huddle",[...OB(42,22,"S"),D(41,20,30,9),SH(29,8),O(9,22,"R"),M(10,20,21,9),C(25,35),T(25,43,"Same routine every game")]));
 def("Skills Testing (PBs)",F("Stations: 17s, 24 in 2, 5-spot shooting, free throws, lane slides",[["R",3,14,20,13,"17s"],["R",27,14,20,13,"24 in 2"],["R",3,31,20,13,"5-spot"],["R",27,31,20,13,"FTs + slides"],T(25,49,"Record scores in the Term tab")]));
 })();

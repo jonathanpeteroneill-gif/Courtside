@@ -114,6 +114,7 @@ a.btn{color:var(--ink);text-decoration:none}
 .groups.warn{color:var(--warn)}
 .block p{margin:0;max-width:68ch}
 .block .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.upnote{font-size:13px;background:var(--sunk);border-left:3px solid var(--accent);padding:6px 10px;border-radius:6px}
 .addrow{padding:6px 0 10px 22px}.addrow .btn{border-style:dashed}
 .pick-ph,.pick-cats{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.pick-q{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);margin:6px 0}
 .chip{font:inherit;font-size:13px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
@@ -352,6 +353,7 @@ html.modal-open,html.modal-open body{overflow:hidden}
         <div class="row">
           <button class="btn primary" id="regen" type="button">↻ New session</button>
           <button class="btn" id="save" type="button">Save</button>
+          <button class="btn" id="buildOn" type="button">↗ Build on last session</button>
         </div>
       </div>
     </aside>
@@ -449,6 +451,8 @@ html.modal-open,html.modal-open body{overflow:hidden}
     <div><div class="eyebrow" id="savedEyebrow">Stored on this phone</div><h1>Saved</h1></div>
     <div><h2 style="margin-bottom:12px">Sessions</h2><div id="savedSessions" style="display:grid;gap:10px"></div></div>
     <div><h2 style="margin-bottom:12px">Favorite drills</h2><div class="grid" id="favGrid"></div></div>
+    <div class="panel" style="display:grid;gap:10px"><div><b>Move your saves to another device</b><div class="muted" style="font-size:13px">Saved sessions, favourites, names, your term plan and PBs. Back up here, send the file to your other device (AirDrop, email, Drive), then restore it there.</div></div>
+      <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" id="bkDown" type="button">⬇ Back up to a file</button><button class="btn" id="bkCopy" type="button">Copy backup code</button><label class="btn" for="bkFile" style="cursor:pointer">⬆ Restore from a file</label><input id="bkFile" type="file" accept=".json,application/json,text/plain" hidden><button class="btn" id="bkPaste" type="button">Paste a code</button></div></div>
     <div class="panel row" style="justify-content:space-between"><div><b>App version <span id="appVersion"></span></b><div class="muted" style="font-size:13px">Updates load on their own when you have signal. If something looks out of date, tap the button. Your saved sessions and favorites are kept.</div></div><button class="btn" id="forceUpdate" type="button">Get latest version</button></div>
   </section>
 </main>
@@ -528,8 +532,8 @@ const tagsOf=d=>{const t=new Set();const iq=IQ.has(d.n);if(iq)t.add("iq");
 D.forEach(d=>d.tags=tagsOf(d));
 // Saved data uses drill names (stable), not list positions
 const byName={};D.forEach(d=>byName[d.n]=d.id);
-const toSave=pl=>pl?pl.map(b=>b.brk?b:{n:D[b.id].n,m:b.m,ph:b.ph}):pl;
-const fromSave=pl=>Array.isArray(pl)?pl.map(b=>b.brk?b:(b.n!=null?{id:byName[b.n],m:b.m,ph:b.ph}:b)).filter(b=>b.brk||(b.id!=null&&D[b.id])):null;
+const toSave=pl=>pl?pl.map(b=>b.brk?b:{n:D[b.id].n,m:b.m,ph:b.ph,...(b.up?{up:1}:{})}):pl;
+const fromSave=pl=>Array.isArray(pl)?pl.map(b=>b.brk?b:(b.n!=null?{id:byName[b.n],m:b.m,ph:b.ph,...(b.up?{up:1}:{})}:b)).filter(b=>b.brk||(b.id!=null&&D[b.id])):null;
 const typeOK=(d,type)=>type==="skill"?d.tags.has("skill"):type==="iq"?d.tags.has("iq"):(d.tags.has("iq")||d.tags.has("team"));
 // One focus list for every session type (the session type decides which kind of drill fills each slot)
 const FOCUS={
@@ -670,7 +674,7 @@ function renderPlan(){
     return head+`<div class="block ${game||b.ph==="game"?"is-game":""}"><span class="clock">${at}</span>
       <div class="block-head"><span class="tag ${game?"game":""}">${C[d.c].label}</span><h3><button type="button" data-open="${d.id}">${esc(d.n)}</button></h3><span class="mins">${b.m} min</span></div>
       <div class="groups ${g.warn?"warn":""}">${esc(g.t)}</div>
-      <p class="muted">${esc(d.s)}</p>
+      <p class="muted">${esc(d.s)}</p>${b.up&&d.v?`<div class="upnote"><b>↑ Build on last time:</b> ${esc(d.v)}</div>`:""}
       <div class="acts"><button class="btn sm" data-swap="${idx}">Swap</button><button class="btn sm" data-open="${d.id}">Steps</button><button class="btn sm" data-tm="${idx}" data-d="-1">−1 min</button><button class="btn sm" data-tm="${idx}" data-d="1">+1 min</button><button class="btn sm" data-rm="${idx}">Remove</button><button class="btn sm" data-mv="${idx}" data-d="-1" aria-label="Move up">↑</button><button class="btn sm" data-mv="${idx}" data-d="1" aria-label="Move down">↓</button></div></div>`+tail;
   }).join("")+(plan.length?"":`<div class="addrow"><button type="button" class="btn sm" data-pick="skill">+ Add a drill</button></div>`);
   const eq=new Set(); plan.forEach(b=>{if(b.brk)return; D[b.id].e.split(",").map(s=>s.trim().replace(/^\d+\s*/,"")).filter(Boolean).forEach(x=>eq.add(x))});
@@ -704,6 +708,31 @@ function renderPick(){
   let L=D.filter(d=>(!PICK.c||d.c===PICK.c)&&(!PICK.q||(d.n+" "+d.s).toLowerCase().includes(PICK.q)));
   L.sort((a,b)=>(fits(b,o)-fits(a,o))||a.n.localeCompare(b.n));
   $("#pickList").innerHTML=L.length?L.map(d=>`<button type="button" class="pick-row" data-pickadd="${d.id}"><span class="pick-n">${esc(d.n)}${inPlan.has(d.id)?' <i class="muted">· in plan</i>':""}</span><span class="pick-m">${esc(C[d.c].label)} · ${d.t} min${fits(d,o)?"":" · not ideal for this group"}</span></button>`).join(""):`<p class="muted">No drills match.</p>`;
+}
+// history: every session you run is remembered, so the next one can build on it
+function logHistory(){const h=store.get("history",[]);const today=new Date().toISOString().slice(0,10);const entry={day:today,st:{...st},plan:toSave(plan)};if(h[0]&&h[0].day===today)h[0]=entry;else h.unshift(entry);store.set("history",h.slice(0,40))}
+function lastSession(){
+  const h=store.get("history",[])[0], s=store.get("sessions",[])[0];
+  const hd=h?h.day:"", sd=s&&s.saved?s.saved:"";
+  const pick=h&&(!s||hd>=sd)?h:s;return pick?{day:pick.day||pick.saved||pick.date,st:pick.st||{},plan:fromSave(pick.plan)||[]}:null;
+}
+function buildOn(){
+  const L=lastSession();if(!L||!L.plan.length){toast("Run or save a session first, then build on it next time");return}
+  const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
+  const last=new Set(L.plan.filter(b=>!b.brk).map(b=>b.id));const used=new Set();let keptSkill=false;
+  const fresh=c=>{const p=D.filter(d=>d.c===c&&fits(d,o)&&!last.has(d.id)&&!used.has(d.id)&&!/Pre-Game Warm-Up Routine|Skills Testing/.test(d.n));return p.length?pick(p):null};
+  plan=L.plan.map(b=>{
+    if(b.brk)return {...b};
+    const d=D[b.id],ph=b.ph||(d.c==="warm"?"warm":d.c==="cool"?"cool":"skill");
+    if(ph==="game"){used.add(b.id);return {id:b.id,m:b.m,ph,up:1}}           // same game, harder
+    if(ph==="skill"&&!keptSkill){keptSkill=true;used.add(b.id);return {id:b.id,m:b.m,ph,up:1}} // repeat the key skill, harder
+    const n=fresh(d.c);if(n){used.add(n.id);return {id:n.id,m:b.m,ph}}         // next drill in the same area
+    used.add(b.id);return {id:b.id,m:b.m,ph,up:1};
+  });
+  store.set("plan",toSave(plan));renderPlan();
+  if(L.st&&L.st.focus&&FOCUS[L.st.focus]&&(!L.st.type||L.st.type===st.type)){st.focus=L.st.focus;saveSet();syncControls();renderPlan()}
+  let when=L.day;try{const d=new Date(L.day);if(!isNaN(d))when=d.toLocaleDateString(undefined,{day:"numeric",month:"short"})}catch(e){}
+  toast("Built on your session from "+when);
 }
 function swap(idx){
   const cur=D[plan[idx].id]; const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
@@ -745,7 +774,8 @@ document.addEventListener("click",e=>{
   const dl=e.target.closest("[data-del]"); if(dl){const a=store.get("sessions",[]);a.splice(+dl.dataset.del,1);store.set("sessions",a);renderSaved();return}
 });
 $("#regen").onclick=regen;
-$("#save").onclick=()=>{const a=store.get("sessions",[]);const d=new Date();a.unshift({name:`${TYPES[st.type].label} · ${FOCUS[st.focus].label} · ${st.kids} kids · ${st.dur} min`,date:d.toLocaleDateString(undefined,{month:"short",day:"numeric"}),st:{...st},plan:toSave(plan)});store.set("sessions",a.slice(0,30));toast("Session saved")};
+$("#buildOn").onclick=buildOn;
+$("#save").onclick=()=>{const a=store.get("sessions",[]);const d=new Date();a.unshift({name:`${TYPES[st.type].label} · ${FOCUS[st.focus].label} · ${st.kids} kids · ${st.dur} min`,date:d.toLocaleDateString(undefined,{month:"short",day:"numeric"}),saved:d.toISOString().slice(0,10),st:{...st},plan:toSave(plan)});store.set("sessions",a.slice(0,30));toast("Session saved")};
 function syncControls(){["dur","lvl","focus","type"].forEach(k=>[...$("#"+k).children].forEach(b=>b.setAttribute("aria-pressed",String(st[k])===b.dataset.v)));["kids","hoops","teams"].forEach(k=>$("#"+k).value=st[k])}
 
 /* teams */
@@ -916,7 +946,7 @@ document.addEventListener("click",e=>{
 });
 $("#termBuild").onclick=buildTerm;
 /* player PBs */
-const PB_TESTS=[["s17","17s (touches in 1 min)"],["s51","51s (touches in 2 min)"],["l24","24 in 2 (layups made)"],["s5","5-spot shooting (/25)"],["ft","Free throws (/10)"],["sl","Lane slides (30s)"]];
+const PB_TESTS=[["s17","17s (touches in 1 min)"],["s51","51s (touches in 2 min)"],["l24","24 in 2 (layups made)"],["s5","5-spot shooting (/25)"],["ft","Free throws (/10)"],["sl","15s block to block (30s)"]];
 let pbT="s17";let pbs=store.get("pbs",{});
 function roster(){let n=($("#names").value||"").split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);return n.length?n:Array.from({length:st.kids},(_,i)=>"Player "+(i+1))}
 function renderPB(){
@@ -938,11 +968,25 @@ function renderSaved(){
   $("#favGrid").innerHTML=f.length?f.map(card).join(""):`<div class="empty">Tap ★ on any drill to keep it here.</div>`;
 }
 
+/* backup / restore */
+const BK_KEYS=["settings","plan","sessions","favs","names","term","termSet","pbs","history"];
+function bkMake(){const o={app:"atw-courtside",v:1,at:new Date().toISOString(),data:{}};BK_KEYS.forEach(k=>{const v=store.get(k,null);if(v!=null)o.data[k]=v});return JSON.stringify(o)}
+function bkRestore(txt){let o;try{o=JSON.parse(txt.trim())}catch(e){toast("That backup could not be read");return}
+  if(!o||o.app!=="atw-courtside"||!o.data){toast("That is not a Courtside backup");return}
+  if(!confirm("Replace the saves on this device with the backup from "+(o.at||"").slice(0,10)+"?"))return;
+  Object.entries(o.data).forEach(([k,v])=>{if(BK_KEYS.includes(k))store.set(k,v)});toast("Restored");setTimeout(()=>location.reload(),600)}
+document.addEventListener("click",e=>{
+  if(e.target.closest("#bkDown")){const b=new Blob([bkMake()],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="courtside-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);toast("Backup saved");return}
+  if(e.target.closest("#bkCopy")){const t=bkMake();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Backup code copied: paste it on your other device"),()=>{prompt("Copy this backup code:",t)});return}
+  if(e.target.closest("#bkPaste")){const t=prompt("Paste your backup code here:");if(t)bkRestore(t);return}
+});
+document.addEventListener("change",e=>{if(e.target.id!=="bkFile")return;const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>bkRestore(String(r.result));r.readAsText(f);e.target.value=""});
 /* run mode */
 let R=null, wake=null, actx=null;
 function beep(n=1){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();for(let i=0;i<n;i++){const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=880;o.connect(g);g.connect(actx.destination);const t=actx.currentTime+i*0.3;g.gain.setValueAtTime(.25,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);o.start(t);o.stop(t+.26)}}catch(e){}}
 function runStart(){
   if(!plan.length) return;
+  logHistory();
   R={i:0,left:plan[0].m*60,on:false,timer:null};
   $("#run").hidden=false; beep(0); runRender();
   try{navigator.wakeLock?.request("screen").then(w=>wake=w).catch(()=>{})}catch(e){}
@@ -1038,7 +1082,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v66";
+const APP_VERSION="v67";
 if("serviceWorker" in navigator){
   let reloaded=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
