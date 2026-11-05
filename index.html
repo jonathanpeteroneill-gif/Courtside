@@ -114,6 +114,7 @@ a.btn{color:var(--ink);text-decoration:none}
 .groups.warn{color:var(--warn)}
 .block p{margin:0;max-width:68ch}
 .block .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.spec-tag{font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--accent)}
 .upnote{font-size:13px;background:var(--sunk);border-left:3px solid var(--accent);padding:6px 10px;border-radius:6px}
 .addrow{padding:6px 0 10px 22px}.addrow .btn{border-style:dashed}
 .pick-ph,.pick-cats{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.pick-q{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);margin:6px 0}
@@ -853,15 +854,18 @@ $("#dlg").addEventListener("close",()=>window.stopDiagramPlay&&stopDiagramPlay()
 
 /* plays */
 const PBK=window.PLAYBOOK||[], PSEC=window.PLAYBOOK_SECTIONS||[];
+let specTags=new Set(store.get("specTags",[]));
+const saveSpec=()=>store.set("specTags",[...specTags]);
 const playByName=n=>PBK.find(p=>p.n===n&&!p.alias);
 let pSec="spectres";
 function playCard(p){const i=PBK.indexOf(p);const nSteps=(PLAYS[p.n]||[]).length;
   return `<article class="card" data-play="${i}"><div class="thumb">${drawDiagram(p)}</div>${nSteps>1?`<span class="steps-badge">${nSteps} steps</span>`:""}
-  <div class="row" style="gap:6px"><span class="call">${esc(p.call)}</span></div>
+  <div class="row" style="gap:6px"><span class="call">${esc(p.call)}</span>${p.sec!=="spectres"&&specTags.has(p.n)?`<span class="spec-tag">★ Spectres</span>`:""}</div>
   <h3>${esc(p.n)}</h3><p class="play-when">${esc(p.when)}</p></article>`}
 function renderPlays(){
   $("#playChips").innerHTML=PSEC.map(x=>`<button type="button" data-psec="${x.k}" aria-pressed="${pSec===x.k}">${x.label}</button>`).join("");
-  const list=PBK.filter(p=>p.sec===pSec).map(p=>p.alias?playByName(p.n):p).filter(Boolean);
+  let list=PBK.filter(p=>p.sec===pSec).map(p=>p.alias?playByName(p.n):p).filter(Boolean);
+  if(pSec==="spectres"){const added=[...specTags].map(n=>playByName(n)).filter(p=>p&&p.sec!=="spectres"&&!list.includes(p));list=list.concat(added)}
   const links=((window.PLAYBOOK_LINKS||{})[pSec]||[]).map(n=>D.find(d=>d.n===n)).filter(Boolean);
   let h="";
   if(pSec==="spectres"){const T=window.SPECTRES_SHEET;
@@ -885,13 +889,14 @@ function openPlay(i){
   <section><div class="eyebrow">When to use it</div><div>${esc(p.when)}</div></section>
   <section><div class="eyebrow">Setup</div><div>${esc(p.s)}</div></section>
   <section><div class="eyebrow">How it runs</div><ol>${p.d.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
-  <section><div class="eyebrow">If they…</div><ul>${p.counters.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
-  <section><div class="eyebrow">Coaching points</div><ul>${p.k.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
+  ${p.counters?`<section><div class="eyebrow">If they…</div><ul>${p.counters.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>`:""}
+  ${p.k?`<section><div class="eyebrow">Coaching points</div><ul>${p.k.split("|").map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>`:""}
   ${links.length?`<section><div class="eyebrow">Teach it with</div><div class="related">${links.map(d=>`<button class="btn sm" data-open="${d.id}">${esc(d.n)}</button>`).join("")}</div></section>`:""}
-  ${isSpec?"":`<div class="muted" style="font-size:13px">Calls for these standard plays are suggestions. Rename them to match your team.</div>`}`;
+  ${isSpec?"":`<div class="row"><button class="btn ${specTags.has(p.n)?"primary":""}" data-spec="${i}" aria-pressed="${specTags.has(p.n)}">${specTags.has(p.n)?"★ In the Spectres playbook (tap to remove)":"☆ Add to the Spectres playbook"}</button></div><div class="muted" style="font-size:13px">Calls for these standard plays are suggestions. Rename them to match your team.</div>`}`;
   const dg=$("#dlg");$("#dlgPanel").style.transform="";$("#dlgPanel").style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;$("#dlgBody").focus({preventScroll:true});
 }
 document.addEventListener("click",e=>{const c=e.target.closest("[data-play]");if(c&&!e.target.closest("[data-open]"))openPlay(+c.dataset.play)});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-spec]");if(!b)return;const p=PBK[+b.dataset.spec];if(specTags.has(p.n)){specTags.delete(p.n);toast("Removed from the Spectres playbook")}else{specTags.add(p.n);toast("Added to the Spectres playbook")}saveSpec();openPlay(+b.dataset.spec);if(view==="plays")renderPlays()});
 
 /* term plan */
 const TERM_TPL={
@@ -969,7 +974,7 @@ function renderSaved(){
 }
 
 /* backup / restore */
-const BK_KEYS=["settings","plan","sessions","favs","names","term","termSet","pbs","history"];
+const BK_KEYS=["settings","plan","sessions","favs","names","term","termSet","pbs","history","specTags"];
 function bkMake(){const o={app:"atw-courtside",v:1,at:new Date().toISOString(),data:{}};BK_KEYS.forEach(k=>{const v=store.get(k,null);if(v!=null)o.data[k]=v});return JSON.stringify(o)}
 function bkRestore(txt){let o;try{o=JSON.parse(txt.trim())}catch(e){toast("That backup could not be read");return}
   if(!o||o.app!=="atw-courtside"||!o.data){toast("That is not a Courtside backup");return}
@@ -1082,7 +1087,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v68";
+const APP_VERSION="v69";
 if("serviceWorker" in navigator){
   let reloaded=false,pending=false;
   // never reload in the middle of a running session: wait until the timer screen is closed

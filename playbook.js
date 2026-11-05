@@ -157,6 +157,7 @@ add({n:"1-2-2 Half-Court Trap",sec:"press",type:"press",call:"1-2-2",
   F("Ball crosses halfway on the sideline: TRAP in the halfway corner · everyone shifts",[O(48,6),B(49.6,7.6),O(62,42),O(40,20),O(30,35),X(70,25,"P"),X(50,9),X(50,41),X(32,17),X(32,33),M(70,23,52,8),M(50,11,46,8),M(50,39,42,26),M(32,19,36,10),M(32,31,24,24),T(50,16,"TRAP!")],1)]);
 
 // ============================== PRESS BREAKS ==============================
+PB.push({n:"1-3-1 Press (Spectres)",sec:"press",alias:true});
 PB.push({n:"Dragon (Spectres press break)",sec:"break",alias:true},{n:"V (Spectres press break)",sec:"break",alias:true});
 
 add({n:"1-4 Flat vs Man Press",sec:"break",type:"break",call:"FLAT",
