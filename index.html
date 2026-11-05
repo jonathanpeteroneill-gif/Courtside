@@ -453,7 +453,7 @@ html.modal-open,html.modal-open body{overflow:hidden}
     <div><h2 style="margin-bottom:12px">Favorite drills</h2><div class="grid" id="favGrid"></div></div>
     <div class="panel" style="display:grid;gap:10px"><div><b>Move your saves to another device</b><div class="muted" style="font-size:13px">Saved sessions, favourites, names, your term plan and PBs. Back up here, send the file to your other device (AirDrop, email, Drive), then restore it there.</div></div>
       <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" id="bkDown" type="button">⬇ Back up to a file</button><button class="btn" id="bkCopy" type="button">Copy backup code</button><label class="btn" for="bkFile" style="cursor:pointer">⬆ Restore from a file</label><input id="bkFile" type="file" accept=".json,application/json,text/plain" hidden><button class="btn" id="bkPaste" type="button">Paste a code</button></div></div>
-    <div class="panel row" style="justify-content:space-between"><div><b>App version <span id="appVersion"></span></b><div class="muted" style="font-size:13px">Updates load on their own when you have signal. If something looks out of date, tap the button. Your saved sessions and favorites are kept.</div></div><button class="btn" id="forceUpdate" type="button">Get latest version</button></div>
+    <div class="panel row" style="justify-content:space-between"><div><b>App version <span id="appVersion"></span></b><div class="muted" style="font-size:13px">Works offline. New drills and updates download on their own next time you have signal (they never interrupt a running session). If something looks out of date, tap the button. Your saved sessions and favorites are kept.</div></div><button class="btn" id="forceUpdate" type="button">Get latest version</button></div>
   </section>
 </main>
 
@@ -1082,16 +1082,21 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v67";
+const APP_VERSION="v68";
 if("serviceWorker" in navigator){
-  let reloaded=false;
-  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(reloaded)return;reloaded=true;location.reload()});
+  let reloaded=false,pending=false;
+  // never reload in the middle of a running session: wait until the timer screen is closed
+  const busy=()=>{const r=document.getElementById("run"),f=document.getElementById("follow");return (r&&!r.hidden)||(f&&!f.hidden)};
+  const go=()=>{if(reloaded)return;if(busy()){pending=true;return}reloaded=true;location.reload()};
+  navigator.serviceWorker.addEventListener("controllerchange",go);
+  setInterval(()=>{if(pending&&!busy())go()},3000);
   window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(reg=>{
     reg.update().catch(()=>{});
     document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")reg.update().catch(()=>{})});
   }).catch(()=>{}));
 }
 document.getElementById("appVersion").textContent=APP_VERSION;
+try{const pv=localStorage.getItem("cs_seen_version");if(pv&&pv!==APP_VERSION){setTimeout(()=>{const t=document.getElementById("toast");if(t){t.textContent="Updated to "+APP_VERSION;t.hidden=false;setTimeout(()=>t.hidden=true,2500)}},800)}localStorage.setItem("cs_seen_version",APP_VERSION)}catch(_){}
 document.getElementById("forceUpdate").addEventListener("click",async e=>{
   e.target.textContent="Updating…";
   try{const rs=await navigator.serviceWorker?.getRegistrations();await Promise.all((rs||[]).map(r=>r.unregister()))}catch(_){}
