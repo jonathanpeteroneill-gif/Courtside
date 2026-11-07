@@ -115,6 +115,8 @@ a.btn{color:var(--ink);text-decoration:none}
 .block p{margin:0;max-width:68ch}
 .block .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .spec-tag{font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--accent)}
+.fchips{display:flex;flex-wrap:wrap;gap:6px}
+.rec-list{display:grid;gap:6px}.rec-row{display:flex;gap:8px;align-items:center}.rec-n{flex:1;display:grid;gap:2px;text-align:left;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}.rec-n .muted{font-size:13px}
 .upnote{font-size:13px;background:var(--sunk);border-left:3px solid var(--accent);padding:6px 10px;border-radius:6px}
 .addrow{padding:6px 0 10px 22px}.addrow .btn{border-style:dashed}
 .pick-ph,.pick-cats{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.pick-q{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);margin:6px 0}
@@ -328,6 +330,12 @@ html.modal-open,html.modal-open body{overflow:hidden}
   <!-- PLAN -->
   <section id="view-plan" class="plan">
     <aside class="rail">
+      <div class="panel" style="display:grid;gap:12px">
+        <div><span class="lbl">Next session, focus on…</span><div class="muted" style="font-size:13px">Pick one or more, or type what you saw at the last game. You get drills to pop straight in.</div></div>
+        <div class="fchips" id="fchips"></div>
+        <input id="fText" class="pick-q" type="text" placeholder="e.g. boxing out, beating the press, closeouts" autocomplete="off">
+        <button class="btn primary" id="fGo" type="button">Get recommendations</button>
+      </div>
       <div class="panel" style="display:grid;gap:18px">
         <div class="field">
           <span class="lbl">Kids at practice</span>
@@ -765,7 +773,7 @@ document.addEventListener("click",e=>{
   const pph=e.target.closest("[data-pickph]"); if(pph){PICK.ph=pph.dataset.pickph;document.querySelectorAll("[data-pickph]").forEach(x=>x.setAttribute("aria-pressed",x===pph));return}
   const pc=e.target.closest("[data-pickc]"); if(pc){PICK.c=pc.dataset.pickc;document.querySelectorAll("[data-pickc]").forEach(x=>x.setAttribute("aria-pressed",x===pc));renderPick();return}
   const pa=e.target.closest("[data-pickadd]"); if(pa){insertDrill(+pa.dataset.pickadd,PICK.ph);$("#dlg").close();return}
-  const ap=e.target.closest("[data-addph]"); if(ap){insertDrill(+ap.dataset.addph,ap.dataset.ph);$("#dlg").close();return}
+  const ap=e.target.closest("[data-addph]"); if(ap){insertDrill(+ap.dataset.addph,ap.dataset.ph);if(document.getElementById("recBuild")){ap.textContent="Added ✓";ap.disabled=true}else $("#dlg").close();return}
   const mv=e.target.closest("[data-mv]"); if(mv){const i=+mv.dataset.mv,j=i+(+mv.dataset.d);if(j<0||j>=plan.length)return;const L=phaseList();const b=plan[i];plan.splice(i,1);plan.splice(j,0,b);if(!b.brk&&L[j])b.ph=L[j];store.set("plan",toSave(plan));renderPlan();return}
   const rm=e.target.closest("[data-rm]"); if(rm){plan.splice(+rm.dataset.rm,1);store.set("plan",toSave(plan));renderPlan();return}
   const tm=e.target.closest("[data-tm]"); if(tm){const b=plan[+tm.dataset.tm];b.m=Math.max(1,b.m+(+tm.dataset.d));store.set("plan",toSave(plan));renderPlan();return}
@@ -973,6 +981,83 @@ function renderSaved(){
   $("#favGrid").innerHTML=f.length?f.map(card).join(""):`<div class="empty">Tap ★ on any drill to keep it here.</div>`;
 }
 
+/* focus recommendations: "next session I want to work on…" */
+const TOPICS=[
+ ["rebound","Rebounding",["rebound"],/rebound|box[- ]?out|crash|tip|outlet|second chance|offensive board/i],
+ ["defense","Defense",["defense"],/defen|closeout|close out|shell|help|deny|denial|stance|slide|contest|stop|charge|zig-zag/i],
+ ["shoot","Shooting",["shoot"],/shoot|shot|catch & shoot|three|3-point|free throw|pull-up|form/i],
+ ["finish","Finishing",["finish"],/layup|finish|euro|floater|rim|mikan|reverse|power/i],
+ ["handle","Ball handling",["handle"],/dribbl|handle|crossover|hesi|between|behind the back|pressure/i],
+ ["pass","Passing",["pass"],/pass|outlet|entry|feed|kick/i],
+ ["transition","Transition",["transition"],/transition|fast break|break|lanes|2v1|3v2|3-on-2|weave|italian|outlet/i],
+ ["press","Press & press breaks",[],/press|trap|1-3-1|2-2-1|1-2-1-1|run and jump|press break|dragon|\bv\b/i],
+ ["inbound","Inbounds",[],/inbound|blob|slob|out of bounds/i],
+ ["cut","Cutting & getting open",[],/cut|backdoor|v-cut|l-cut|curl|flare|ucla|get open|getting open|denial/i],
+ ["team","Team offense",["offense"],/5-out|motion|screen|pick & roll|hand-off|flex|horns|spacing|offen/i],
+ ["condition","Conditioning",["condition"],/sprint|touches|17s|51s|15s|conditioning|fitness|suicides|line/i],
+ ["post","Post play",["post"],/post|block|seal|drop step|hook/i],
+ ["foot","Footwork",["foot"],/footwork|pivot|jump stop|triple threat|stance/i]];
+let FSEL=new Set();
+function renderFChips(){$("#fchips").innerHTML=TOPICS.map(([k,l])=>`<button type="button" class="chip" data-ft="${k}" aria-pressed="${FSEL.has(k)}">${l}</button>`).join("")}
+const IMPL_ALL=new Set(Object.values(IMPL).flat());
+const isGameLike=d=>d.c==="games"||IMPL_ALL.has(d.n)||/\b\d ?v ?\d\b|live|scrimmage|cutthroat|king of/i.test(d.n);
+function recommend(){
+  const text=$("#fText").value.trim();
+  const topics=TOPICS.filter(t=>FSEL.has(t[0])||(text&&(t[3].test(text)||t[1].toLowerCase().includes(text.toLowerCase()))));
+  const words=text.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>3&&!/with|that|this|from|they|their|have|need|more|better|work|want|game|last|next|session|focus/.test(w));
+  if(!topics.length&&!words.length){toast("Pick a focus or type what you want to work on");return null}
+  const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
+  const score=d=>{let sc=0;const txt=(d.n+" "+d.s+" "+d.d+" "+d.k).toLowerCase();
+    topics.forEach(t=>{if(t[2].includes(d.c))sc+=4;if(t[3].test(d.n))sc+=3;else if(t[3].test(txt))sc+=1.5});
+    words.forEach(w=>{if(d.n.toLowerCase().includes(w))sc+=3;else if(txt.includes(w))sc+=1});
+    if(!fits(d,o))sc-=2.5;if(/Pre-Game Warm-Up Routine|Skills Testing/.test(d.n))sc-=3;return sc};
+  const ranked=D.map(d=>({d,sc:score(d)})).filter(x=>x.sc>=2).sort((a,b)=>b.sc-a.sc||a.d.n.localeCompare(b.d.n));
+  let warm=ranked.filter(x=>x.d.c==="warm").slice(0,2);
+  if(!warm.length){const W=D.filter(d=>d.c==="warm"&&fits(d,o)&&!/Pre-Game Warm-Up Routine/.test(d.n));warm=W.sort(()=>Math.random()-.5).slice(0,2).map(d=>({d,sc:0}))}
+  const game=ranked.filter(x=>x.d.c!=="warm"&&x.d.c!=="cool"&&isGameLike(x.d)).slice(0,3);
+  const skill=ranked.filter(x=>x.d.c!=="warm"&&x.d.c!=="cool"&&!game.includes(x)).slice(0,6);
+  const plays=PBK.filter(p=>!p.alias&&topics.some(t=>t[3].test(p.n+" "+(p.when||"")))).slice(0,6);
+  const label=[...topics.map(t=>t[1]),...(text&&!topics.length?[text]:[])].join(" + ")||text;
+  return {label,warm,skill,game,plays};
+}
+let REC=null;
+function openRecs(){
+  REC=recommend();if(!REC)return;const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
+  const row=(x,ph)=>`<div class="rec-row"><button type="button" class="rec-n" data-open="${x.d.id}"><b>${esc(x.d.n)}</b><span class="muted">${esc(C[x.d.c].label)} · ${x.d.t} min${fits(x.d,o)?"":" · not ideal for this group"}</span></button><button type="button" class="btn sm" data-addph="${x.d.id}" data-ph="${ph}">+ Add</button></div>`;
+  const sec=(t,L,ph)=>L.length?`<section><div class="eyebrow">${t}</div><div class="rec-list">${L.map(x=>row(x,ph)).join("")}</div></section>`:"";
+  $("#dlgBody").innerHTML=`<div class="eyebrow">Next session</div><h2>${esc(REC.label)}</h2>
+  <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" id="recBuild" type="button">Build a session around this</button></div>
+  ${sec("Warm-up",REC.warm,"warm")}${sec("Skills",REC.skill,"skill")}${sec("Game implementation",REC.game,"game")}
+  ${REC.plays.length?`<section><div class="eyebrow">Plays to go over</div><div class="rec-list">${REC.plays.map(p=>`<div class="rec-row"><button type="button" class="rec-n" data-play="${PBK.indexOf(p)}"><b>${esc(p.n)}</b><span class="muted">${esc(p.call||"")}</span></button></div>`).join("")}</div></section>`:""}
+  ${!REC.warm.length&&!REC.skill.length&&!REC.game.length?`<p class="muted">No drills matched. Try different words, like rebounding, closeouts or press.</p>`:""}`;
+  const dg=$("#dlg");$("#dlgPanel").style.transform="";$("#dlgPanel").style.transition="";if(!dg.open)dg.showModal();$("#dlgBody").scrollTop=0;
+}
+function buildFromRecs(){
+  if(!REC)return;const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops},T=st.dur;
+  const ok=x=>fits(x.d,o);
+  const w=(REC.warm.find(ok)||REC.warm[0]);const warm=w?w.d:null;
+  const warmM=warm?Math.min(warm.t+2,Math.max(6,Math.round(T*0.12))):0;
+  const cool=T>=40?D.find(d=>d.c==="cool"&&fits(d,o)):null;const coolM=cool?Math.min(cool.t,5):0;
+  const breakM=T>=60?2:0;
+  const games=REC.game.filter(ok).slice(0,T>=60?2:1).map(x=>x.d);
+  let gameM=games.length?Math.max(8,Math.round(T*0.35)):0;
+  let left=T-warmM-coolM-breakM-gameM;const skills=[];
+  for(const x of REC.skill.filter(ok)){if(left<4)break;const m=Math.min(left,Math.max(5,x.d.t+(T>=75?3:1)));skills.push({id:x.d.id,m,ph:"skill"});left-=m}
+  if(left>0&&skills.length)skills[skills.length-1].m+=left;else if(left>0&&games.length)gameM+=left;
+  const P=[];if(warm)P.push({id:warm.id,m:warmM,ph:"warm"});P.push(...skills);if(breakM)P.push({brk:true,m:breakM});
+  if(games.length===1)P.push({id:games[0].id,m:gameM,ph:"game"});
+  if(games.length===2){const a=Math.round(gameM*0.5);P.push({id:games[0].id,m:a,ph:"game"},{id:games[1].id,m:gameM-a,ph:"game"})}
+  if(cool)P.push({id:cool.id,m:coolM,ph:"cool"});
+  if(!P.some(b=>!b.brk)){toast("Not enough drills matched to build a session");return}
+  plan=P;store.set("plan",toSave(plan));renderPlan();$("#dlg").close();toast("Session built around "+REC.label);location.hash="plan";
+}
+document.addEventListener("click",e=>{
+  const c=e.target.closest("[data-ft]");if(c){const k=c.dataset.ft;FSEL.has(k)?FSEL.delete(k):FSEL.add(k);c.setAttribute("aria-pressed",FSEL.has(k));return}
+  if(e.target.closest("#fGo")){openRecs();return}
+  if(e.target.closest("#recBuild")){buildFromRecs();return}
+});
+$("#fText")&&$("#fText").addEventListener("keydown",e=>{if(e.key==="Enter")openRecs()});
+renderFChips();
 /* backup / restore */
 const BK_KEYS=["settings","plan","sessions","favs","names","term","termSet","pbs","history","specTags"];
 function bkMake(){const o={app:"atw-courtside",v:1,at:new Date().toISOString(),data:{}};BK_KEYS.forEach(k=>{const v=store.get(k,null);if(v!=null)o.data[k]=v});return JSON.stringify(o)}
@@ -1087,7 +1172,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v69";
+const APP_VERSION="v70";
 if("serviceWorker" in navigator){
   let reloaded=false,pending=false;
   // never reload in the middle of a running session: wait until the timer screen is closed
