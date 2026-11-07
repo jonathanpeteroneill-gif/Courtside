@@ -116,6 +116,8 @@ a.btn{color:var(--ink);text-decoration:none}
 .block .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
 .spec-tag{font-size:11px;font-weight:800;letter-spacing:.06em;color:var(--accent)}
 .fchips{display:flex;flex-wrap:wrap;gap:6px}
+.ask{display:grid;gap:12px}.ask-q{font-size:20px;margin:0}.ask textarea{width:100%;font:inherit;font-size:16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);resize:vertical;box-sizing:border-box}
+.ask-note{font-size:14px;background:var(--sunk);border-left:3px solid var(--accent);padding:8px 12px;border-radius:8px}.linkbtn{font:inherit;background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;cursor:pointer}
 .rec-list{display:grid;gap:6px}.rec-row{display:flex;gap:8px;align-items:center}.rec-n{flex:1;display:grid;gap:2px;text-align:left;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer}.rec-n .muted{font-size:13px}
 .upnote{font-size:13px;background:var(--sunk);border-left:3px solid var(--accent);padding:6px 10px;border-radius:6px}
 .addrow{padding:6px 0 10px 22px}.addrow .btn{border-style:dashed}
@@ -330,12 +332,6 @@ html.modal-open,html.modal-open body{overflow:hidden}
   <!-- PLAN -->
   <section id="view-plan" class="plan">
     <aside class="rail">
-      <div class="panel" style="display:grid;gap:12px">
-        <div><span class="lbl">Next session, focus on…</span><div class="muted" style="font-size:13px">Pick one or more, or type what you saw at the last game. You get drills to pop straight in.</div></div>
-        <div class="fchips" id="fchips"></div>
-        <input id="fText" class="pick-q" type="text" placeholder="e.g. boxing out, beating the press, closeouts" autocomplete="off">
-        <button class="btn primary" id="fGo" type="button">Get recommendations</button>
-      </div>
       <div class="panel" style="display:grid;gap:18px">
         <div class="field">
           <span class="lbl">Kids at practice</span>
@@ -368,6 +364,13 @@ html.modal-open,html.modal-open body{overflow:hidden}
     </aside>
 
     <div style="display:grid;gap:24px;min-width:0">
+      <div class="panel ask">
+        <h2 class="ask-q">What do you want to focus on this session?</h2>
+        <textarea id="fText" rows="2" placeholder="e.g. We got killed on the boards and couldn't break the press" autocomplete="off"></textarea>
+        <div class="fchips" id="fchips" aria-label="Quick picks"></div>
+        <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn primary" id="fGo" type="button">Build my session</button><button class="btn" id="fIdeas" type="button">Just show me drill ideas</button></div>
+        <div id="askNote" class="ask-note" hidden></div>
+      </div>
       <div class="panel">
         <div class="summary">
           <div>
@@ -996,20 +999,22 @@ const TOPICS=[
  ["team","Team offense",["offense"],/5-out|motion|screen|pick & roll|hand-off|flex|horns|spacing|offen/i],
  ["condition","Conditioning",["condition"],/sprint|touches|17s|51s|15s|conditioning|fitness|suicides|line/i],
  ["post","Post play",["post"],/post|block|seal|drop step|hook/i],
- ["foot","Footwork",["foot"],/footwork|pivot|jump stop|triple threat|stance/i]];
+ ["foot","Footwork",["foot"],/footwork|pivot|jump stop|triple threat|stance/i],
+ ["compete","Fun & compete",["games"],/\bfun\b|compet|battle|king of|cutthroat|knockout|race|war\b/i]];
 let FSEL=new Set();
 function renderFChips(){$("#fchips").innerHTML=TOPICS.map(([k,l])=>`<button type="button" class="chip" data-ft="${k}" aria-pressed="${FSEL.has(k)}">${l}</button>`).join("")}
 const IMPL_ALL=new Set(Object.values(IMPL).flat());
 const isGameLike=d=>d.c==="games"||IMPL_ALL.has(d.n)||/\b\d ?v ?\d\b|live|scrimmage|cutthroat|king of/i.test(d.n);
 function recommend(){
   const text=$("#fText").value.trim();
-  const topics=TOPICS.filter(t=>FSEL.has(t[0])||(text&&(t[3].test(text)||t[1].toLowerCase().includes(text.toLowerCase()))));
-  const words=text.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>3&&!/with|that|this|from|they|their|have|need|more|better|work|want|game|last|next|session|focus/.test(w));
+  const tx=text.toLowerCase().replace(/defence/g,"defense").replace(/\bboards?\b/g,"rebound").replace(/turn ?overs?|losing the ball|ball security/g,"dribble pass").replace(/fitness|fit\b|tired|legs/g,"conditioning").replace(/lay ?ups?/g,"layup").replace(/man[- ]to[- ]man/g,"defense").replace(/spacing|zone offen|half ?court/g,"motion").replace(/fast ?break|running/g,"transition").replace(/talk(ing)?|communicat/g,"defense help").replace(/free ?throws?|foul shots?/g,"free throw").replace(/getting open|get open|moving without the ball/g,"cut").replace(/inbounds?|out of bounds/g,"inbound");
+  const topics=TOPICS.filter(t=>FSEL.has(t[0])||(tx&&(t[3].test(tx)||tx.includes(t[1].toLowerCase()))));
+  const words=tx.split(/[^a-z0-9]+/).filter(w=>w.length>3&&!/^(with|that|this|from|they|their|them|have|need|more|better|work|want|game|games|last|next|session|focus|really|lots|some|team|kids|player|players|training|help|make|good|well|couldn|didn|week|today|were|been|what|into|also|just|much)$/.test(w));
   if(!topics.length&&!words.length){toast("Pick a focus or type what you want to work on");return null}
   const o={kids:st.kids,lvl:st.lvl,hoops:st.hoops};
   const score=d=>{let sc=0;const txt=(d.n+" "+d.s+" "+d.d+" "+d.k).toLowerCase();
-    topics.forEach(t=>{if(t[2].includes(d.c))sc+=4;if(t[3].test(d.n))sc+=3;else if(t[3].test(txt))sc+=1.5});
-    words.forEach(w=>{if(d.n.toLowerCase().includes(w))sc+=3;else if(txt.includes(w))sc+=1});
+    topics.forEach(t=>{if(t[2].includes(d.c))sc+=3;if(t[3].test(d.n))sc+=2.5;else if(t[3].test(txt))sc+=1});
+    words.forEach(w=>{const st=w.replace(/(ing|es|s)$/,"");if(d.n.toLowerCase().includes(st))sc+=6;else if(txt.includes(st))sc+=1.5});
     if(!fits(d,o))sc-=2.5;if(/Pre-Game Warm-Up Routine|Skills Testing/.test(d.n))sc-=3;return sc};
   const ranked=D.map(d=>({d,sc:score(d)})).filter(x=>x.sc>=2).sort((a,b)=>b.sc-a.sc||a.d.n.localeCompare(b.d.n));
   let warm=ranked.filter(x=>x.d.c==="warm").slice(0,2);
@@ -1049,14 +1054,15 @@ function buildFromRecs(){
   if(games.length===2){const a=Math.round(gameM*0.5);P.push({id:games[0].id,m:a,ph:"game"},{id:games[1].id,m:gameM-a,ph:"game"})}
   if(cool)P.push({id:cool.id,m:coolM,ph:"cool"});
   if(!P.some(b=>!b.brk)){toast("Not enough drills matched to build a session");return}
-  plan=P;store.set("plan",toSave(plan));renderPlan();$("#dlg").close();toast("Session built around "+REC.label);location.hash="plan";
+  plan=P;store.set("plan",toSave(plan));renderPlan();if($("#dlg").open)$("#dlg").close();toast("Session built: "+REC.label);
 }
 document.addEventListener("click",e=>{
   const c=e.target.closest("[data-ft]");if(c){const k=c.dataset.ft;FSEL.has(k)?FSEL.delete(k):FSEL.add(k);c.setAttribute("aria-pressed",FSEL.has(k));return}
-  if(e.target.closest("#fGo")){openRecs();return}
+  if(e.target.closest("#fGo")){REC=recommend();if(!REC)return;buildFromRecs();const n=$("#askNote");n.hidden=false;n.innerHTML=`<b>Built for: ${esc(REC.label)}</b> · <button type="button" class="linkbtn" id="recMore">See more options or add single drills</button>`;return}
+  if(e.target.closest("#fIdeas")||e.target.closest("#recMore")){openRecs();return}
   if(e.target.closest("#recBuild")){buildFromRecs();return}
 });
-$("#fText")&&$("#fText").addEventListener("keydown",e=>{if(e.key==="Enter")openRecs()});
+$("#fText")&&$("#fText").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("#fGo").click()}});
 renderFChips();
 /* backup / restore */
 const BK_KEYS=["settings","plan","sessions","favs","names","term","termSet","pbs","history","specTags"];
@@ -1172,7 +1178,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v70";
+const APP_VERSION="v71";
 if("serviceWorker" in navigator){
   let reloaded=false,pending=false;
   // never reload in the middle of a running session: wait until the timer screen is closed
