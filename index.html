@@ -203,6 +203,9 @@ html.modal-open,html.modal-open body{overflow:hidden}
 .dg-court{fill:none;stroke:var(--floorline);stroke-width:.35}
 .dg-rim{fill:none;stroke:var(--accent);stroke-width:.4}
 .dg-o circle{fill:var(--surface);stroke:var(--court);stroke-width:.45}
+.dg-o.hb circle{fill:#ffe3ec;stroke:var(--accent);stroke-width:.6}.dg-o.hb text{fill:var(--accent)}
+.dgc-ctl{display:flex;justify-content:center;gap:8px;margin:2px 0 4px}.dgc-ctl .dgc-btn{width:auto;padding:0 12px;font-size:13px;font-weight:700}.dgc-all[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.dgc-allview{margin:0}.dgc-allview figcaption{display:grid;gap:2px;text-align:center;font-size:14px;margin-top:6px}
 .dg-o text,.dg-c text{font:700 2px var(--body);fill:var(--court);text-anchor:middle;dominant-baseline:central}
 .dg-x path{stroke:var(--accent);stroke-width:.6;stroke-linecap:round;fill:none}
 .dg-x text{font:700 1.6px var(--body);fill:var(--accent)}
@@ -478,6 +481,7 @@ html.modal-open,html.modal-open body{overflow:hidden}
 <script src="drills_adv.js"></script>
 <script src="plays.js"></script>
 <script src="playbook.js"></script>
+<script src="playspec.js"></script>
 <script src="diagrams.js"></script>
 <script src="videos.js"></script>
 <script src="moves.js"></script>
@@ -557,10 +561,12 @@ const FOCUS={
   offense:{label:"Offense",seq:["offense","pass","offense","finish","offense"]},
   team:{label:"Team play",seq:["pass","offense","transition","offense","defense"]},
   transition:{label:"Transition",seq:["transition","transition","defense","pass","transition"]},
-  compete:{label:"Competitive",seq:["games","shoot","defense","games","offense"]}
+  compete:{label:"Competitive",seq:["games","shoot","defense","games","offense"]},
+  rebounding:{label:"Rebounding",seq:["rebound","defense","rebound","condition","rebound"]},
+  passing:{label:"Passing",seq:["pass","offense","pass","transition","pass"]}
 };
 const DUR=[30,45,60,75,90];
-if(!FOCUS[st.focus])st.focus="balanced";
+if(!FOCUS[st.focus]&&st.focus!=="__multi")st.focus="balanced";
 
 function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._t);t._t=setTimeout(()=>t.hidden=true,1800)}
 const pick = a=>a[Math.floor(Math.random()*a.length)];
@@ -594,8 +600,20 @@ const IMPL={
   offense:["Advantage 4v3","3v3 No Key","3v3 No-Dribble Cutting","Cut Reads vs a Defender","Elbow Screen Reads 2v2","3v3 Cutthroat","5-Out Motion","Advantage / Disadvantage","Scrimmage with Rules","Situational 5v5"],
   team:["Advantage 4v3","3v3 Cutthroat","Make/Miss Transition 5v5","Scrimmage with Rules","Situational 5v5","Kill Scrimmage"],
   transition:["5-Man Italian","3-Man Italian","2v1 Rapid","3-on-2, 2-on-1","4v3 Continuous","5-Man Weave into 3v2","Make/Miss Transition 5v5","11-Man Break"],
-  compete:["Kill Scrimmage","Situational 5v5","3v3 Cutthroat","King of the Court","Advantage / Disadvantage","Scrimmage with Rules"]
+  compete:["Kill Scrimmage","Situational 5v5","3v3 Cutthroat","King of the Court","Advantage / Disadvantage","Scrimmage with Rules"],
+  rebounding:["Rebound War","Circle Box-Out War","Shell Rebounding","Kill Scrimmage","3v3 Cutthroat"],
+  passing:["5-Pass Game","3v3 No-Dribble Cutting","Advantage 4v3","Scrimmage with Rules","3v3 Cutthroat"]
 };
+// pick more than one focus: they are blended into one session
+if(!Array.isArray(st.foci)||!st.foci.length)st.foci=[st.focus==="__multi"?"balanced":st.focus];
+st.foci=st.foci.filter(f=>FOCUS[f]&&f!=="__multi");if(!st.foci.length)st.foci=["balanced"];
+function applyFoci(){
+  const F=st.foci.filter(f=>f!=="balanced");
+  if(F.length>1){const seqs=F.map(f=>FOCUS[f].seq||[]);const seq=[];for(let i=0;i<5;i++)seqs.forEach(q=>{if(q[i])seq.push(q[i])});
+    FOCUS.__multi={label:F.map(f=>FOCUS[f].label).join(" + "),seq};IMPL.__multi=[...new Set(F.flatMap(f=>IMPL[f]||[]))];st.focus="__multi"}
+  else st.focus=F[0]||"balanced";
+}
+applyFoci();
 const PHASE={warm:"Warm-up",skill:"Skills",game:"Game implementation",cool:"Wrap-up"};
 function implPool(o,used,focus,type){
   focus=focus||st.focus; type=type||st.type;
@@ -742,7 +760,7 @@ function buildOn(){
     used.add(b.id);return {id:b.id,m:b.m,ph,up:1};
   });
   store.set("plan",toSave(plan));renderPlan();
-  if(L.st&&L.st.focus&&FOCUS[L.st.focus]&&(!L.st.type||L.st.type===st.type)){st.focus=L.st.focus;saveSet();syncControls();renderPlan()}
+  if(L.st&&L.st.focus&&(FOCUS[L.st.focus]||L.st.foci)&&(!L.st.type||L.st.type===st.type)){st.focus=L.st.focus;st.foci=L.st.foci||[L.st.focus];saveSet();syncControls();renderPlan()}
   let when=L.day;try{const d=new Date(L.day);if(!isNaN(d))when=d.toLocaleDateString(undefined,{day:"numeric",month:"short"})}catch(e){}
   toast("Built on your session from "+when);
 }
@@ -765,7 +783,11 @@ function saveSet(){store.set("settings",st)}
 seg($("#dur"),DUR.map(m=>[m,m+" min"]),"dur",regen);
 seg($("#lvl"),[[4,"Rep / Elite"],[3,"13–15"],[2,"9–12"],[1,"5–8"]],"lvl",regen);
 seg($("#type"),Object.entries(TYPES).map(([k,v])=>[k,v.label]),"type",()=>{store.set("plan",null);location.reload()});
-seg($("#focus"),Object.entries(FOCUS).map(([k,v])=>[k,v.label]),"focus",regen);
+function focusSeg(){const el=$("#focus");el.innerHTML=Object.entries(FOCUS).filter(([k])=>k!=="__multi").map(([k,v])=>`<button type="button" data-v="${k}" aria-pressed="${st.foci.includes(k)}">${v.label}</button>`).join("");
+  el.onclick=e=>{const b=e.target.closest("button");if(!b)return;const k=b.dataset.v;
+    if(k==="balanced")st.foci=["balanced"];else{st.foci=st.foci.filter(f=>f!=="balanced");st.foci.includes(k)?st.foci=st.foci.filter(f=>f!==k):st.foci.push(k);if(!st.foci.length)st.foci=["balanced"]}
+    applyFoci();[...el.children].forEach(x=>x.setAttribute("aria-pressed",st.foci.includes(x.dataset.v)));saveSet();regen()}}
+focusSeg();
 
 ["kids","hoops","teams"].forEach(k=>{const i=$("#"+k);i.value=st[k];i.addEventListener("change",()=>{let v=Math.max(+i.min,Math.min(+i.max,parseInt(i.value)||+i.min));i.value=v;st[k]=v;saveSet();k==="teams"?renderTeams():regen();if(k==="kids")renderTeams()})});
 document.addEventListener("click",e=>{
@@ -782,13 +804,13 @@ document.addEventListener("click",e=>{
   const tm=e.target.closest("[data-tm]"); if(tm){const b=plan[+tm.dataset.tm];b.m=Math.max(1,b.m+(+tm.dataset.d));store.set("plan",toSave(plan));renderPlan();return}
   const f=e.target.closest("[data-fav]"); if(f){const id=+f.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);saveFavs();f.setAttribute("aria-pressed",favs.has(id));if(view==="saved")renderSaved();return}
   const add=e.target.closest("[data-add]"); if(add){const d=D[+add.dataset.add];let at=plan.findIndex(b=>b.ph==="game"||b.brk);if(at<0)at=plan.length&&!plan[plan.length-1].brk&&D[plan[plan.length-1].id].c==="cool"?plan.length-1:plan.length;plan.splice(at,0,{id:d.id,m:d.t,ph:"skill"});store.set("plan",toSave(plan));renderPlan();$("#dlg").close();toast("Added to session");return}
-  const ld=e.target.closest("[data-load]"); if(ld){const s=store.get("sessions",[])[+ld.dataset.load];const prevType=st.type;Object.assign(st,s.st);if(!st.type)st.type=prevType;plan=fromSave(s.plan)||[];saveSet();store.set("plan",toSave(plan));if(st.type!==prevType){location.hash="plan";location.reload();return}syncControls();renderPlan();location.hash="plan";return}
+  const ld=e.target.closest("[data-load]"); if(ld){const s=store.get("sessions",[])[+ld.dataset.load];const prevType=st.type;Object.assign(st,s.st);if(!s.st.foci)st.foci=[st.focus==="__multi"?"balanced":st.focus];applyFoci();if(!st.type)st.type=prevType;plan=fromSave(s.plan)||[];saveSet();store.set("plan",toSave(plan));if(st.type!==prevType){location.hash="plan";location.reload();return}syncControls();renderPlan();location.hash="plan";return}
   const dl=e.target.closest("[data-del]"); if(dl){const a=store.get("sessions",[]);a.splice(+dl.dataset.del,1);store.set("sessions",a);renderSaved();return}
 });
 $("#regen").onclick=regen;
 $("#buildOn").onclick=buildOn;
 $("#save").onclick=()=>{const a=store.get("sessions",[]);const d=new Date();a.unshift({name:`${TYPES[st.type].label} · ${FOCUS[st.focus].label} · ${st.kids} kids · ${st.dur} min`,date:d.toLocaleDateString(undefined,{month:"short",day:"numeric"}),saved:d.toISOString().slice(0,10),st:{...st},plan:toSave(plan)});store.set("sessions",a.slice(0,30));toast("Session saved")};
-function syncControls(){["dur","lvl","focus","type"].forEach(k=>[...$("#"+k).children].forEach(b=>b.setAttribute("aria-pressed",String(st[k])===b.dataset.v)));["kids","hoops","teams"].forEach(k=>$("#"+k).value=st[k])}
+function syncControls(){if(!st.foci||!st.foci.length)st.foci=[st.focus==="__multi"?"balanced":st.focus];applyFoci();[...$("#focus").children].forEach(b=>b.setAttribute("aria-pressed",st.foci.includes(b.dataset.v)));["dur","lvl","type"].forEach(k=>[...$("#"+k).children].forEach(b=>b.setAttribute("aria-pressed",String(st[k])===b.dataset.v)));["kids","hoops","teams"].forEach(k=>$("#"+k).value=st[k])}
 
 /* teams */
 const TEAMC=["var(--accent)","var(--teal)","var(--ink)","#7a5af5","#f9a825","#0277bd","#2e7d32","#ef6c00","#6d4c41","#455a64","#c2185b","#5e35b1"];
@@ -957,7 +979,7 @@ function renderTerm(){
 document.addEventListener("click",e=>{
   const t=e.target.closest("[data-ttpl]");if(t){tset.tpl=t.dataset.ttpl;tset.per=TERM_TPL[tset.tpl].per;store.set("termSet",tset);renderTerm();return}
   const ts=e.target.closest("[data-tstep]");if(ts){const k=ts.dataset.tstep;if(k==="weeks")tset.weeks=Math.max(4,Math.min(12,tset.weeks+(+ts.dataset.d)));else tset.per=Math.max(1,Math.min(3,tset.per+(+ts.dataset.d)));store.set("termSet",tset);renderTerm();return}
-  const tl=e.target.closest("[data-tload]");if(tl){const [wi,si]=tl.dataset.tload.split(":").map(Number);const w=term.weeks[wi];st.focus=w.focus;st.type=w.type;saveSet();plan=fromSave(w.sessions[si])||[];store.set("plan",toSave(plan));syncControls();renderPlan();location.hash="plan";toast(`Week ${w.n} loaded`);return}
+  const tl=e.target.closest("[data-tload]");if(tl){const [wi,si]=tl.dataset.tload.split(":").map(Number);const w=term.weeks[wi];st.focus=w.focus;st.foci=[w.focus];applyFoci();st.type=w.type;saveSet();plan=fromSave(w.sessions[si])||[];store.set("plan",toSave(plan));syncControls();renderPlan();location.hash="plan";toast(`Week ${w.n} loaded`);return}
   const tr=e.target.closest("[data-tre]");if(tr){const [wi,si]=tr.dataset.tre.split(":").map(Number);const w=term.weeks[wi];w.sessions[si]=toSave(build({focus:w.focus,type:w.type,must:w.must}));store.set("term",term);renderTerm();return}
 });
 $("#termBuild").onclick=buildTerm;
@@ -1178,7 +1200,7 @@ renderTeams(); route();
 })();
 </script>
 <script>
-const APP_VERSION="v71";
+const APP_VERSION="v72";
 if("serviceWorker" in navigator){
   let reloaded=false,pending=false;
   // never reload in the middle of a running session: wait until the timer screen is closed

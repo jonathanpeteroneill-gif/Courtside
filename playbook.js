@@ -23,7 +23,7 @@ window.SPECTRES_SHEET={
   motto:"We see everything, we strike hard & fast. Together, we're unstoppable.",
   chant:"What do we see? EVERYONE! · How do we move? AS ONE! · How do we play? TOGETHER!",
   rules:["Feet, not hands. Beat your player to the spot. Don't reach or swipe. Reaching gives them free throws.","Shot goes up, one goes back. Someone sprints back on defence straight away. No easy layups.","Everyone talks: BALL, HELP, SCREEN. Quiet on defence costs your team a point (talk tax).","Box out every shot. Find a body, hit it, then go get the ball."],
-  situations:[["Made basket","Inbound vs their press: run DRAGON or V"],["Sideline out","Run GHOST"],["Baseline out","Run GRAVEYARD"],["Half court","5-Out motion vs man-to-man"],["Our defence","1-3-1 in the backcourt, MATCH at halfway, then man-to-man"]],
+  situations:[["Made basket","Inbound vs their press: run DRAGON or V"],["Sideline out","Run GHOST"],["Baseline out","Run GRAVEYARD"],["Half court","5-OUT motion vs man-to-man · FLEX as a set"],["Our defence","1-3-1 in the backcourt, MATCH at halfway, then man-to-man"]],
   calls:["DRAGON RIGHT","DRAGON LEFT","V","GHOST (SLOB)","GRAVEYARD (BLOB)","TRAP","BALL","MATCH"],
   note:"League rule: press in the backcourt only. Once the ball crosses halfway it's strict man-to-man."
 };
@@ -95,6 +95,14 @@ add({n:"Graveyard (Spectres BLOB)",sec:"spectres",type:"inbound",call:"GRAVEYARD
   F("Both elbows curl tight around the screens into the lane to the rim",[O(36,-2,"I"),B(37.6,-0.4),O(17,16.5,"4"),O(33,16.5,"5"),O(17,19,"2"),O(33,19,"3"),M(15.5,20,11,15,14,10,21,8),M(34.5,20,39,15,36,10,29,8)]),
   F("Hit the first open curler: ball side first, then the weak side at the front of the rim · screeners pop out",[O(36,-2,"I"),B(37.6,-0.4),O(17,16.5,"4"),O(33,16.5,"5"),O(21,8,"2"),O(29,8,"3"),PS(35.5,-0.5,30,6.5),SH(28,7),M(34,17,41,21),M(16,17,9,21),T(25,40,"Count to 5 · no lobs")])]);
 
+add({n:"5-Out Motion (Spectres offense)",sec:"spectres",type:"offense",call:"5-OUT",
+ when:"Our half-court offence against man-to-man, every time the ball crosses halfway and we are not running a set.",
+ s:"Spots: top, two wings, two corners. The lane stays empty.",
+ d:"Pass and cut hard to the rim|Fill the empty spot, rotate toward the ball|See a gap, drive it. Drive and kick|Denied on the wing? Go backdoor|Cutter not open? Exit to the empty corner|Teammate drives toward you? Slide away to give them room",
+ counters:"They deny the wing: backdoor every time|They sag into the lane: hand-offs and screen away (5-Out Hand-Off, 5-Out Screen Away)|They switch everything: drive the mismatch|Need a set: run Flex or Pistol",
+ k:"Catch in triple threat, eyes to the rim first|4 to 5 big steps between players|Cut at game speed, hand up|Never two players in the same spot",
+ links:["5-Out Motion","5-Out Screen Away","5-Out Hand-Off","Cutting Series: 6 Cuts","3v3 No-Dribble Cutting"]});
+P["5-Out Motion (Spectres offense)"]=P["5-Out Motion"];
 add({n:"Shell vs 5-Out (Spectres rules)",sec:"spectres",type:"defense",call:"BALL · HELP · SCREEN",
  when:"Our half-court man-to-man once the ball crosses halfway.",
  s:"Offense in 5-Out spots (top, two wings, two corners). Split line = imaginary line down the middle, basket to basket.",
@@ -158,6 +166,7 @@ add({n:"1-2-2 Half-Court Trap",sec:"press",type:"press",call:"1-2-2",
 
 // ============================== PRESS BREAKS ==============================
 PB.push({n:"1-3-1 Press (Spectres)",sec:"press",alias:true});
+PB.push({n:"Flex Offense",sec:"spectres",alias:true});
 PB.push({n:"Dragon (Spectres press break)",sec:"break",alias:true},{n:"V (Spectres press break)",sec:"break",alias:true});
 
 add({n:"1-4 Flat vs Man Press",sec:"break",type:"break",call:"FLAT",

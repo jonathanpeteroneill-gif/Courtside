@@ -1,6 +1,6 @@
 // Bump VERSION on every release (keep it in sync with APP_VERSION in index.html).
-const VERSION = "atw-courtside-v71";
-const CORE = ["./","index.html","drills.js","drills_adv.js","plays.js","playbook.js","diagrams.js","videos.js","moves.js","manifest.webmanifest","icons/atw-icon-192.png","icons/atw-icon-512.png","icons/atw-apple-touch-icon.png","assets/wordmark-white.webp"];
+const VERSION = "atw-courtside-v72";
+const CORE = ["./","index.html","drills.js","drills_adv.js","plays.js","playbook.js","playspec.js","diagrams.js","videos.js","moves.js","manifest.webmanifest","icons/atw-icon-192.png","icons/atw-icon-512.png","icons/atw-apple-touch-icon.png","assets/wordmark-white.webp"];
 // Always fetch fresh copies from the server (skip the browser's HTTP cache) when installing.
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE.map(u => new Request(u, {cache: "reload"})))).then(() => self.skipWaiting()));

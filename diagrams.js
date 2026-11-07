@@ -122,14 +122,14 @@ function el(e,full,i){
   if(k==="k") return `<path class="dg-k" d="M${f(e[1])},${f(e[2]-1.1)} L${f(e[1]+1)},${f(e[2]+0.8)} L${f(e[1]-1)},${f(e[2]+0.8)}Z"/>`;
   if(k==="b") return `<circle class="dg-b" data-a="${i}" cx="${f(e[1])}" cy="${f(e[2])}" r=".8"/>`;
   if(k==="q"){let s="";for(let i=0;i<e[5];i++)s+=`<circle class="dg-qd" cx="${f(e[1]+e[3]*i)}" cy="${f(e[2]+e[4]*i)}" r="1.1"/>`;return s}
-  if(k==="m"||k==="mr") return `<path class="dg-m" d="${poly(e[1])}" marker-end="url(#dgA)"/>`; // mr = a run the passing carries on around
-  if(k==="p") return `<path class="dg-p" d="${poly(e[1])}" marker-end="url(#dgA)"/>`;
+  if(k==="m"||k==="mr") return `<path class="dg-m" data-i="${i}" d="${poly(e[1])}" marker-end="url(#dgA)"/>`; // mr = a run the passing carries on around
+  if(k==="p") return `<path class="dg-p" data-i="${i}" d="${poly(e[1])}" marker-end="url(#dgA)"/>`;
   if(k==="op") return `<path class="dg-p dg-opt" d="${poly(e[1])}" marker-end="url(#dgA)"/>`; // option pass: shown, not played
   if(k==="osh"){const r=full?(e[1][0]>47?RR:RL):R;return `<path class="dg-sh dg-opt" d="M${f(e[1][0])},${f(e[1][1])} L${r[0]},${r[1]}" marker-end="url(#dgA)"/>`}
-  if(k==="d") return `<path class="dg-m" d="${zig(e[1])}" marker-end="url(#dgA)"/>`;
+  if(k==="d") return `<path class="dg-m" data-i="${i}" d="${zig(e[1])}" marker-end="url(#dgA)"/>`;
   if(k==="s"){const p=e[1],n=p.length,x1=p[n-4],y1=p[n-3],x2=p[n-2],y2=p[n-1],L=Math.hypot(x2-x1,y2-y1),nx=-(y2-y1)/L*1.5,ny=(x2-x1)/L*1.5;
-    return `<path class="dg-m" d="${poly(p)} M${f(x2+nx)},${f(y2+ny)} L${f(x2-nx)},${f(y2-ny)}"/>`}
-  if(k==="sh"){const r=full?(e[1][0]>47?RR:RL):R;return `<path class="dg-sh" d="M${f(e[1][0])},${f(e[1][1])} L${r[0]},${r[1]}" marker-end="url(#dgA)"/>`}
+    return `<path class="dg-m" data-i="${i}" d="${poly(p)} M${f(x2+nx)},${f(y2+ny)} L${f(x2-nx)},${f(y2-ny)}"/>`}
+  if(k==="sh"){const r=full?(e[1][0]>47?RR:RL):R;return `<path class="dg-sh" data-i="${i}" d="M${f(e[1][0])},${f(e[1][1])} L${r[0]},${r[1]}" marker-end="url(#dgA)"/>`}
   if(k==="g") return `<circle class="dg-g" cx="${f(e[1])}" cy="${f(e[2])}" r="1.5"/>`;
   if(k==="L2") return `<line class="dg-court" stroke-dasharray="1 1" x1="${e[1]}" y1="${e[2]}" x2="${e[3]}" y2="${e[4]}"/>`;
   if(k==="t") return `<text class="dg-t" x="${f(e[1])}" y="${f(e[2])}">${e[3]}</text>`;
@@ -138,9 +138,13 @@ function el(e,full,i){
   return "";
 }
 const flat=els=>els.flatMap(x=>Array.isArray(x[0])?x:[x]);
+let MID=0;
 function svg(els,full,label){
-  const vb=full?"-4 -4 102 58":"-4 -5 58 56";
-  return `<svg class="dg" viewBox="${vb}" role="img" aria-label="${label.replace(/"/g,"")}"><defs><marker id="dgA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10Z" class="dg-ah"/></marker></defs>${courtSVG(full)}${flat(els).map((e,i)=>el(e,full,i)).join("")}</svg>`;
+  const vb=full?"-4 -4 102 58":"-4 -5 58 56";const mid="dgA"+(++MID);
+  return svgRaw(els,full,label,vb).replace(/#dgA\)/g,"#"+mid+")").replace('<marker id="dgA"','<marker id="'+mid+'"');
+}
+function svgRaw(els,full,label,vb){
+  return `<svg class="dg" viewBox="${vb}" role="img" aria-label="${label.replace(/"/g,"")}"><defs><marker id="dgA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10Z" class="dg-ah"/></marker></defs>${courtSVG(full)}${(()=>{const F=flat(els),B=F.filter(e=>e[0]==="b");return F.map((e,i)=>{let h=el(e,full,i);if(e[0]==="o"&&B.some(b=>Math.hypot(b[1]-e[1],b[2]-e[2])<3.2))h=h.replace('class="dg-o"','class="dg-o hb"');return h}).join("")})()}</svg>`;
 }
 // Frames for a drill: [{svg, cap}]
 window.drillFrames=function(d){
@@ -156,8 +160,10 @@ window.drawCarousel=function(d){
   const slides=f.map((x,i)=>`<figure class="dgc-slide"><div class="dg-wrap">${x.svg}</div><figcaption>${n>1?`<b>Step ${i+1} of ${n}</b>`:""}${x.cap?`<span>${x.cap}</span>`:""}</figcaption></figure>`).join("");
   const canPlay=f.some(x=>x.els&&x.els.some(e=>["m","d","s","p","sh"].includes(e[0])));
   const play=canPlay?`<button type="button" class="dgc-play" data-dgplay aria-label="Play the animation">▶ Play</button>`:"";
+  const extra=canPlay&&n>1?`<div class="dgc-ctl"><button type="button" class="dgc-btn" data-dgrestart aria-label="Restart">⟲</button><button type="button" class="dgc-btn dgc-spd" data-dgspeed aria-label="Speed">${SPEED}×</button><button type="button" class="dgc-btn dgc-all" data-dgall aria-pressed="false">Show all</button></div>`:"";
+  const allEls=n>1?(()=>{const F=f.filter(x=>x.els);if(!F.length)return null;const first=F[0].els.filter(e=>["o","x","c","k","b","q","g"].includes(e[0]));const lines=F.flatMap(x=>x.els.filter(e=>["m","mr","d","s","p","op","sh","osh","t"].includes(e[0])));return svg(first.concat(lines),F[0].full,d.n+" all steps")})():null;
   if(n<2) return `<div class="dgc single" data-dn="${d.n.replace(/"/g,"&quot;")}"><div class="dgc-track">${slides}</div>${play?`<div class="dgc-nav">${play}</div>`:""}</div>`;
-  return `<div class="dgc" data-dn="${d.n.replace(/"/g,"&quot;")}"><div class="dgc-track">${slides}</div><div class="dgc-nav"><button type="button" class="dgc-btn" data-dgc="-1" aria-label="Previous step">‹</button>${play}<span class="dgc-dots">${f.map((_,i)=>`<i${i?"":' class="on"'}></i>`).join("")}</span><button type="button" class="dgc-btn" data-dgc="1" aria-label="Next step">›</button></div><div class="dgc-hint">Swipe for each step</div></div>`;
+  return `<div class="dgc" data-dn="${d.n.replace(/"/g,"&quot;")}"><div class="dgc-track">${slides}</div>${allEls?`<figure class="dgc-allview" hidden><div class="dg-wrap">${allEls}</div><figcaption><b>All steps</b><span>Every step's lines on one whiteboard</span></figcaption></figure>`:""}${extra}<div class="dgc-nav"><button type="button" class="dgc-btn" data-dgc="-1" aria-label="Previous step">‹</button>${play}<span class="dgc-dots">${f.map((_,i)=>`<i${i?"":' class="on"'}></i>`).join("")}</span><button type="button" class="dgc-btn" data-dgc="1" aria-label="Next step">›</button></div><div class="dgc-hint">Swipe for each step</div></div>`;
 };
 document.addEventListener("click",e=>{const b=e.target.closest("[data-dgc]");if(!b)return;const tr=b.closest(".dgc").querySelector(".dgc-track");tr.scrollBy({left:tr.clientWidth*(+b.dataset.dgc),behavior:"smooth"})});
 document.addEventListener("scroll",e=>{const tr=e.target;if(!tr.classList||!tr.classList.contains("dgc-track"))return;const i=Math.round(tr.scrollLeft/tr.clientWidth);tr.parentNode.querySelectorAll(".dgc-dots i").forEach((d,k)=>d.classList.toggle("on",k===i))},true);
@@ -186,8 +192,8 @@ function planFrame(els,full){
     const a=near(pos,pt,6);const at=a!=null?[pos[a][0]+1.2,pos[a][1]+1.2]:[...pt];const key="v"+(vn++);bp[key]=at;B0[key]=at;virt[key]=t;
     if(a!=null){const m=ev.filter(x=>x.k==="move"&&String(x.a)===String(a)).pop();if(m)free[key]=m.start+m.dur} // wait until that player gets there
     return key};
-  els.forEach(e=>{
-    const k=e[0];
+  els.forEach((e,ei)=>{
+    const k=e[0];const tm=(e[2]&&typeof e[2]==="object"&&!Array.isArray(e[2]))?e[2]:null; // optional {at,dur} in seconds
     if(k==="m"||k==="d"||k==="s"||k==="f"||k==="mr"){
       // f = follow: a hidden move (not drawn) that runs alongside the move before it, e.g. a defender shadowing a cutter
       const pts=pairs(e[1]);let a=near(pos,pts[0],7);
@@ -203,8 +209,9 @@ function planFrame(els,full){
       const dur=Math.max(.6,Math.min(1.9,plen(path)/(k==="d"?16:20)));
       const prev=ev.filter(x=>x.k==="move").pop();let st=k==="f"&&prev?prev.start:t;
       if(b!=null)st=Math.max(st,free[b]||0); // catch it before you move with it
-      const D=k==="f"&&prev?Math.max(dur,prev.dur):dur;
-      ev.push({k:"move",a,b,off,path,start:st,dur:D,nb:k==="mr"});moved.add(a);if(b!=null){used.add(b);free[b]=st+D;carrier[b]=a}
+      let D=k==="f"&&prev?Math.max(dur,prev.dur):dur;
+      if(tm){if(tm.at!=null)st=tm.at;if(tm.dur!=null)D=tm.dur}
+      ev.push({k:"move",a,b,off,path,start:st,dur:D,nb:k==="mr"||!!tm,ei});moved.add(a);if(b!=null){used.add(b);free[b]=st+D;carrier[b]=a}
       if(st>t)t=st;
       pos[a]=[...pts[pts.length-1]];if(b!=null)bp[b]=[pos[a][0]+off[0],pos[a][1]+off[1]];
       if(k!=="f"&&k!=="mr")t+=.4;
@@ -213,12 +220,14 @@ function planFrame(els,full){
       const path=[bp[b],...pts.slice(1)];const dur=Math.max(.35,Math.min(1,plen(path)/38));
       // lead pass: if someone is running to where the ball lands, time it to arrive with them
       const recv=ev.filter(x=>x.k==="move"&&String(x.a)!==String(carrier[b])&&dist(x.path[x.path.length-1],end)<3.6).pop();
-      const st=recv?Math.max(free[b]||0,recv.start+recv.dur-dur):Math.max(t,lastEnd(.7),free[b]||0);
-      ev.push({k:"pass",b,path,start:st,dur});bp[b]=[...end];free[b]=st+dur;carrier[b]=null;t=Math.max(t,st+dur);
+      let st=recv?Math.max(free[b]||0,recv.start+recv.dur-dur):Math.max(t,lastEnd(.7),free[b]||0);
+      if(tm&&tm.at!=null)st=tm.at;
+      ev.push({k:"pass",b,path,start:st,dur,ei});bp[b]=[...end];free[b]=st+dur;carrier[b]=null;t=Math.max(t,st+dur);
     }else if(k==="sh"){
       const from=e[1];const b=ballAt(from,7.5);t=Math.max(t,lastEnd(.8),free[b]||0);
       const rim=full?(from[0]>47?[88.75,25]:[5.25,25]):[25,5.25];
-      ev.push({k:"shot",b,path:[bp[b],rim],start:t,dur:.8});delete bp[b];used.add(b);t+=.8; // a shot ball is finished with
+      if(tm&&tm.at!=null)t=tm.at;
+      ev.push({k:"shot",b,path:[bp[b],rim],start:t,dur:.8,ei});delete bp[b];used.add(b);t+=.8; // a shot ball is finished with
     }
   });
   const total=ev.reduce((m,x)=>Math.max(m,x.start+x.dur),0);
@@ -235,38 +244,63 @@ function poseFrame(pl,tau){
   return {pos,bp,hide};
 }
 function applyPose(svgEl,pl,tau){
+  if(!svgEl.__hb)svgEl.__hb=new Set([...svgEl.querySelectorAll(".dg-o.hb[data-a]")].map(n=>n.getAttribute("data-a")));
   const {pos,bp,hide}=poseFrame(pl,tau);
   for(const k in pl.virt){if(!svgEl.querySelector(`[data-a="${k}"]`)){const c=document.createElementNS("http://www.w3.org/2000/svg","circle");c.setAttribute("class","dg-b");c.setAttribute("r",".8");c.setAttribute("data-a",k);c.setAttribute("data-virt","1");svgEl.appendChild(c)}}
   svgEl.querySelectorAll("[data-a]").forEach(n=>{const i=n.getAttribute("data-a");
     if(pl.R0[i]){const dx=pos[i][0]-pl.R0[i][0],dy=pos[i][1]-pl.R0[i][1];n.setAttribute("transform",`translate(${dx.toFixed(2)},${dy.toFixed(2)})`)}
     else if(bp[i]){n.setAttribute("cx",bp[i][0].toFixed(2));n.setAttribute("cy",bp[i][1].toFixed(2));n.style.opacity=hide[i]===1?"0":hide[i]?".35":"1"}});
+  // lines draw themselves as the player moves along them
+  pl.ev.forEach(x=>{if(x.ei==null)return;const pth=svgEl.querySelector(`[data-i="${x.ei}"]`);if(!pth)return;
+    const u=tau<x.start?0:Math.min(1,(tau-x.start)/x.dur);
+    if(pth.dataset.mk==null)pth.dataset.mk=pth.getAttribute("marker-end")||"";
+    if(x.k==="move"&&!pth.classList.contains("dg-p")){let L=+pth.dataset.len;if(!L){try{L=pth.getTotalLength()}catch(_){L=0}pth.dataset.len=L||1}
+      pth.style.strokeDasharray=L;pth.style.strokeDashoffset=(L*(1-u)).toFixed(2);pth.style.opacity=u>0?"1":".12"}
+    else pth.style.opacity=u>0?"1":".12";
+    if(pth.dataset.mk){if(u>=.97)pth.setAttribute("marker-end",pth.dataset.mk);else pth.removeAttribute("marker-end")}});
+  // whoever has the ball is highlighted
+  const balls=Object.keys(bp).filter(k=>hide[k]!==1).map(k=>bp[k]);
+  svgEl.querySelectorAll(".dg-o[data-a]").forEach(n=>{const i=n.getAttribute("data-a");if(!pos[i])return;n.classList.toggle("hb",balls.some(b=>Math.hypot(b[0]-pos[i][0],b[1]-pos[i][1])<3.2))});
 }
 function resetSvg(svgEl,pl){ // back to the drawn diagram
   svgEl.querySelectorAll("[data-virt]").forEach(n=>n.remove());
+  svgEl.querySelectorAll("[data-i]").forEach(n=>{n.style.strokeDasharray="";n.style.strokeDashoffset="";n.style.opacity="";if(n.dataset.mk)n.setAttribute("marker-end",n.dataset.mk)});
+  const F=svgEl.__hb;svgEl.querySelectorAll(".dg-o[data-a]").forEach(n=>n.classList.toggle("hb",!!(F&&F.has(n.getAttribute("data-a")))));
   svgEl.querySelectorAll("[data-a]").forEach(n=>{const i=n.getAttribute("data-a");n.removeAttribute("transform");n.style.opacity="";
     const o=pl&&(pl.BR||pl.B0)[i];if(o&&!String(i).startsWith("v")){n.setAttribute("cx",o[0].toFixed(2));n.setAttribute("cy",o[1].toFixed(2))}});
 }
 const PLAN_CACHE={};
 function plansFor(name){if(PLAN_CACHE[name])return PLAN_CACHE[name];const d=(window.DRILLS||[]).find(x=>x.n===name)||(window.PLAYBOOK||[]).find(x=>x.n===name&&!x.alias);if(!d)return[];return PLAN_CACHE[name]=window.drillFrames(d).map(fr=>fr.els?planFrame(fr.els,fr.full):{A0:{},B0:{},ev:[],total:0})}
-let PLAYING=null;
-function stopPlay(reset=true){if(!PLAYING)return;const P=PLAYING;PLAYING=null;cancelAnimationFrame(P.raf);clearTimeout(P.to);
+let PLAYING=null,SPEED=1,PAUSED=null;
+function stopPlay(reset=true){if(reset)PAUSED=null;if(!PLAYING)return;const P=PLAYING;PLAYING=null;cancelAnimationFrame(P.raf);clearTimeout(P.to);
   P.root.querySelectorAll("svg.dg").forEach((sv,i)=>{sv.classList.remove("playing");if(reset)resetSvg(sv,P.plans[i])});
   const b=P.root.querySelector("[data-dgplay]");if(b)b.textContent="▶ Play"}
-function playFrom(root,i){
+function pausePlay(){if(!PLAYING)return;const P=PLAYING;PAUSED={root:P.root,k:P.k,tau:P.tau||0};PLAYING=null;cancelAnimationFrame(P.raf);clearTimeout(P.to);const b=P.root.querySelector("[data-dgplay]");if(b)b.textContent="▶ Play"}
+function playFrom(root,i,tauStart){
   const plans=plansFor(root.dataset.dn);const svgs=[...root.querySelectorAll("svg.dg")];const track=root.querySelector(".dgc-track");
-  const P={root,plans,raf:0,to:0};PLAYING=P;const btn=root.querySelector("[data-dgplay]");if(btn)btn.textContent="■ Stop";
+  const P={root,plans,raf:0,to:0,k:i,tau:0};PLAYING=P;PAUSED=null;const btn=root.querySelector("[data-dgplay]");if(btn)btn.textContent=svgs.length>1?"❚❚ Pause":"■ Stop";
   const run=k=>{if(PLAYING!==P)return;
     const LP=(window.PLAYS&&window.PLAYS[root.dataset.dn]||{}).loop;if(LP&&(k>=svgs.length||(k===LP&&i<LP)))k=0;if(k>=svgs.length){stopPlay(false);return}
     if(track&&svgs.length>1)track.scrollTo({left:track.clientWidth*k,behavior:"smooth"});
     svgs.forEach((sv,j)=>{if(j!==k)resetSvg(sv,plans[j])});
-    const sv=svgs[k],pl=plans[k];sv.classList.add("playing");const t0=performance.now()+450;
-    const step=now=>{if(PLAYING!==P)return;const tau=Math.max(0,(now-t0)/1000);applyPose(sv,pl,tau);
-      if(tau<pl.total+.2)P.raf=requestAnimationFrame(step);else{sv.classList.remove("playing");P.to=setTimeout(()=>run(k+1),900)}};
-    P.raf=requestAnimationFrame(step)};
+    const sv=svgs[k],pl=plans[k];sv.classList.add("playing");P.k=k;
+    let last=performance.now()+(tauStart!=null?0:450/SPEED),tau=tauStart!=null?tauStart:0;tauStart=null;
+    const step=now=>{if(PLAYING!==P)return;if(now>last){tau+=(now-last)/1000*SPEED;last=now}P.tau=tau;applyPose(sv,pl,tau);
+      if(tau<pl.total+.2)P.raf=requestAnimationFrame(step);else{sv.classList.remove("playing");P.to=setTimeout(()=>run(k+1),900/SPEED)}};
+    applyPose(sv,pl,tau);P.raf=requestAnimationFrame(step)};
   run(i);
 }
-document.addEventListener("click",e=>{const b=e.target.closest("[data-dgplay]");if(!b)return;const root=b.closest(".dgc");
-  if(PLAYING&&PLAYING.root===root){stopPlay();return}stopPlay();
+document.addEventListener("click",e=>{
+  const rs=e.target.closest("[data-dgrestart]");if(rs){const root=rs.closest(".dgc");stopPlay();showAll(root,false);playFrom(root,0);return}
+  const sp=e.target.closest("[data-dgspeed]");if(sp){SPEED=SPEED===1?2:SPEED===2?.5:1;document.querySelectorAll("[data-dgspeed]").forEach(x=>x.textContent=SPEED+"×");return}
+  const al=e.target.closest("[data-dgall]");if(al){const root=al.closest(".dgc");stopPlay();showAll(root,al.getAttribute("aria-pressed")!=="true");return}
+});
+function showAll(root,on){const v=root.querySelector(".dgc-allview"),tr=root.querySelector(".dgc-track"),b=root.querySelector("[data-dgall]");if(!v)return;v.hidden=!on;tr.style.display=on?"none":"";if(b){b.setAttribute("aria-pressed",on);b.textContent=on?"Steps":"Show all"}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-dgplay]");if(!b)return;const root=b.closest(".dgc");showAll(root,false);
+  const multi=root.querySelectorAll("svg.dg").length>1;
+  if(PLAYING&&PLAYING.root===root){if(multi)pausePlay();else stopPlay();return}
+  if(PAUSED&&PAUSED.root===root){const p=PAUSED;playFrom(root,p.k,p.tau);return}
+  stopPlay();
   const tr=root.querySelector(".dgc-track");const i=tr&&tr.clientWidth?Math.round(tr.scrollLeft/tr.clientWidth):0;
   const last=root.querySelectorAll("svg.dg").length-1;playFrom(root,i>=last&&last>0?0:i)});
 window.stopDiagramPlay=()=>stopPlay();
